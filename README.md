@@ -16,6 +16,7 @@ corepack pnpm dev
 ```
 
 - Web: http://localhost:3000
+- Workspace: http://localhost:3000/home
 - API health: http://localhost:3001/health
 
 ## Scripts

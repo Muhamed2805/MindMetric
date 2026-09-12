@@ -1,21 +1,51 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+@import "tailwindcss";
+
+@source "../../packages/ui/src";
+
+:root {
+  --mm-canvas: #f3f1ec;
+  --mm-surface: #fffcf7;
+  --mm-ink: #1c1917;
+  --mm-muted: #57534e;
+  --mm-line: #e7e3db;
+  --mm-accent: #0f5f63;
+  --mm-accent-hover: #0c4e51;
+  --mm-accent-fg: #f7fffe;
+  --mm-danger: #b42318;
+}
+
+.dark {
+  --mm-canvas: #161513;
+  --mm-surface: #1c1917;
+  --mm-ink: #f5f2eb;
+  --mm-muted: #a8a29e;
+  --mm-line: #44403c;
+  --mm-accent: #5eead4;
+  --mm-accent-hover: #99f6e4;
+  --mm-accent-fg: #042f2e;
+  --mm-danger: #fca5a5;
+}
+
+@theme inline {
+  --color-canvas: var(--mm-canvas);
+  --color-surface: var(--mm-surface);
+  --color-ink: var(--mm-ink);
+  --color-muted: var(--mm-muted);
+  --color-line: var(--mm-line);
+  --color-accent: var(--mm-accent);
+  --color-accent-hover: var(--mm-accent-hover);
+  --color-accent-fg: var(--mm-accent-fg);
+  --color-danger: var(--mm-danger);
+  --font-sans: var(--font-sans);
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, sans-serif;
+  background: var(--mm-canvas);
+  color: var(--mm-ink);
 }
 
-main {
-  padding: 1.5rem;
-}
-
-h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
+body {
+  min-height: 100dvh;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
