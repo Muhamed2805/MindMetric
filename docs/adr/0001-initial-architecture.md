@@ -16,9 +16,9 @@ Ship a modular monolith in a pnpm workspace monorepo.
 | Web | Next.js App Router, TypeScript |
 | API | NestJS with Fastify |
 | Public API | REST, `/api/v1` when versioned routes exist |
-| Database | PostgreSQL (not in this change) |
+| Database | PostgreSQL + Drizzle (see ADR 0003) |
 | Jobs / cache | Redis + BullMQ (not in this change) |
-| Auth | Self-hosted sessions, httpOnly cookies (not in this change) |
+| Auth | Better Auth, httpOnly cookies, roles in Postgres (see ADR 0003) |
 | UI primitives | `packages/ui` + Tailwind tokens (see ADR 0002) |
 | Scoring | Pure library (`packages/scoring-core`), classical test theory first |
 
