@@ -37,6 +37,30 @@ describe("isLikertDefinition", () => {
       false,
     );
   });
+
+  it("accepts monotonic CTT scoring metadata", () => {
+    expect(
+      isLikertDefinition({
+        engine: LIKERT_ENGINE,
+        items: [
+          {
+            id: "q1",
+            type: "likert",
+            prompt: "I finish work I start.",
+            scale,
+          },
+        ],
+        scoring: {
+          model: "ctt-v1",
+          bands: [{ upTo: 5, id: "high", label: "High" }],
+          norms: {
+            kind: "development",
+            points: [{ score: 1, percentile: 10 }],
+          },
+        },
+      }),
+    ).toBe(true);
+  });
 });
 
 describe("isLikertValue", () => {

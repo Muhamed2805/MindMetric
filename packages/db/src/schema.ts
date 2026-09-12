@@ -109,3 +109,14 @@ export const assessmentAnswer = pgTable(
   },
   (table) => [unique().on(table.assessmentId, table.itemId)],
 );
+
+export const assessmentResult = pgTable("assessment_result", {
+  id: text("id").primaryKey(),
+  assessmentId: text("assessment_id")
+    .notNull()
+    .unique()
+    .references(() => assessment.id, { onDelete: "cascade" }),
+  model: text("model").notNull(),
+  payload: jsonb("payload").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+});

@@ -7,6 +7,7 @@ import {
   createPostgresDb,
   findRepoRoot,
   isPgliteUrl,
+  pgliteDir,
 } from "./client";
 import { seedCatalog } from "./seed";
 
@@ -45,13 +46,13 @@ async function migrateUrl(target: string, seed: boolean) {
 if (isPgliteUrl(url)) {
   const apiUrl = process.env.API_DATABASE_URL ?? `${url}-api`;
   await migrateUrl(apiUrl, true);
-  try {
-    await migrateUrl(url, false);
-  } catch (cause) {
+  const webPid = join(pgliteDir(url), "postmaster.pid");
+  if (existsSync(webPid)) {
     console.warn(
-      "Skipped the web PGlite database because it is already open. Stop `pnpm dev` and re-run db:migrate to update it.",
+      "Skipped the web PGlite database because postmaster.pid is present. Stop the app before migrating auth tables.",
     );
-    console.warn(cause instanceof Error ? cause.message : cause);
+  } else {
+    await migrateUrl(url, false);
   }
 } else {
   await migrateUrl(url, true);

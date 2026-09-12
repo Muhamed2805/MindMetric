@@ -12,6 +12,7 @@
   "dependencies": {
     "@mindmetric/auth": "workspace:*",
     "@mindmetric/db": "workspace:*",
+    "@mindmetric/scoring-core": "workspace:*",
     "@mindmetric/shared": "workspace:*",
     "drizzle-orm": "0.45.2",
     "@nestjs/common": "11.1.6",

@@ -2,6 +2,7 @@ import { Button } from "@mindmetric/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ResultScore } from "../../../../components/result-score";
 import { apiGet } from "../../../../lib/api.server";
 import type { AssessmentSession } from "../../../../lib/assessment-types";
 
@@ -31,14 +32,18 @@ export default async function ResultDetailPage({ params }: PageProps) {
         </h1>
         <p className="mt-2 text-base leading-7 text-muted">
           {session.status === "completed"
-            ? "Answers are stored against this instrument version. Percentiles and CTT scoring are the next phase."
+            ? `Instrument version ${session.version}. Reverse-keyed items are recoded before the total.`
             : "This session is still in progress."}
         </p>
       </div>
-      <p className="text-sm text-muted">
-        {Object.keys(session.answers).length} of {session.items.length} items
-        answered
-      </p>
+      {session.status === "completed" && session.score ? (
+        <ResultScore score={session.score} items={session.items} />
+      ) : (
+        <p className="text-sm text-muted">
+          {Object.keys(session.answers).length} of {session.items.length} items
+          answered
+        </p>
+      )}
       <div className="flex flex-col gap-3 sm:flex-row">
         {session.status !== "completed" ? (
           <Button asChild>

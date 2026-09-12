@@ -28,8 +28,8 @@ export default async function ResultsPage() {
         <ErrorState description={loadError} />
       ) : completed.length === 0 ? (
         <p className="text-muted">
-          Finished assessments will show up here. Scoring and percentiles come
-          next.
+          Finished assessments show keyed totals and development percentiles
+          here.
         </p>
       ) : (
         <ul className="flex flex-col gap-3">
@@ -41,7 +41,10 @@ export default async function ResultsPage() {
               >
                 <p className="font-medium text-ink">{row.title}</p>
                 <p className="mt-1 text-sm text-muted">
-                  Version {row.version}
+                  {row.score
+                    ? `${row.score.raw} / ${row.score.max}`
+                    : `Version ${row.version}`}
+                  {row.score?.band ? ` · ${row.score.band.label}` : ""}
                   {row.completedAt
                     ? ` · ${new Date(row.completedAt).toLocaleString()}`
                     : ""}

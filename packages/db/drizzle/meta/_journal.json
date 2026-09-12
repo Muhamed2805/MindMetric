@@ -22,6 +22,13 @@
       "when": 1789222800000,
       "tag": "0002_drop_assessment_user_fk",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789224000000,
+      "tag": "0003_assessment_result",
+      "breakpoints": true
     }
   ]
 }

@@ -2,10 +2,17 @@ import { randomUUID } from "node:crypto";
 import {
   assessment,
   assessmentAnswer,
+  assessmentResult,
   type Database,
   instrument,
   instrumentVersion,
 } from "@mindmetric/db";
+import {
+  type CttScore,
+  isCttScore,
+  SCORING_MODEL,
+  scoreLikertCtt,
+} from "@mindmetric/scoring-core";
 import {
   allItemsAnswered,
   isLikertDefinition,
@@ -92,6 +99,7 @@ export class AssessmentService {
         title: instrument.title,
         slug: instrument.slug,
         version: instrumentVersion.version,
+        result: assessmentResult.payload,
       })
       .from(assessment)
       .innerJoin(
@@ -99,10 +107,33 @@ export class AssessmentService {
         eq(instrumentVersion.id, assessment.instrumentVersionId),
       )
       .innerJoin(instrument, eq(instrument.id, instrumentVersion.instrumentId))
+      .leftJoin(
+        assessmentResult,
+        eq(assessmentResult.assessmentId, assessment.id),
+      )
       .where(eq(assessment.userId, userId))
       .orderBy(desc(assessment.startedAt));
 
-    return rows;
+    return rows.map((row) => {
+      const score = isCttScore(row.result) ? row.result : null;
+      return {
+        id: row.id,
+        status: row.status,
+        startedAt: row.startedAt,
+        completedAt: row.completedAt,
+        title: row.title,
+        slug: row.slug,
+        version: row.version,
+        score: score
+          ? {
+              raw: score.raw,
+              max: score.max,
+              percentile: score.percentile,
+              band: score.band,
+            }
+          : null,
+      };
+    });
   }
 
   async getForUser(userId: string, assessmentId: string) {
@@ -142,6 +173,11 @@ export class AssessmentService {
       answers.map((answer) => [answer.itemId, answer.value]),
     );
 
+    let score: CttScore | null = null;
+    if (row.assessment.status === "completed") {
+      score = await this.loadOrCreateScore(assessmentId, definition, answerMap);
+    }
+
     return {
       id: row.assessment.id,
       status: row.assessment.status,
@@ -152,6 +188,7 @@ export class AssessmentService {
       version: row.version.version,
       items: definition.items.map(toClientLikertItem),
       answers: answerMap,
+      score,
     };
   }
 
@@ -224,5 +261,43 @@ export class AssessmentService {
       .where(eq(assessment.id, assessmentId));
 
     return this.getForUser(userId, assessmentId);
+  }
+
+  private async loadOrCreateScore(
+    assessmentId: string,
+    definition: Parameters<typeof scoreLikertCtt>[0],
+    answers: Record<string, unknown>,
+  ) {
+    const existing = await this.db
+      .select()
+      .from(assessmentResult)
+      .where(eq(assessmentResult.assessmentId, assessmentId))
+      .limit(1);
+    const stored = existing[0];
+    if (stored && isCttScore(stored.payload)) {
+      return stored.payload;
+    }
+
+    const payload = scoreLikertCtt(definition, answers);
+    try {
+      await this.db.insert(assessmentResult).values({
+        id: randomUUID(),
+        assessmentId,
+        model: SCORING_MODEL,
+        payload,
+        createdAt: new Date(),
+      });
+    } catch {
+      const retry = await this.db
+        .select()
+        .from(assessmentResult)
+        .where(eq(assessmentResult.assessmentId, assessmentId))
+        .limit(1);
+      const again = retry[0];
+      if (again && isCttScore(again.payload)) {
+        return again.payload;
+      }
+    }
+    return payload;
   }
 }

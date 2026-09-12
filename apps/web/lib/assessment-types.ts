@@ -30,6 +30,19 @@ export type AssessmentSession = {
   version: number;
   items: ClientLikertItem[];
   answers: Record<string, unknown>;
+  score: CttScore | null;
+};
+
+export type CttScore = {
+  model: string;
+  raw: number;
+  min: number;
+  max: number;
+  pomp: number;
+  percentile: number | null;
+  band: { id: string; label: string } | null;
+  normsKind: "development" | null;
+  items: { id: string; keyed: number }[];
 };
 
 export type AssessmentSummary = {
@@ -40,4 +53,10 @@ export type AssessmentSummary = {
   title: string;
   slug: string;
   version: number;
+  score: {
+    raw: number;
+    max: number;
+    percentile: number | null;
+    band: { id: string; label: string } | null;
+  } | null;
 };

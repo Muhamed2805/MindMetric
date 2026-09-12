@@ -61,6 +61,38 @@ const definition: LikertDefinition = {
       scale: fivePoint,
     },
   ],
+  scoring: {
+    model: "ctt-v1",
+    bands: [
+      {
+        upTo: 14,
+        id: "lower",
+        label: "Lower reported work attention",
+      },
+      {
+        upTo: 22,
+        id: "typical",
+        label: "Typical reported work attention",
+      },
+      {
+        upTo: 30,
+        id: "higher",
+        label: "Higher reported work attention",
+      },
+    ],
+    norms: {
+      kind: "development",
+      points: [
+        { score: 6, percentile: 1 },
+        { score: 10, percentile: 8 },
+        { score: 14, percentile: 22 },
+        { score: 18, percentile: 48 },
+        { score: 22, percentile: 72 },
+        { score: 26, percentile: 90 },
+        { score: 30, percentile: 99 },
+      ],
+    },
+  },
 };
 
 export async function seedCatalog(db: Database) {
@@ -78,11 +110,20 @@ export async function seedCatalog(db: Database) {
       slug: SLUG,
       title: "Work attention",
       description:
-        "A short Likert scale about staying with work despite interruptions. Scoring comes in a later phase.",
+        "A short Likert scale about staying with work despite interruptions.",
       kind: LIKERT_ENGINE,
       createdAt: now,
       updatedAt: now,
     });
+  } else {
+    await db
+      .update(instrument)
+      .set({
+        description:
+          "A short Likert scale about staying with work despite interruptions.",
+        updatedAt: now,
+      })
+      .where(eq(instrument.id, INSTRUMENT_ID));
   }
 
   const version = await db
@@ -101,5 +142,10 @@ export async function seedCatalog(db: Database) {
       publishedAt: now,
       createdAt: now,
     });
+  } else {
+    await db
+      .update(instrumentVersion)
+      .set({ definition })
+      .where(eq(instrumentVersion.id, VERSION_ID));
   }
 }
