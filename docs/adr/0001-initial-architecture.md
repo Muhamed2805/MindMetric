@@ -19,7 +19,7 @@ Ship a modular monolith in a pnpm workspace monorepo.
 | Database | PostgreSQL (not in this change) |
 | Jobs / cache | Redis + BullMQ (not in this change) |
 | Auth | Self-hosted sessions, httpOnly cookies (not in this change) |
-| UI primitives | Shared design system in a later phase |
+| UI primitives | `packages/ui` + Tailwind tokens (see ADR 0002) |
 | Scoring | Pure library (`packages/scoring-core`), classical test theory first |
 
 Bounded contexts: Identity, Catalog, Assessment, Scoring, Results, Analytics, Admin. Analytics and full authoring stay out of the first vertical slice.
