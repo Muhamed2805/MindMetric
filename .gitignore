@@ -10,6 +10,11 @@ coverage
 .env.local
 .env.*.local
 
+.data/
+
+AGENTS.md
+CLAUDE.md
+
 *.log
 .DS_Store
 Thumbs.db

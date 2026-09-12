@@ -6,6 +6,8 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "db:generate": "corepack pnpm --filter @mindmetric/db generate",
+    "db:migrate": "corepack pnpm --filter @mindmetric/db migrate",
     "dev": "corepack pnpm --parallel --filter @mindmetric/web --filter @mindmetric/api dev",
     "build": "corepack pnpm --filter \"./apps/**\" --filter \"./packages/**\" -r build",
     "lint": "biome check .",

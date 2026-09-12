@@ -10,8 +10,11 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@mindmetric/auth": "workspace:*",
+    "@mindmetric/db": "workspace:*",
     "@mindmetric/shared": "workspace:*",
     "@mindmetric/ui": "workspace:*",
+    "better-auth": "1.7.4",
     "next": "16.3.5",
     "react": "19.1.1",
     "react-dom": "19.1.1"

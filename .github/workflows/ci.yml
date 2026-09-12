@@ -13,6 +13,27 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mindmetric
+          POSTGRES_PASSWORD: mindmetric
+          POSTGRES_DB: mindmetric
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mindmetric -d mindmetric"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgres://mindmetric:mindmetric@localhost:5432/mindmetric
+      BETTER_AUTH_SECRET: ci-mindmetric-secret-key-not-for-prod
+      BETTER_AUTH_URL: http://localhost:3000
+      WEB_ORIGIN: http://localhost:3000
+      API_ORIGIN: http://localhost:3001
+      NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -23,6 +44,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test

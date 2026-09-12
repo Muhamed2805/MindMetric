@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: mindmetric
+      POSTGRES_PASSWORD: mindmetric
+      POSTGRES_DB: mindmetric
+    ports:
+      - "5432:5432"
+    volumes:
+      - mindmetric_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mindmetric -d mindmetric"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mindmetric_pg:

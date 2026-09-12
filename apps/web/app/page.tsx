@@ -8,7 +8,7 @@ export default function HomePage() {
         <div className="mx-auto flex min-h-14 max-w-5xl items-center justify-between px-4">
           <p className="text-base font-semibold tracking-tight">MindMetric</p>
           <Button asChild variant="secondary" size="sm">
-            <Link href="/home">Open workspace</Link>
+            <Link href="/login">Sign in</Link>
           </Button>
         </div>
       </header>
@@ -25,7 +25,7 @@ export default function HomePage() {
             <Link href="/tests">View catalog</Link>
           </Button>
           <Button asChild variant="secondary">
-            <Link href="/home">Workspace</Link>
+            <Link href="/login">Sign in</Link>
           </Button>
         </div>
       </main>
