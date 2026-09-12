@@ -1,0 +1,20 @@
+{
+  "name": "mindmetric",
+  "private": true,
+  "packageManager": "pnpm@10.17.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "corepack pnpm --parallel --filter @mindmetric/web --filter @mindmetric/api dev",
+    "build": "corepack pnpm --filter \"./apps/**\" --filter \"./packages/**\" -r build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "test": "corepack pnpm --filter \"./apps/**\" --filter \"./packages/**\" -r test",
+    "typecheck": "corepack pnpm --filter \"./apps/**\" --filter \"./packages/**\" -r typecheck"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "typescript": "5.9.2"
+  }
+}
