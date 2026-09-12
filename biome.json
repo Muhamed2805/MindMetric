@@ -37,6 +37,16 @@
   },
   "overrides": [
     {
+      "includes": ["apps/api/src/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.css"],
       "linter": {
         "rules": {

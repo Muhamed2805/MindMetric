@@ -1,4 +1,12 @@
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -54,3 +62,50 @@ export const verification = pgTable("verification", {
   createdAt: timestamp("created_at", { withTimezone: true }),
   updatedAt: timestamp("updated_at", { withTimezone: true }),
 });
+
+export const instrument = pgTable("instrument", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  kind: text("kind").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
+});
+
+export const instrumentVersion = pgTable("instrument_version", {
+  id: text("id").primaryKey(),
+  instrumentId: text("instrument_id")
+    .notNull()
+    .references(() => instrument.id, { onDelete: "cascade" }),
+  version: integer("version").notNull(),
+  status: text("status").notNull(),
+  definition: jsonb("definition").notNull(),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+});
+
+export const assessment = pgTable("assessment", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  instrumentVersionId: text("instrument_version_id")
+    .notNull()
+    .references(() => instrumentVersion.id),
+  status: text("status").notNull(),
+  startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+});
+
+export const assessmentAnswer = pgTable(
+  "assessment_answer",
+  {
+    id: text("id").primaryKey(),
+    assessmentId: text("assessment_id")
+      .notNull()
+      .references(() => assessment.id, { onDelete: "cascade" }),
+    itemId: text("item_id").notNull(),
+    value: jsonb("value").notNull(),
+    answeredAt: timestamp("answered_at", { withTimezone: true }).notNull(),
+  },
+  (table) => [unique().on(table.assessmentId, table.itemId)],
+);

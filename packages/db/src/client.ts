@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
@@ -34,6 +34,10 @@ export function pgliteDir(url: string) {
 export function createPgliteDb(url: string) {
   const dir = pgliteDir(url);
   mkdirSync(dir, { recursive: true });
+  const pidFile = join(dir, "postmaster.pid");
+  if (existsSync(pidFile)) {
+    unlinkSync(pidFile);
+  }
   const client = new PGlite(dir);
   return drizzlePglite({ client, schema });
 }
@@ -49,13 +53,26 @@ export function createDb(url: string) {
 
 let db: Database | undefined;
 
+export function resolveDatabaseUrl() {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error("DATABASE_URL is not set");
+  }
+  if (process.env.MINDMETRIC_PROCESS !== "api") {
+    return url;
+  }
+  if (process.env.API_DATABASE_URL) {
+    return process.env.API_DATABASE_URL;
+  }
+  if (isPgliteUrl(url)) {
+    return `${url}-api`;
+  }
+  return url;
+}
+
 export function getDb() {
   if (!db) {
-    const url = process.env.DATABASE_URL;
-    if (!url) {
-      throw new Error("DATABASE_URL is not set");
-    }
-    db = createDb(url);
+    db = createDb(resolveDatabaseUrl());
   }
 
   return db;

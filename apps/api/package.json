@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/main.ts",
+    "dev": "tsx watch --include ./src/**/*.ts src/main.ts",
     "build": "nest build",
     "start": "tsx src/main.ts",
     "typecheck": "tsc --noEmit",
@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@mindmetric/auth": "workspace:*",
+    "@mindmetric/db": "workspace:*",
+    "@mindmetric/shared": "workspace:*",
+    "drizzle-orm": "0.45.2",
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/platform-fastify": "11.1.6",

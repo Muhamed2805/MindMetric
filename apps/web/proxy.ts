@@ -1,7 +1,7 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
-const protectedPaths = ["/home", "/tests", "/results", "/account"];
+const protectedPaths = ["/home", "/tests", "/results", "/account", "/run"];
 const authPaths = ["/login", "/register"];
 
 function matches(pathname: string, prefixes: string[]) {
@@ -37,6 +37,8 @@ export const config = {
     "/results/:path*",
     "/account",
     "/account/:path*",
+    "/run",
+    "/run/:path*",
     "/login",
     "/register",
   ],

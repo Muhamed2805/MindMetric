@@ -13,17 +13,20 @@ if (existsSync(rootEnv)) {
   process.loadEnvFile(rootEnv);
 }
 
+process.env.MINDMETRIC_PROCESS = "api";
+
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({ logger: false }),
   );
 
   app.setGlobalPrefix("v1", { exclude: ["health"] });
   app.enableShutdownHooks();
 
   const port = Number(process.env.API_PORT ?? 3001);
-  await app.listen({ port, host: "0.0.0.0" });
+  const host = process.env.API_HOST ?? "0.0.0.0";
+  await app.listen({ port, host });
 }
 
 void bootstrap();
