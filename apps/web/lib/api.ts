@@ -5,6 +5,9 @@ export function apiBaseUrl() {
 }
 
 export async function readApiError(response: Response) {
+  if (response.status === 429) {
+    return "Too many requests. Try again shortly.";
+  }
   try {
     const body = (await response.json()) as { message?: string };
     return body.message ?? `Request failed (${response.status})`;

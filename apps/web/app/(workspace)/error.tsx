@@ -3,7 +3,6 @@
 import { Button, ErrorState } from "@mindmetric/ui";
 
 export default function WorkspaceError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -11,7 +10,7 @@ export default function WorkspaceError({
 }) {
   return (
     <ErrorState
-      description={error.message || "The workspace failed to load."}
+      description="The workspace failed to load. Try again."
       action={
         <Button type="button" onClick={reset}>
           Try again

@@ -49,7 +49,17 @@ export function createAuth() {
     rateLimit: {
       enabled: true,
       window: 60,
-      max: 10,
+      max: 20,
+      customRules: {
+        "/sign-in/email": {
+          window: 60,
+          max: 5,
+        },
+        "/sign-up/email": {
+          window: 60,
+          max: 5,
+        },
+      },
     },
     advanced: {
       useSecureCookies: process.env.NODE_ENV === "production",
