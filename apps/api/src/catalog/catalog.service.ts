@@ -1,8 +1,13 @@
 import { type Database, instrument, instrumentVersion } from "@mindmetric/db";
 import {
+  definitionEstimatedSeconds,
+  definitionItemCount,
   isLikertDefinition,
+  isMcqTimedDefinition,
   LIKERT_ENGINE,
+  MCQ_TIMED_ENGINE,
   toClientLikertItem,
+  toClientMcqItem,
 } from "@mindmetric/shared";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { and, asc, desc, eq } from "drizzle-orm";
@@ -37,17 +42,25 @@ export class CatalogService {
         seen.add(row.slug);
         return true;
       })
-      .map((row) => ({
-        slug: row.slug,
-        title: row.title,
-        description: row.description,
-        kind: row.kind,
-        versionId: row.versionId,
-        version: row.version,
-        itemCount: isLikertDefinition(row.definition)
-          ? row.definition.items.length
-          : 0,
-      }));
+      .map((row) => {
+        const definition =
+          isLikertDefinition(row.definition) ||
+          isMcqTimedDefinition(row.definition)
+            ? row.definition
+            : null;
+        return {
+          slug: row.slug,
+          title: row.title,
+          description: row.description,
+          kind: row.kind,
+          versionId: row.versionId,
+          version: row.version,
+          itemCount: definition ? definitionItemCount(definition) : 0,
+          estimatedSeconds: definition
+            ? definitionEstimatedSeconds(definition)
+            : 0,
+        };
+      });
   }
 
   async getPublishedBySlug(slug: string) {
@@ -76,23 +89,37 @@ export class CatalogService {
     }
 
     const definition = row.version.definition;
-    if (
-      row.instrument.kind !== LIKERT_ENGINE ||
-      !isLikertDefinition(definition)
-    ) {
-      throw new NotFoundException("Instrument definition is not available.");
+    const kind = row.instrument.kind;
+
+    if (kind === LIKERT_ENGINE && isLikertDefinition(definition)) {
+      return {
+        slug: row.instrument.slug,
+        title: row.instrument.title,
+        description: row.instrument.description,
+        kind,
+        versionId: row.version.id,
+        version: row.version.version,
+        itemCount: definition.items.length,
+        estimatedSeconds: definitionEstimatedSeconds(definition),
+        items: definition.items.map(toClientLikertItem),
+      };
     }
 
-    return {
-      slug: row.instrument.slug,
-      title: row.instrument.title,
-      description: row.instrument.description,
-      kind: row.instrument.kind,
-      versionId: row.version.id,
-      version: row.version.version,
-      itemCount: definition.items.length,
-      items: definition.items.map(toClientLikertItem),
-    };
+    if (kind === MCQ_TIMED_ENGINE && isMcqTimedDefinition(definition)) {
+      return {
+        slug: row.instrument.slug,
+        title: row.instrument.title,
+        description: row.instrument.description,
+        kind,
+        versionId: row.version.id,
+        version: row.version.version,
+        itemCount: definition.items.length,
+        estimatedSeconds: definitionEstimatedSeconds(definition),
+        items: definition.items.map(toClientMcqItem),
+      };
+    }
+
+    throw new NotFoundException("Instrument definition is not available.");
   }
 
   async getPublishedVersion(versionId: string) {
@@ -108,7 +135,11 @@ export class CatalogService {
       .limit(1);
 
     const version = rows[0];
-    if (!version || !isLikertDefinition(version.definition)) {
+    if (
+      !version ||
+      (!isLikertDefinition(version.definition) &&
+        !isMcqTimedDefinition(version.definition))
+    ) {
       throw new NotFoundException("Instrument version not found.");
     }
 

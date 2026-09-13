@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { LikertRunner } from "../../../components/likert-runner";
+import { McqTimedRunner } from "../../../components/mcq-timed-runner";
 import { apiGet } from "../../../lib/api.server";
 import type { AssessmentSession } from "../../../lib/assessment-types";
 
@@ -24,6 +25,10 @@ export default async function RunPage({ params }: PageProps) {
 
   if (session.status === "completed") {
     redirect(`/results/${session.id}`);
+  }
+
+  if (session.kind === "mcq-timed-v1") {
+    return <McqTimedRunner initial={session} />;
   }
 
   return <LikertRunner initial={session} />;

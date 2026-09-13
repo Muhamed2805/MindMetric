@@ -5,7 +5,7 @@ import { PageIntro } from "../../../../components/page-intro";
 import { StartAssessmentButton } from "../../../../components/start-assessment-button";
 import { apiGet } from "../../../../lib/api.server";
 import type { InstrumentDetail } from "../../../../lib/assessment-types";
-import { engineLabel, minutesLabel } from "../../../../lib/format";
+import { durationLabel, engineLabel } from "../../../../lib/format";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -48,7 +48,11 @@ export default async function InstrumentPage({ params }: PageProps) {
     );
   }
 
-  const time = minutesLabel(detail.itemCount);
+  const time = durationLabel(detail.estimatedSeconds, detail.itemCount);
+  const intro =
+    detail.kind === "mcq-timed-v1"
+      ? "Each puzzle has a clock. A late or missing answer scores zero. This is not an IQ test and not a clinical instrument."
+      : "You will answer one statement at a time. Reverse-keyed items are recoded when you finish. Percentiles are development tables, not clinical norms.";
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
@@ -61,10 +65,7 @@ export default async function InstrumentPage({ params }: PageProps) {
         {detail.itemCount} items
         {time ? ` · ${time}` : ""} · version {detail.version}
       </p>
-      <p className="max-w-xl text-sm leading-6 text-muted">
-        You will answer one statement at a time. Reverse-keyed items are recoded
-        when you finish. Percentiles are development tables, not clinical norms.
-      </p>
+      <p className="max-w-xl text-sm leading-6 text-muted">{intro}</p>
       <StartAssessmentButton slug={detail.slug} />
     </div>
   );

@@ -3,12 +3,9 @@
 import { Button } from "@mindmetric/ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { apiSend } from "../lib/api";
-import type {
-  AssessmentSession,
-  ClientLikertItem,
-} from "../lib/assessment-types";
+import type { AssessmentSession, ClientMcqItem } from "../lib/assessment-types";
 
 function firstUnansweredIndex(session: AssessmentSession) {
   const index = session.items.findIndex(
@@ -17,15 +14,33 @@ function firstUnansweredIndex(session: AssessmentSession) {
   return index === -1 ? session.items.length - 1 : index;
 }
 
-export function LikertRunner({ initial }: { initial: AssessmentSession }) {
+function isMcqItem(
+  item: AssessmentSession["items"][number] | undefined,
+): item is ClientMcqItem {
+  return item?.type === "mcq";
+}
+
+export function McqTimedRunner({ initial }: { initial: AssessmentSession }) {
   const router = useRouter();
   const [session, setSession] = useState(initial);
   const [index, setIndex] = useState(() => firstUnansweredIndex(initial));
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [remainingMs, setRemainingMs] = useState(0);
+  const startedAt = useRef(0);
+  const saving = useRef(false);
+  const persistRef = useRef<
+    (
+      nextItem: ClientMcqItem,
+      value: {
+        choiceId: string | null;
+        elapsedMs: number;
+        timedOut: boolean;
+      },
+    ) => Promise<AssessmentSession | null>
+  >(async () => null);
 
   const item = session.items[index];
-  const selected = item ? session.answers[item.id] : undefined;
   const last = index === session.items.length - 1;
   const progress = useMemo(() => {
     const answered = session.items.filter(
@@ -34,13 +49,39 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
     return `${answered} of ${session.items.length}`;
   }, [session]);
 
-  if (!item || item.type !== "likert") {
-    return <p className="text-muted">This assessment has no items.</p>;
-  }
+  useEffect(() => {
+    if (!isMcqItem(item) || session.answers[item.id] !== undefined) {
+      return;
+    }
+    startedAt.current = Date.now();
+    setRemainingMs(item.timeLimitMs);
+    saving.current = false;
+    const timer = window.setInterval(() => {
+      const elapsed = Date.now() - startedAt.current;
+      const left = item.timeLimitMs - elapsed;
+      if (left <= 0) {
+        window.clearInterval(timer);
+        setRemainingMs(0);
+        void persistRef.current(item, {
+          choiceId: null,
+          elapsedMs: item.timeLimitMs,
+          timedOut: true,
+        });
+        return;
+      }
+      setRemainingMs(left);
+    }, 200);
+    return () => window.clearInterval(timer);
+  }, [item, session.answers]);
 
-  const currentItem = item;
-
-  async function persist(nextItem: ClientLikertItem, value: number) {
+  async function persist(
+    nextItem: ClientMcqItem,
+    value: { choiceId: string | null; elapsedMs: number; timedOut: boolean },
+  ) {
+    if (saving.current || session.answers[nextItem.id] !== undefined) {
+      return null;
+    }
+    saving.current = true;
     setPending(true);
     setError(null);
     try {
@@ -52,28 +93,34 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
         },
       );
       setSession(next);
+      if (!last) {
+        setIndex((current) => current + 1);
+      }
       return next;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not save.");
+      saving.current = false;
       return null;
     } finally {
       setPending(false);
     }
   }
+  persistRef.current = persist;
 
-  async function onChoose(value: number) {
-    const next = await persist(currentItem, value);
-    if (!next) {
+  async function onChoose(choiceId: string) {
+    if (!isMcqItem(item)) {
       return;
     }
-    if (!last) {
-      setIndex((current) => current + 1);
-    }
+    await persist(item, {
+      choiceId,
+      elapsedMs: Date.now() - startedAt.current,
+      timedOut: false,
+    });
   }
 
   async function onFinish() {
-    if (typeof selected !== "number") {
-      setError("Choose an answer to finish.");
+    if (!isMcqItem(item) || session.answers[item.id] === undefined) {
+      setError("Answer or wait for the timer on this item.");
       return;
     }
     setPending(true);
@@ -86,6 +133,13 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
       setPending(false);
     }
   }
+
+  if (!isMcqItem(item)) {
+    return <p className="text-muted">This assessment has no items.</p>;
+  }
+
+  const seconds = Math.max(0, Math.ceil(remainingMs / 1000));
+  const answered = session.answers[item.id] !== undefined;
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-8 px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
@@ -101,39 +155,34 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
           </Link>
         </div>
       </header>
-      <div className="h-1 overflow-hidden rounded-full bg-line">
-        <div
-          className="h-full bg-accent"
-          style={{
-            width: `${((index + 1) / session.items.length) * 100}%`,
-          }}
-        />
+      <div className="flex items-center justify-between gap-4">
+        <div className="h-1 flex-1 overflow-hidden rounded-full bg-line">
+          <div
+            className="h-full bg-accent"
+            style={{
+              width: `${((index + 1) / session.items.length) * 100}%`,
+            }}
+          />
+        </div>
+        <p className="text-sm font-medium tabular-nums text-ink">
+          {answered ? "Saved" : `${seconds}s`}
+        </p>
       </div>
       <p className="text-xl font-medium leading-8 text-ink md:text-2xl">
         {item.prompt}
       </p>
       <div className="flex flex-col gap-2">
-        {item.scale.anchors
-          .slice()
-          .sort((a, b) => a.value - b.value)
-          .map((anchor) => {
-            const active = selected === anchor.value;
-            return (
-              <button
-                key={anchor.value}
-                type="button"
-                disabled={pending}
-                onClick={() => onChoose(anchor.value)}
-                className={
-                  active
-                    ? "min-h-12 rounded-md bg-accent px-4 text-left text-base text-accent-fg"
-                    : "min-h-12 rounded-md bg-surface px-4 text-left text-base text-ink ring-1 ring-line"
-                }
-              >
-                {anchor.label}
-              </button>
-            );
-          })}
+        {item.choices.map((choice) => (
+          <button
+            key={choice.id}
+            type="button"
+            disabled={pending || answered}
+            onClick={() => onChoose(choice.id)}
+            className="min-h-12 rounded-md bg-surface px-4 text-left text-base text-ink ring-1 ring-line disabled:opacity-50"
+          >
+            {choice.label}
+          </button>
+        ))}
       </div>
       {error ? (
         <p className="text-sm text-danger" role="alert">
@@ -157,10 +206,10 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
           <Button
             type="button"
             variant="secondary"
-            disabled={pending || selected === undefined}
+            disabled={pending || !answered}
             onClick={() => setIndex((current) => current + 1)}
           >
-            Skip ahead
+            Next
           </Button>
         )}
       </div>

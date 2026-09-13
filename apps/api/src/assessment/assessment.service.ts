@@ -9,15 +9,21 @@ import {
 } from "@mindmetric/db";
 import {
   type CttScore,
-  isCttScore,
+  isStoredScore,
   SCORING_MODEL,
+  type SumCorrectScore,
   scoreLikertCtt,
+  scoreMcqTimed,
 } from "@mindmetric/scoring-core";
 import {
   allItemsAnswered,
   isLikertDefinition,
   isLikertValue,
+  isMcqTimedDefinition,
+  normalizeMcqAnswer,
+  SUM_CORRECT_MODEL,
   toClientLikertItem,
+  toClientMcqItem,
 } from "@mindmetric/shared";
 import {
   BadRequestException,
@@ -27,6 +33,8 @@ import {
 } from "@nestjs/common";
 import { and, desc, eq } from "drizzle-orm";
 import { DATABASE } from "../database/database.module";
+
+type StoredScore = CttScore | SumCorrectScore;
 
 @Injectable()
 export class AssessmentService {
@@ -38,6 +46,7 @@ export class AssessmentService {
         version: instrumentVersion,
         title: instrument.title,
         slug: instrument.slug,
+        kind: instrument.kind,
       })
       .from(instrument)
       .innerJoin(
@@ -54,7 +63,11 @@ export class AssessmentService {
       .limit(1);
 
     const match = published[0];
-    if (!match || !isLikertDefinition(match.version.definition)) {
+    const definition = match?.version.definition;
+    if (
+      !match ||
+      (!isLikertDefinition(definition) && !isMcqTimedDefinition(definition))
+    ) {
       throw new NotFoundException("Instrument not found.");
     }
 
@@ -76,13 +89,12 @@ export class AssessmentService {
     }
 
     const id = randomUUID();
-    const startedAt = new Date();
     await this.db.insert(assessment).values({
       id,
       userId,
       instrumentVersionId: match.version.id,
       status: "in_progress",
-      startedAt,
+      startedAt: new Date(),
       completedAt: null,
     });
 
@@ -115,7 +127,7 @@ export class AssessmentService {
       .orderBy(desc(assessment.startedAt));
 
     return rows.map((row) => {
-      const score = isCttScore(row.result) ? row.result : null;
+      const score = isStoredScore(row.result) ? row.result : null;
       return {
         id: row.id,
         status: row.status,
@@ -137,45 +149,27 @@ export class AssessmentService {
   }
 
   async getForUser(userId: string, assessmentId: string) {
-    const rows = await this.db
-      .select({
-        assessment,
-        version: instrumentVersion,
-        title: instrument.title,
-        slug: instrument.slug,
-      })
-      .from(assessment)
-      .innerJoin(
-        instrumentVersion,
-        eq(instrumentVersion.id, assessment.instrumentVersionId),
-      )
-      .innerJoin(instrument, eq(instrument.id, instrumentVersion.instrumentId))
-      .where(
-        and(eq(assessment.id, assessmentId), eq(assessment.userId, userId)),
-      )
-      .limit(1);
-
-    const row = rows[0];
-    if (!row) {
-      throw new NotFoundException("Assessment not found.");
-    }
+    const row = await this.loadOwned(userId, assessmentId);
     const definition = row.version.definition;
-    if (!isLikertDefinition(definition)) {
+    const answers = await this.answerMap(assessmentId);
+
+    let items: Array<
+      ReturnType<typeof toClientLikertItem> | ReturnType<typeof toClientMcqItem>
+    >;
+    let score: StoredScore | null = null;
+
+    if (isLikertDefinition(definition)) {
+      items = definition.items.map(toClientLikertItem);
+      if (row.assessment.status === "completed") {
+        score = await this.loadOrCreateScore(assessmentId, definition, answers);
+      }
+    } else if (isMcqTimedDefinition(definition)) {
+      items = definition.items.map(toClientMcqItem);
+      if (row.assessment.status === "completed") {
+        score = await this.loadOrCreateScore(assessmentId, definition, answers);
+      }
+    } else {
       throw new NotFoundException("Assessment not found.");
-    }
-
-    const answers = await this.db
-      .select()
-      .from(assessmentAnswer)
-      .where(eq(assessmentAnswer.assessmentId, assessmentId));
-
-    const answerMap = Object.fromEntries(
-      answers.map((answer) => [answer.itemId, answer.value]),
-    );
-
-    let score: CttScore | null = null;
-    if (row.assessment.status === "completed") {
-      score = await this.loadOrCreateScore(assessmentId, definition, answerMap);
     }
 
     return {
@@ -185,9 +179,10 @@ export class AssessmentService {
       completedAt: row.assessment.completedAt,
       title: row.title,
       slug: row.slug,
+      kind: row.kind,
       version: row.version.version,
-      items: definition.items.map(toClientLikertItem),
-      answers: answerMap,
+      items,
+      answers,
       score,
     };
   }
@@ -198,13 +193,27 @@ export class AssessmentService {
     itemId: string,
     value: unknown,
   ) {
-    const session = await this.getForUser(userId, assessmentId);
-    if (session.status !== "in_progress") {
+    const row = await this.loadOwned(userId, assessmentId);
+    if (row.assessment.status !== "in_progress") {
       throw new BadRequestException("This assessment is already closed.");
     }
 
-    const item = session.items.find((entry) => entry.id === itemId);
-    if (!item || !isLikertValue(item, value)) {
+    const definition = row.version.definition;
+    let stored: unknown = value;
+
+    if (isLikertDefinition(definition)) {
+      const item = definition.items.find((entry) => entry.id === itemId);
+      if (!item || !isLikertValue(item, value)) {
+        throw new BadRequestException("Invalid answer.");
+      }
+    } else if (isMcqTimedDefinition(definition)) {
+      const item = definition.items.find((entry) => entry.id === itemId);
+      const normalized = item ? normalizeMcqAnswer(item, value) : null;
+      if (!item || !normalized) {
+        throw new BadRequestException("Invalid answer.");
+      }
+      stored = normalized;
+    } else {
       throw new BadRequestException("Invalid answer.");
     }
 
@@ -224,14 +233,14 @@ export class AssessmentService {
     if (found) {
       await this.db
         .update(assessmentAnswer)
-        .set({ value, answeredAt: now })
+        .set({ value: stored, answeredAt: now })
         .where(eq(assessmentAnswer.id, found.id));
     } else {
       await this.db.insert(assessmentAnswer).values({
         id: randomUUID(),
         assessmentId,
         itemId,
-        value,
+        value: stored,
         answeredAt: now,
       });
     }
@@ -263,9 +272,48 @@ export class AssessmentService {
     return this.getForUser(userId, assessmentId);
   }
 
+  private async loadOwned(userId: string, assessmentId: string) {
+    const rows = await this.db
+      .select({
+        assessment,
+        version: instrumentVersion,
+        title: instrument.title,
+        slug: instrument.slug,
+        kind: instrument.kind,
+      })
+      .from(assessment)
+      .innerJoin(
+        instrumentVersion,
+        eq(instrumentVersion.id, assessment.instrumentVersionId),
+      )
+      .innerJoin(instrument, eq(instrument.id, instrumentVersion.instrumentId))
+      .where(
+        and(eq(assessment.id, assessmentId), eq(assessment.userId, userId)),
+      )
+      .limit(1);
+
+    const row = rows[0];
+    if (!row) {
+      throw new NotFoundException("Assessment not found.");
+    }
+    return row;
+  }
+
+  private async answerMap(assessmentId: string) {
+    const answers = await this.db
+      .select()
+      .from(assessmentAnswer)
+      .where(eq(assessmentAnswer.assessmentId, assessmentId));
+    return Object.fromEntries(
+      answers.map((answer) => [answer.itemId, answer.value]),
+    );
+  }
+
   private async loadOrCreateScore(
     assessmentId: string,
-    definition: Parameters<typeof scoreLikertCtt>[0],
+    definition:
+      | Parameters<typeof scoreLikertCtt>[0]
+      | Parameters<typeof scoreMcqTimed>[0],
     answers: Record<string, unknown>,
   ) {
     const existing = await this.db
@@ -274,16 +322,22 @@ export class AssessmentService {
       .where(eq(assessmentResult.assessmentId, assessmentId))
       .limit(1);
     const stored = existing[0];
-    if (stored && isCttScore(stored.payload)) {
+    if (stored && isStoredScore(stored.payload)) {
       return stored.payload;
     }
 
-    const payload = scoreLikertCtt(definition, answers);
+    const payload = isLikertDefinition(definition)
+      ? scoreLikertCtt(definition, answers)
+      : scoreMcqTimed(definition, answers);
+    const model = isLikertDefinition(definition)
+      ? SCORING_MODEL
+      : SUM_CORRECT_MODEL;
+
     try {
       await this.db.insert(assessmentResult).values({
         id: randomUUID(),
         assessmentId,
-        model: SCORING_MODEL,
+        model,
         payload,
         createdAt: new Date(),
       });
@@ -294,7 +348,7 @@ export class AssessmentService {
         .where(eq(assessmentResult.assessmentId, assessmentId))
         .limit(1);
       const again = retry[0];
-      if (again && isCttScore(again.payload)) {
+      if (again && isStoredScore(again.payload)) {
         return again.payload;
       }
     }

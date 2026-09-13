@@ -1,0 +1,129 @@
+{
+  "id": "inst_quick_pattern",
+  "slug": "quick-pattern-reasoning",
+  "title": "Quick pattern reasoning",
+  "description": "Short timed puzzles. This is not an IQ test and not a clinical measure.",
+  "kind": "mcq-timed-v1",
+  "versions": [
+    {
+      "id": "ver_quick_pattern_1",
+      "version": 1,
+      "status": "published",
+      "definition": {
+        "engine": "mcq-timed-v1",
+        "items": [
+          {
+            "id": "qp-1",
+            "type": "mcq",
+            "prompt": "What number comes next? 3, 6, 12, 24, __",
+            "timeLimitMs": 20000,
+            "correctChoiceId": "b",
+            "choices": [
+              { "id": "a", "label": "30" },
+              { "id": "b", "label": "48" },
+              { "id": "c", "label": "36" },
+              { "id": "d", "label": "18" }
+            ]
+          },
+          {
+            "id": "qp-2",
+            "type": "mcq",
+            "prompt": "Which does not belong: square, rectangle, rhombus, cylinder?",
+            "timeLimitMs": 20000,
+            "correctChoiceId": "d",
+            "choices": [
+              { "id": "a", "label": "Square" },
+              { "id": "b", "label": "Rectangle" },
+              { "id": "c", "label": "Rhombus" },
+              { "id": "d", "label": "Cylinder" }
+            ]
+          },
+          {
+            "id": "qp-3",
+            "type": "mcq",
+            "prompt": "What comes next? AZ, BY, CX, __",
+            "timeLimitMs": 20000,
+            "correctChoiceId": "a",
+            "choices": [
+              { "id": "a", "label": "DW" },
+              { "id": "b", "label": "DY" },
+              { "id": "c", "label": "DU" },
+              { "id": "d", "label": "CY" }
+            ]
+          },
+          {
+            "id": "qp-4",
+            "type": "mcq",
+            "prompt": "If every vowel is dropped from PLANET, what remains?",
+            "timeLimitMs": 20000,
+            "correctChoiceId": "c",
+            "choices": [
+              { "id": "a", "label": "PLT" },
+              { "id": "b", "label": "PNT" },
+              { "id": "c", "label": "PLNT" },
+              { "id": "d", "label": "PLAN" }
+            ]
+          },
+          {
+            "id": "qp-5",
+            "type": "mcq",
+            "prompt": "Odd one out: oak, pine, maple, rose.",
+            "timeLimitMs": 20000,
+            "correctChoiceId": "d",
+            "choices": [
+              { "id": "a", "label": "Oak" },
+              { "id": "b", "label": "Pine" },
+              { "id": "c", "label": "Maple" },
+              { "id": "d", "label": "Rose" }
+            ]
+          },
+          {
+            "id": "qp-6",
+            "type": "mcq",
+            "prompt": "What number comes next? 2, 3, 5, 8, 12, __",
+            "timeLimitMs": 20000,
+            "correctChoiceId": "b",
+            "choices": [
+              { "id": "a", "label": "16" },
+              { "id": "b", "label": "17" },
+              { "id": "c", "label": "18" },
+              { "id": "d", "label": "20" }
+            ]
+          }
+        ],
+        "scoring": {
+          "model": "sum-correct-v1",
+          "bands": [
+            {
+              "upTo": 2,
+              "id": "lower",
+              "label": "Fewer correct on this puzzle set"
+            },
+            {
+              "upTo": 4,
+              "id": "typical",
+              "label": "Typical on this puzzle set"
+            },
+            {
+              "upTo": 6,
+              "id": "higher",
+              "label": "More correct on this puzzle set"
+            }
+          ],
+          "norms": {
+            "kind": "development",
+            "points": [
+              { "score": 0, "percentile": 5 },
+              { "score": 1, "percentile": 15 },
+              { "score": 2, "percentile": 32 },
+              { "score": 3, "percentile": 50 },
+              { "score": 4, "percentile": 70 },
+              { "score": 5, "percentile": 88 },
+              { "score": 6, "percentile": 99 }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

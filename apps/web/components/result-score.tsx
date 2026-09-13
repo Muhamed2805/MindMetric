@@ -1,4 +1,10 @@
-import type { ClientLikertItem, CttScore } from "../lib/assessment-types";
+import type {
+  AssessmentScore,
+  ClientLikertItem,
+  ClientMcqItem,
+  CttScore,
+  SumCorrectScore,
+} from "../lib/assessment-types";
 
 function Meter({
   label,
@@ -26,12 +32,29 @@ function Meter({
   );
 }
 
+function isSumCorrectScore(score: AssessmentScore): score is SumCorrectScore {
+  return score.model === "sum-correct-v1";
+}
+
 export function ResultScore({
   score,
   items,
 }: {
+  score: AssessmentScore;
+  items: Array<ClientLikertItem | ClientMcqItem>;
+}) {
+  if (isSumCorrectScore(score)) {
+    return <McqResult score={score} items={items} />;
+  }
+  return <LikertResult score={score} items={items} />;
+}
+
+function LikertResult({
+  score,
+  items,
+}: {
   score: CttScore;
-  items: ClientLikertItem[];
+  items: Array<ClientLikertItem | ClientMcqItem>;
 }) {
   const prompts = Object.fromEntries(
     items.map((item) => [item.id, item.prompt]),
@@ -72,8 +95,10 @@ export function ResultScore({
         <ul className="flex flex-col gap-3">
           {score.items.map((entry) => {
             const item = items.find((row) => row.id === entry.id);
-            const max = item?.scale.max ?? score.max;
-            const min = item?.scale.min ?? score.min;
+            const max =
+              item && item.type === "likert" ? item.scale.max : score.max;
+            const min =
+              item && item.type === "likert" ? item.scale.min : score.min;
             const span = Math.max(1, max - min);
             return (
               <li key={entry.id} className="flex flex-col gap-1">
@@ -91,6 +116,62 @@ export function ResultScore({
               </li>
             );
           })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function McqResult({
+  score,
+  items,
+}: {
+  score: SumCorrectScore;
+  items: Array<ClientLikertItem | ClientMcqItem>;
+}) {
+  const prompts = Object.fromEntries(
+    items.map((item) => [item.id, item.prompt]),
+  );
+
+  return (
+    <div className="flex flex-col gap-8">
+      {score.band ? (
+        <p className="text-lg font-medium text-ink">{score.band.label}</p>
+      ) : null}
+      <Meter
+        label="Correct"
+        valueLabel={`${score.raw} of ${score.max}`}
+        percent={score.max === 0 ? 0 : (score.raw / score.max) * 100}
+      />
+      {score.percentile !== null ? (
+        <Meter
+          label="Development percentile"
+          valueLabel={`${score.percentile}`}
+          percent={score.percentile}
+        />
+      ) : null}
+      <p className="text-sm leading-6 text-muted">
+        Credit is given only for the correct option inside the time limit. This
+        set is not an IQ test and not a clinical instrument. Percentiles are
+        development tables shipped with the version, not ranks against other
+        users.
+      </p>
+      <div>
+        <p className="mb-3 text-sm font-medium text-ink">Items</p>
+        <ul className="flex flex-col gap-3">
+          {score.items.map((entry) => (
+            <li key={entry.id} className="text-sm leading-6 text-ink">
+              <span className="font-medium">
+                {entry.timedOut
+                  ? "Timed out"
+                  : entry.correct
+                    ? "Correct"
+                    : "Incorrect"}
+              </span>
+              {" · "}
+              {prompts[entry.id] ?? entry.id}
+            </li>
+          ))}
         </ul>
       </div>
     </div>

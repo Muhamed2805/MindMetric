@@ -24,14 +24,14 @@ const baseLikert = {
 };
 
 describe("loadCatalogDocuments", () => {
-  it("loads the published Likert instruments from files", () => {
+  it("loads published instruments from files", () => {
     const documents = loadCatalogDocuments();
     expect(documents.map((document) => document.slug)).toEqual([
+      "quick-pattern-reasoning",
       "work-attention",
       "work-emotion-awareness",
     ]);
     for (const document of documents) {
-      expect(document.kind).toBe(LIKERT_ENGINE);
       expect(
         document.versions.some((version) => version.status === "published"),
       ).toBe(true);
@@ -47,13 +47,13 @@ describe("parseCatalogDocument", () => {
         slug: "timed-iq",
         title: "Timed IQ",
         description: "Not registered yet.",
-        kind: "mcq-timed-v1",
+        kind: "iq-v1",
         versions: [
           {
             id: "ver_x_1",
             version: 1,
             status: "published",
-            definition: { engine: "mcq-timed-v1", items: [] },
+            definition: { engine: "iq-v1", items: [] },
           },
         ],
       }),

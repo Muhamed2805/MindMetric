@@ -31,7 +31,7 @@ corepack pnpm dev
 - Current user: http://localhost:3000/api/v1/me
 - Catalog (public): http://localhost:3000/api/v1/instruments
 
-`db:migrate` seeds published instruments from `packages/catalog/instruments`. Edit a published version by adding a new `version` object; migrate will refuse to overwrite existing published JSON.
+`db:migrate` seeds published instruments from `packages/catalog/instruments`. Edit a published version by adding a new `version` object; migrate will refuse to overwrite existing published JSON. Likert scales and the timed puzzle set (`quick-pattern-reasoning`) ship together.
 
 PGlite (`pglite:` URLs) is an emergency fallback only. Next and Nest cannot share one PGlite file.
 

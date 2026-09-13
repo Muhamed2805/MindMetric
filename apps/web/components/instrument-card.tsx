@@ -1,13 +1,13 @@
 import Link from "next/link";
 import type { CatalogInstrument } from "../lib/assessment-types";
-import { engineLabel, minutesLabel } from "../lib/format";
+import { durationLabel, engineLabel } from "../lib/format";
 
 export function InstrumentCard({
   instrument,
 }: {
   instrument: CatalogInstrument;
 }) {
-  const time = minutesLabel(instrument.itemCount);
+  const time = durationLabel(instrument.estimatedSeconds, instrument.itemCount);
 
   return (
     <Link

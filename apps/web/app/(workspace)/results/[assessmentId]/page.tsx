@@ -34,7 +34,9 @@ export default async function ResultDetailPage({ params }: PageProps) {
         title={session.title}
         description={
           completed
-            ? `Instrument version ${session.version}. Reverse-keyed items are recoded before the total.`
+            ? session.kind === "mcq-timed-v1"
+              ? `Instrument version ${session.version}. Correct answers inside the time limit count.`
+              : `Instrument version ${session.version}. Reverse-keyed items are recoded before the total.`
             : "This session is still in progress. Resume to finish and score it."
         }
       />

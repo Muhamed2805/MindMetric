@@ -7,6 +7,14 @@ export type ClientLikertItem = {
   scale: { min: number; max: number; anchors: LikertAnchor[] };
 };
 
+export type ClientMcqItem = {
+  id: string;
+  type: "mcq";
+  prompt: string;
+  choices: { id: string; label: string }[];
+  timeLimitMs: number;
+};
+
 export type CatalogInstrument = {
   slug: string;
   title: string;
@@ -15,10 +23,11 @@ export type CatalogInstrument = {
   versionId: string;
   version: number;
   itemCount: number;
+  estimatedSeconds: number;
 };
 
 export type InstrumentDetail = CatalogInstrument & {
-  items: ClientLikertItem[];
+  items: Array<ClientLikertItem | ClientMcqItem>;
 };
 
 export type AssessmentSession = {
@@ -28,14 +37,15 @@ export type AssessmentSession = {
   completedAt: string | null;
   title: string;
   slug: string;
+  kind: string;
   version: number;
-  items: ClientLikertItem[];
+  items: Array<ClientLikertItem | ClientMcqItem>;
   answers: Record<string, unknown>;
-  score: CttScore | null;
+  score: AssessmentScore | null;
 };
 
 export type CttScore = {
-  model: string;
+  model: "ctt-v1" | string;
   raw: number;
   min: number;
   max: number;
@@ -45,6 +55,25 @@ export type CttScore = {
   normsKind: "development" | null;
   items: { id: string; keyed: number }[];
 };
+
+export type SumCorrectScore = {
+  model: "sum-correct-v1" | string;
+  raw: number;
+  min: number;
+  max: number;
+  pomp: number;
+  percentile: number | null;
+  band: { id: string; label: string } | null;
+  normsKind: "development" | null;
+  items: {
+    id: string;
+    correct: boolean;
+    timedOut: boolean;
+    elapsedMs: number;
+  }[];
+};
+
+export type AssessmentScore = CttScore | SumCorrectScore;
 
 export type AssessmentSummary = {
   id: string;

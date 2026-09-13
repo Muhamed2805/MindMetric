@@ -8,3 +8,10 @@ export {
   SCORING_MODEL,
   scoreLikertCtt,
 } from "./ctt";
+export {
+  isStoredScore,
+  isSumCorrectScore,
+  type SumCorrectItemScore,
+  type SumCorrectScore,
+  scoreMcqTimed,
+} from "./sum-correct";
