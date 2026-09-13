@@ -1628,3 +1628,174 @@ describe("composed battery", () => {
     }
   });
 });
+
+const judgingSeverity = {
+  viewport_below_minimum: {
+    default: "info",
+    byDomain: { gv: "invalidating" },
+  },
+  device_class_not_normed: {
+    default: "info",
+    byDomain: { gv: "invalidating" },
+  },
+  rapid_responding: { default: "warning" },
+  excessive_missingness: { default: "warning" },
+  focus_loss: { default: "warning" },
+  gs_trial_interrupted: {
+    default: "warning",
+    byDomain: { gs: "invalidating" },
+  },
+  too_few_responses: { default: "invalidating" },
+  impossible_timing: { default: "invalidating" },
+};
+
+async function seedJudgingRules() {
+  const existing = await db
+    .select({ id: qualityRuleVersion.id })
+    .from(qualityRuleVersion)
+    .where(eq(qualityRuleVersion.id, "qrs_test_v2"))
+    .limit(1);
+  if (existing[0]) {
+    return;
+  }
+  const now = new Date();
+  const open = { minViewport: null, normIneligibleDeviceClasses: [] };
+  await db.insert(qualityRuleVersion).values({
+    id: "qrs_test_v2",
+    ruleSetId: "qrs_test",
+    version: 2,
+    status: "published",
+    definition: {
+      engine: "quality-rules-v1",
+      provisional: true,
+      normReferenceDeviceClass: "desktop",
+      domains: {
+        gf: open,
+        gs: open,
+        rq: open,
+        gwm: open,
+        gv: {
+          minViewport: { widthPx: 820, heightPx: 640 },
+          normIneligibleDeviceClasses: ["phone", "unknown"],
+        },
+      },
+      severity: judgingSeverity,
+      thresholds: {
+        rapidRespondingMs: 2_000,
+        rapidRespondingShare: 0.5,
+        missingnessShare: 0.5,
+        focusLossCount: 3,
+        tooFewResponsesShare: 0.25,
+      },
+    },
+    publishedAt: now,
+    createdAt: now,
+  });
+}
+
+async function omitNext(userId: string, sessionId: string) {
+  const served = await service.serveNextItem(userId, sessionId);
+  const current = served.current?.item;
+  if (!current) {
+    return served;
+  }
+  return service.submitResponse(userId, sessionId, {
+    itemInstanceId: current.itemInstanceId,
+    choiceId: null,
+    clientShownAt: null,
+    clientFirstInteractionAt: null,
+    clientAnsweredAt: null,
+  });
+}
+
+describe("derived quality states", () => {
+  it("flags instant power answers without hiding the raw total", async () => {
+    await seedJudgingRules();
+    const userId = await freshUser();
+    const state = await startSession(userId);
+    await finishSectionKeyed(userId, state.id, 1);
+    const done = await finishSectionKeyed(userId, state.id, 2);
+    const gf = done.report?.sections.find((row) => row.domain === "gf");
+
+    expect(done.sections[0]?.ruleVersionId).toBe("qrs_test_v2");
+    expect(gf?.observations?.map((row) => row.flag)).toContain(
+      "rapid_responding",
+    );
+    expect(gf?.sectionValid).toBe(true);
+    expect(gf?.raw).toBe(GF_SCORED.length);
+    expect(done.report?.estimatedIq).toBeNull();
+    expect((done.report?.warnings ?? []).length).toBeLessThanOrEqual(2);
+  });
+
+  it("treats a section with nothing shown as technically invalid", async () => {
+    await seedJudgingRules();
+    const userId = await freshUser();
+    const state = await startSession(userId);
+    await service.startSection(userId, state.id, 1);
+    await db
+      .update(schema.sectionInstance)
+      .set({ deadlineAt: new Date(Date.now() - 60_000) })
+      .where(eq(schema.sectionInstance.id, await sectionIdFor(state.id, 1)));
+    await service.getForUser(userId, state.id);
+    const done = await finishSectionKeyed(userId, state.id, 2);
+    const gf = done.report?.sections.find((row) => row.domain === "gf");
+
+    expect(gf?.observations?.map((row) => row.flag)).toContain(
+      "too_few_responses",
+    );
+    expect(gf?.sectionValid).toBe(false);
+    expect(gf?.normEligible).toBe(false);
+    expect(gf?.raw).toBe(0);
+    expect(done.report?.sessionValid).toBe(false);
+    expect(done.report?.estimatedIq).toBeNull();
+  });
+
+  it("needs two behavioral families before a section is uninterpretable", async () => {
+    await seedJudgingRules();
+    const userId = await freshUser();
+    const state = await startSession(userId);
+    await service.startSection(userId, state.id, 1);
+    await omitNext(userId, state.id);
+    await omitNext(userId, state.id);
+    await omitNext(userId, state.id);
+    await omitNext(userId, state.id);
+    const afterGf = await answerKeyed(userId, state.id);
+    expect(afterGf.sections[0]?.status).not.toBe("in_progress");
+
+    const done = await finishSectionKeyed(userId, state.id, 2);
+    const gf = done.report?.sections.find((row) => row.domain === "gf");
+
+    expect(gf?.observations?.map((row) => row.flag).sort()).toEqual([
+      "excessive_missingness",
+      "rapid_responding",
+    ]);
+    expect(gf?.sectionValid).toBe(false);
+    expect(gf?.normEligible).toBe(false);
+    expect(typeof gf?.raw).toBe("number");
+  });
+
+  it("still runs Gv on a phone and keeps it out of the sample", async () => {
+    await seedJudgingRules();
+    const userId = await freshUser();
+    const state = await startSession(userId, "live-battery", {
+      deviceClass: "phone",
+      inputMode: "touch",
+      viewportWidth: 390,
+      viewportHeight: 700,
+    });
+    await finishSectionKeyed(userId, state.id, 1);
+    const done = await finishSectionKeyed(userId, state.id, 2);
+    const gv = done.report?.sections.find((row) => row.domain === "gv");
+
+    expect(gv?.normEligible).toBe(false);
+    expect(gv?.sectionValid).toBe(true);
+    expect(gv?.observations?.map((row) => row.flag)).toEqual(
+      expect.arrayContaining([
+        "device_class_not_normed",
+        "viewport_below_minimum",
+      ]),
+    );
+    expect((done.report?.warnings ?? []).length).toBeLessThanOrEqual(2);
+    expect(done.report?.estimatedIq).toBeNull();
+  });
+});

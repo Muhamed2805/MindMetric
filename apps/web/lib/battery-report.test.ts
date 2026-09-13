@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { batteryRawLabel, sectionNotes } from "../components/battery-report";
+import {
+  batteryRawLabel,
+  reportWarningNotes,
+  sectionNotes,
+} from "../components/battery-report";
 import type { BatteryReport } from "./battery-types";
 
 const report: BatteryReport = {
@@ -9,11 +13,25 @@ const report: BatteryReport = {
   estimatedIq: null,
   percentile: null,
   interval: null,
+  sessionValid: true,
+  normEligible: false,
+  warnings: [
+    {
+      flag: "device_class_not_normed",
+      severity: "invalidating",
+      measured: "phone",
+      threshold: "phone,unknown",
+      domain: "gv",
+      position: 2,
+    },
+  ],
   sections: [
     {
       domain: "gf",
       position: 1,
       status: "submitted",
+      sectionScored: true,
+      sectionValid: true,
       normEligible: true,
       raw: 3,
       max: 7,
@@ -28,6 +46,8 @@ const report: BatteryReport = {
       domain: "gv",
       position: 2,
       status: "expired",
+      sectionScored: true,
+      sectionValid: true,
       normEligible: false,
       raw: 1,
       max: 2,
@@ -63,13 +83,30 @@ describe("sectionNotes", () => {
       "The section clock ran out.",
       "1 item was never shown.",
       "1 item timed out after it was shown.",
-      "Taken on a phone; that device class is not in the reference sample.",
       "Kept out of the reference sample.",
     ]);
   });
 
-  it("hides info-only flags", () => {
+  it("says when a section could not be scored reliably", () => {
+    expect(
+      sectionNotes({
+        ...report.sections[0],
+        sectionValid: false,
+        normEligible: false,
+      } as NonNullable<(typeof report.sections)[0]>),
+    ).toContain("This section could not be scored reliably.");
+  });
+
+  it("keeps completion notes off a clean section", () => {
     const gf = report.sections[0];
     expect(sectionNotes(gf as NonNullable<typeof gf>)).toEqual([]);
+  });
+});
+
+describe("reportWarningNotes", () => {
+  it("keeps at most the report-level warnings and names the domain", () => {
+    expect(reportWarningNotes(report)).toEqual([
+      "Spatial reasoning: Taken on a phone; that device class is not in the reference sample.",
+    ]);
   });
 });

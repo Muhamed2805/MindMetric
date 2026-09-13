@@ -138,7 +138,10 @@ export {
 } from "./power-mcq";
 export {
   type DomainQualityRule,
+  evaluateSectionQuality,
+  MAX_VISIBLE_QUALITY_WARNINGS,
   parseQualityRuleSetDefinition,
+  pickVisibleWarnings,
   QUALITY_FLAGS,
   QUALITY_RULES_ENGINE,
   QUALITY_SEVERITIES,
@@ -146,9 +149,13 @@ export {
   type QualityObservation,
   type QualityRuleSetDefinition,
   type QualitySeverity,
+  type QualityThresholds,
+  type QualityWarning,
   resolveSectionEligibility,
   type SectionCovariates,
   type SectionEligibility,
+  type SectionQuality,
+  type SectionQualityEvidence,
   type SeverityRule,
   type ViewportMinimum,
 } from "./quality-rules";

@@ -46,6 +46,64 @@
           }
         }
       }
+    },
+    {
+      "id": "qrs_core_v2",
+      "version": 2,
+      "status": "published",
+      "definition": {
+        "engine": "quality-rules-v1",
+        "provisional": true,
+        "normReferenceDeviceClass": "desktop",
+        "domains": {
+          "gf": {
+            "minViewport": null,
+            "normIneligibleDeviceClasses": []
+          },
+          "gs": {
+            "minViewport": null,
+            "normIneligibleDeviceClasses": []
+          },
+          "rq": {
+            "minViewport": null,
+            "normIneligibleDeviceClasses": []
+          },
+          "gv": {
+            "minViewport": { "widthPx": 820, "heightPx": 640 },
+            "normIneligibleDeviceClasses": ["phone", "unknown"]
+          },
+          "gwm": {
+            "minViewport": null,
+            "normIneligibleDeviceClasses": []
+          }
+        },
+        "severity": {
+          "viewport_below_minimum": {
+            "default": "info",
+            "byDomain": { "gv": "invalidating" }
+          },
+          "device_class_not_normed": {
+            "default": "info",
+            "byDomain": { "gv": "invalidating" }
+          },
+          "rapid_responding": { "default": "warning" },
+          "excessive_missingness": { "default": "warning" },
+          "focus_loss": { "default": "warning" },
+          "gs_trial_interrupted": {
+            "default": "warning",
+            "byDomain": { "gs": "invalidating" }
+          },
+          "too_few_responses": { "default": "invalidating" },
+          "impossible_timing": { "default": "invalidating" }
+        },
+        "thresholds": {
+          "rapidRespondingMs": 2000,
+          "rapidRespondingShare": 0.5,
+          "missingnessShare": 0.5,
+          "focusLossCount": 3,
+          "tooFewResponsesShare": 0.25
+        }
+      }
     }
   ]
 }

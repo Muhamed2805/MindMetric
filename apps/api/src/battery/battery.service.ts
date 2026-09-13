@@ -45,6 +45,7 @@ import {
   classifySpeedTrial,
   DEVICE_CLASSES,
   type DeviceClass,
+  evaluateSectionQuality,
   formItemCeilingMs,
   formSectionTimeLimitMs,
   generateSpatialSequence,
@@ -67,8 +68,11 @@ import {
   parseSpanRecall,
   parseSpanSequence,
   parseSpeedDecisionSubmissions,
+  type QualityObservation,
   type ResponseCode,
   resolveSectionEligibility,
+  type SectionQuality,
+  type SectionQualityEvidence,
   SPAN_FAMILY_ID,
   SPAN_GENERATOR_VERSION,
   SPAN_SPATIAL_REVERSE,
@@ -817,6 +821,75 @@ export class BatteryService {
     };
   }
 
+  private async loadPinnedRules(ruleVersionId: string | null) {
+    if (!ruleVersionId) {
+      return null;
+    }
+    const rows = await this.db
+      .select()
+      .from(qualityRuleVersion)
+      .where(eq(qualityRuleVersion.id, ruleVersionId))
+      .limit(1);
+    const row = rows[0];
+    if (!row) {
+      return null;
+    }
+    return parseQualityRuleSetDefinition(row.definition, row.id);
+  }
+
+  private async judgeClosedSection(
+    section: {
+      id: string;
+      domain: string;
+      deviceNormEligible: boolean;
+      ruleVersionId: string | null;
+      eligibilityObservations: unknown;
+    },
+    counts: {
+      scoredItemCount: number;
+      attempted: number;
+      omitted: number;
+      timedOut: number;
+      notReached: number;
+    },
+    timings: QualityTimingRow[],
+  ): Promise<SectionQuality> {
+    const events = await this.db
+      .select({
+        kind: qualityEvent.kind,
+        occurredAt: qualityEvent.occurredAt,
+      })
+      .from(qualityEvent)
+      .where(eq(qualityEvent.sectionInstanceId, section.id));
+    const observations = Array.isArray(section.eligibilityObservations)
+      ? (section.eligibilityObservations as QualityObservation[])
+      : [];
+    const evidence = sectionQualityEvidence(
+      counts,
+      timings,
+      events,
+      section.domain,
+    );
+    const definition = await this.loadPinnedRules(section.ruleVersionId);
+    if (!definition) {
+      return {
+        observations,
+        sectionScored: counts.scoredItemCount > 0,
+        sectionValid: true,
+        normEligible: section.deviceNormEligible,
+      };
+    }
+    return evaluateSectionQuality(
+      definition,
+      section.domain as BatteryDomain,
+      {
+        deviceNormEligible: section.deviceNormEligible,
+        observations,
+      },
+      evidence,
+    );
+  }
+
   private async resolveEligibility(
     domain: BatteryDomain,
     covariates: {
@@ -1080,6 +1153,28 @@ export class BatteryService {
     });
 
     const score = scoreAccuracyPower(section.domain, records);
+    const quality = await this.judgeClosedSection(
+      section,
+      {
+        scoredItemCount: scored.length,
+        attempted: score.attempted,
+        omitted: score.omitted,
+        timedOut: score.timedOut,
+        notReached: score.notReached,
+      },
+      scored.map((row) => {
+        const response = byItem.get(row.id);
+        return {
+          code: response?.code ?? "not_reached",
+          role: row.role,
+          responseTimeMs: response?.responseTimeMs ?? null,
+          clientShownAt: response?.clientShownAt ?? null,
+          clientAnsweredAt: response?.clientAnsweredAt ?? null,
+          shownAt: row.shownAt,
+          submittedAt: response?.submittedAt ?? null,
+        };
+      }),
+    );
     const digest = hashCanon(powerSectionInputCanon(records));
     const qualityRulesVersion = section.ruleVersionId ?? VERSION_PIN_NONE;
 
@@ -1112,10 +1207,10 @@ export class BatteryService {
             domain: section.domain,
             position: section.position,
             status: section.status,
-            normEligible: section.deviceNormEligible,
-            observations: Array.isArray(section.eligibilityObservations)
-              ? section.eligibilityObservations
-              : [],
+            sectionScored: quality.sectionScored,
+            sectionValid: quality.sectionValid,
+            normEligible: quality.normEligible,
+            observations: quality.observations,
           },
           score,
         ),
@@ -1592,6 +1687,28 @@ export class BatteryService {
 
     const procedures = [{ id: SPAN_SPATIAL_REVERSE, trials }];
     const score = scoreSpanPartial(procedures);
+    const quality = await this.judgeClosedSection(
+      section,
+      {
+        scoredItemCount: scored.length,
+        attempted: score.attempted,
+        omitted: score.omitted,
+        timedOut: score.timedOut,
+        notReached: score.notReached,
+      },
+      scored.map((row) => {
+        const response = byItem.get(row.id);
+        return {
+          code: response?.code ?? "not_reached",
+          role: row.role,
+          responseTimeMs: response?.responseTimeMs ?? null,
+          clientShownAt: response?.clientShownAt ?? null,
+          clientAnsweredAt: response?.clientAnsweredAt ?? null,
+          shownAt: row.shownAt,
+          submittedAt: response?.submittedAt ?? null,
+        };
+      }),
+    );
     const digest = hashCanon(spanSectionInputCanon(procedures));
     const qualityRulesVersion = section.ruleVersionId ?? VERSION_PIN_NONE;
     const existing = await this.db
@@ -1623,10 +1740,10 @@ export class BatteryService {
             domain: "gwm",
             position: section.position,
             status: section.status === "expired" ? "expired" : "submitted",
-            normEligible: section.deviceNormEligible,
-            observations: Array.isArray(section.eligibilityObservations)
-              ? section.eligibilityObservations
-              : [],
+            sectionScored: quality.sectionScored,
+            sectionValid: quality.sectionValid,
+            normEligible: quality.normEligible,
+            observations: quality.observations,
           },
           score,
         ),
@@ -1849,6 +1966,38 @@ export class BatteryService {
     });
 
     const score = scoreSpeedCorrected(records);
+    const authoredDecisionCount = records.reduce(
+      (sum, record) => sum + record.content.decisions.length,
+      0,
+    );
+    const quality = await this.judgeClosedSection(
+      section,
+      {
+        scoredItemCount: authoredDecisionCount,
+        attempted: score.trials.reduce(
+          (sum, trial) => sum + trial.attempted,
+          0,
+        ),
+        omitted: score.trials.reduce((sum, trial) => sum + trial.omitted, 0),
+        timedOut: score.trials.reduce((sum, trial) => sum + trial.timedOut, 0),
+        notReached: score.trials.reduce(
+          (sum, trial) => sum + trial.notReached,
+          0,
+        ),
+      },
+      scored.map((row) => {
+        const response = byItem.get(row.id);
+        return {
+          code: response?.code ?? "not_reached",
+          role: row.role,
+          responseTimeMs: response?.responseTimeMs ?? null,
+          clientShownAt: response?.clientShownAt ?? null,
+          clientAnsweredAt: response?.clientAnsweredAt ?? null,
+          shownAt: row.shownAt,
+          submittedAt: response?.submittedAt ?? null,
+        };
+      }),
+    );
     const digest = hashCanon(speedSectionInputCanon(records));
     const qualityRulesVersion = section.ruleVersionId ?? VERSION_PIN_NONE;
     const existing = await this.db
@@ -1867,11 +2016,6 @@ export class BatteryService {
       return;
     }
 
-    const authoredDecisionCount = records.reduce(
-      (sum, record) => sum + record.content.decisions.length,
-      0,
-    );
-
     await this.db.insert(sectionScore).values({
       id: randomUUID(),
       sectionInstanceId: section.id,
@@ -1885,10 +2029,10 @@ export class BatteryService {
             domain: "gs",
             position: section.position,
             status: section.status === "expired" ? "expired" : "submitted",
-            normEligible: section.deviceNormEligible,
-            observations: Array.isArray(section.eligibilityObservations)
-              ? section.eligibilityObservations
-              : [],
+            sectionScored: quality.sectionScored,
+            sectionValid: quality.sectionValid,
+            normEligible: quality.normEligible,
+            observations: quality.observations,
           },
           score,
           authoredDecisionCount,
@@ -1958,6 +2102,11 @@ function toClientReport(payload: unknown) {
     estimatedIq: profile.estimatedIq,
     percentile: profile.percentile,
     interval: profile.interval,
+    sessionValid: profile.sessionValid ?? true,
+    normEligible:
+      profile.normEligible ??
+      profile.sections.every((section) => section.normEligible),
+    warnings: Array.isArray(profile.warnings) ? profile.warnings : [],
     sections: profile.sections,
   };
 }
@@ -1993,12 +2142,18 @@ function storedSectionReport(
     "observations" in body && Array.isArray(body.observations)
       ? body.observations
       : [];
+  const flag = (key: string, fallback: boolean) =>
+    key in body && typeof (body as Record<string, unknown>)[key] === "boolean"
+      ? Boolean((body as Record<string, unknown>)[key])
+      : fallback;
   return {
     domain: section.domain as BatteryDomain,
     position: section.position,
     scoringModel,
     status: section.status === "expired" ? "expired" : "submitted",
-    normEligible: section.deviceNormEligible,
+    sectionScored: flag("sectionScored", true),
+    sectionValid: flag("sectionValid", true),
+    normEligible: flag("normEligible", section.deviceNormEligible),
     raw,
     max,
     attempted,
@@ -2007,6 +2162,85 @@ function storedSectionReport(
     timedOut: count("timedOut"),
     notReached: count("notReached"),
     observations,
+  };
+}
+
+type QualityTimingRow = {
+  code: string;
+  role: string;
+  responseTimeMs: number | null;
+  clientShownAt: Date | null;
+  clientAnsweredAt: Date | null;
+  shownAt: Date | null;
+  submittedAt: Date | null;
+};
+
+function sectionQualityEvidence(
+  counts: {
+    scoredItemCount: number;
+    attempted: number;
+    omitted: number;
+    timedOut: number;
+    notReached: number;
+  },
+  timings: QualityTimingRow[],
+  events: Array<{ kind: string; occurredAt: Date }>,
+  domain: string,
+): SectionQualityEvidence {
+  const scoredTimings = timings.filter((row) => row.role === "scored");
+  const answeredResponseTimesMs = scoredTimings.flatMap((row) =>
+    row.code === "answered" &&
+    row.responseTimeMs !== null &&
+    row.responseTimeMs >= 0
+      ? [row.responseTimeMs]
+      : [],
+  );
+
+  let invalidTimingCount = 0;
+  for (const row of scoredTimings) {
+    if (row.responseTimeMs !== null && row.responseTimeMs < 0) {
+      invalidTimingCount += 1;
+      continue;
+    }
+    if (
+      row.clientShownAt &&
+      row.clientAnsweredAt &&
+      row.clientAnsweredAt.getTime() < row.clientShownAt.getTime()
+    ) {
+      invalidTimingCount += 1;
+    }
+  }
+
+  const interruptKinds = new Set(["focus_lost", "visibility_hidden"]);
+  const focusLossCount = events.filter((event) =>
+    interruptKinds.has(event.kind),
+  ).length;
+  const gsTrialInterrupted =
+    domain === "gs" &&
+    scoredTimings.some((row) => {
+      if (!row.shownAt) {
+        return false;
+      }
+      const start = row.shownAt.getTime();
+      const end = (row.submittedAt ?? row.shownAt).getTime();
+      return events.some(
+        (event) =>
+          interruptKinds.has(event.kind) &&
+          event.occurredAt.getTime() >= start &&
+          event.occurredAt.getTime() <= end,
+      );
+    });
+
+  return {
+    scoredItemCount: counts.scoredItemCount,
+    attempted: counts.attempted,
+    omitted: counts.omitted,
+    timedOut: counts.timedOut,
+    notReached: counts.notReached,
+    answeredResponseTimesMs,
+    invalidTimingCount,
+    focusLossCount,
+    gsTrialInterrupted,
   };
 }
 

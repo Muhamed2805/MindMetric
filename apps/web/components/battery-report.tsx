@@ -1,8 +1,8 @@
 import type {
-  BatteryObservation,
   BatteryReport,
   BatteryReportSection,
   BatterySection,
+  BatteryWarning,
 } from "../lib/battery-types";
 import { domainLabel } from "../lib/format";
 
@@ -16,6 +16,11 @@ export function BatteryReportPanel({
   if (report) {
     return (
       <div className="mm-panel flex flex-col gap-5 p-5">
+        {reportWarningNotes(report).map((note) => (
+          <p key={note} className="text-sm text-muted">
+            {note}
+          </p>
+        ))}
         {report.sections.map((section) => (
           <div key={section.position} className="flex flex-col gap-1">
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
@@ -67,7 +72,7 @@ export function batteryRawLabel(report: BatteryReport | null) {
     .join(" · ");
 }
 
-/** User-facing completion notes. Info-only flags stay off the report. */
+/** User-facing completion notes. Quality flags live on the report, not here. */
 export function sectionNotes(section: BatteryReportSection) {
   const notes: string[] = [];
   if (section.status === "expired") {
@@ -94,11 +99,8 @@ export function sectionNotes(section: BatteryReportSection) {
         : `${section.omitted} items were left blank.`,
     );
   }
-  for (const observation of section.observations ?? []) {
-    const note = observationNote(observation);
-    if (note) {
-      notes.push(note);
-    }
+  if (section.sectionValid === false) {
+    notes.push("This section could not be scored reliably.");
   }
   if (!section.normEligible) {
     notes.push("Kept out of the reference sample.");
@@ -106,15 +108,38 @@ export function sectionNotes(section: BatteryReportSection) {
   return notes;
 }
 
-function observationNote(observation: BatteryObservation) {
-  if (observation.severity === "info") {
-    return null;
+export function reportWarningNotes(report: BatteryReport) {
+  return (report.warnings ?? []).map(warningNote);
+}
+
+function warningNote(warning: BatteryWarning) {
+  return `${domainLabel(warning.domain)}: ${warningBody(warning)}`;
+}
+
+function warningBody(warning: BatteryWarning) {
+  if (warning.flag === "viewport_below_minimum") {
+    return `Screen was ${warning.measured}; this section needs ${warning.threshold}.`;
   }
-  if (observation.flag === "viewport_below_minimum") {
-    return `Screen was ${observation.measured}; this section needs ${observation.threshold}.`;
+  if (warning.flag === "device_class_not_normed") {
+    return `Taken on a ${warning.measured}; that device class is not in the reference sample.`;
   }
-  if (observation.flag === "device_class_not_normed") {
-    return `Taken on a ${observation.measured}; that device class is not in the reference sample.`;
+  if (warning.flag === "rapid_responding") {
+    return "Many answers came in unusually quickly, so this section is harder to interpret.";
   }
-  return null;
+  if (warning.flag === "excessive_missingness") {
+    return "Many items were left unanswered, so this section is harder to interpret.";
+  }
+  if (warning.flag === "focus_loss") {
+    return "Attention left the test several times, so this section is harder to interpret.";
+  }
+  if (warning.flag === "gs_trial_interrupted") {
+    return "A processing-speed trial was interrupted, so that trial is harder to interpret.";
+  }
+  if (warning.flag === "too_few_responses") {
+    return "Too few items were answered to interpret this section reliably.";
+  }
+  if (warning.flag === "impossible_timing") {
+    return "The recorded timing for this section could not be interpreted.";
+  }
+  return "This section is harder to interpret.";
 }

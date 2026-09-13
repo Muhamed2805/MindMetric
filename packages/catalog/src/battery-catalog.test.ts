@@ -355,11 +355,14 @@ describe("loadBatteryCatalog", () => {
 
   it("ships a published quality rule set flagged as provisional", () => {
     const loaded = loadBatteryCatalog();
-    const version = loaded.ruleSets[0]?.versions[0];
+    const versions = loaded.ruleSets[0]?.versions ?? [];
+    const latest = versions[versions.length - 1];
 
-    expect(version?.status).toBe("published");
-    expect(version?.definition.provisional).toBe(true);
-    expect(version?.definition.domains.gv.minViewport).not.toBeNull();
+    expect(versions.map((row) => row.version)).toEqual([1, 2]);
+    expect(latest?.status).toBe("published");
+    expect(latest?.definition.provisional).toBe(true);
+    expect(latest?.definition.domains.gv.minViewport).not.toBeNull();
+    expect(latest?.definition.thresholds).not.toBeNull();
   });
 
   it("ships every battery item as a reviewable draft", () => {

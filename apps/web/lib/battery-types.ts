@@ -157,6 +157,8 @@ export type BatteryReportSection = {
   domain: string;
   position: number;
   status: string;
+  sectionScored?: boolean;
+  sectionValid?: boolean;
   normEligible: boolean;
   raw: number;
   max: number;
@@ -168,6 +170,11 @@ export type BatteryReportSection = {
   observations?: BatteryObservation[];
 };
 
+export type BatteryWarning = BatteryObservation & {
+  domain: string;
+  position: number;
+};
+
 export type BatteryReport = {
   maturity: "S0";
   durationMs: number | null;
@@ -175,6 +182,9 @@ export type BatteryReport = {
   estimatedIq: null;
   percentile: null;
   interval: null;
+  sessionValid?: boolean;
+  normEligible?: boolean;
+  warnings?: BatteryWarning[];
   sections: BatteryReportSection[];
 };
 

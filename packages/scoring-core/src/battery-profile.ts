@@ -1,7 +1,9 @@
 import {
   BATTERY_PROFILE_MODEL,
   type BatteryDomain,
+  pickVisibleWarnings,
   type QualityObservation,
+  type QualityWarning,
   SPAN_PARTIAL_MODEL,
   SPEED_CORRECTED_MODEL,
 } from "@mindmetric/shared";
@@ -20,6 +22,8 @@ export type BatterySectionReport = {
   position: number;
   scoringModel: string;
   status: "submitted" | "expired";
+  sectionScored: boolean;
+  sectionValid: boolean;
   normEligible: boolean;
   raw: number;
   max: number;
@@ -39,6 +43,9 @@ export type BatteryProfileScore = {
   estimatedIq: null;
   percentile: null;
   interval: null;
+  sessionValid: boolean;
+  normEligible: boolean;
+  warnings: QualityWarning[];
   sections: BatterySectionReport[];
 };
 
@@ -54,6 +61,8 @@ export function toBatterySectionReport(
     domain: BatteryDomain;
     position: number;
     status: "submitted" | "expired";
+    sectionScored: boolean;
+    sectionValid: boolean;
     normEligible: boolean;
     observations: QualityObservation[];
   },
@@ -64,6 +73,8 @@ export function toBatterySectionReport(
     position: section.position,
     scoringModel: score.model,
     status: section.status,
+    sectionScored: section.sectionScored,
+    sectionValid: section.sectionValid,
     normEligible: section.normEligible,
     raw: score.raw,
     max: score.max,
@@ -95,6 +106,9 @@ export function scoreBatteryProfile(input: {
     estimatedIq: null,
     percentile: null,
     interval: null,
+    sessionValid: sections.every((section) => section.sectionValid),
+    normEligible: sections.every((section) => section.normEligible),
+    warnings: pickVisibleWarnings(sections),
     sections,
   };
 }
@@ -105,6 +119,8 @@ export function toSpeedSectionReport(
     domain: BatteryDomain;
     position: number;
     status: "submitted" | "expired";
+    sectionScored: boolean;
+    sectionValid: boolean;
     normEligible: boolean;
     observations: QualityObservation[];
   },
@@ -116,6 +132,8 @@ export function toSpeedSectionReport(
     position: section.position,
     scoringModel: score.model,
     status: section.status,
+    sectionScored: section.sectionScored,
+    sectionValid: section.sectionValid,
     normEligible: section.normEligible,
     raw: score.trials.reduce((sum, trial) => sum + trial.displayRaw, 0),
     max: authoredDecisionCount,
@@ -133,6 +151,8 @@ export function toSpanSectionReport(
     domain: BatteryDomain;
     position: number;
     status: "submitted" | "expired";
+    sectionScored: boolean;
+    sectionValid: boolean;
     normEligible: boolean;
     observations: QualityObservation[];
   },
@@ -144,6 +164,8 @@ export function toSpanSectionReport(
     position: section.position,
     scoringModel: score.model,
     status: section.status,
+    sectionScored: section.sectionScored,
+    sectionValid: section.sectionValid,
     normEligible: section.normEligible,
     raw: combined
       ? Math.round(score.combinedProportion * 1000) / 10

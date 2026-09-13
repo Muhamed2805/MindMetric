@@ -17,6 +17,8 @@ describe("scoreBatteryProfile", () => {
           position: 1,
           scoringModel: "accuracy-power-v1",
           status: "submitted",
+          sectionScored: true,
+          sectionValid: true,
           normEligible: true,
           raw: 4,
           max: 7,
@@ -35,6 +37,9 @@ describe("scoreBatteryProfile", () => {
     expect(report.percentile).toBeNull();
     expect(report.interval).toBeNull();
     expect(report.composite).toBeNull();
+    expect(report.sessionValid).toBe(true);
+    expect(report.normEligible).toBe(true);
+    expect(report.warnings).toEqual([]);
     expect(report.sections[0]?.raw).toBe(4);
     expect(report.sections[0]?.max).toBe(7);
   });
@@ -48,6 +53,8 @@ describe("scoreBatteryProfile", () => {
           position: 2,
           scoringModel: "accuracy-power-v1",
           status: "expired",
+          sectionScored: true,
+          sectionValid: true,
           normEligible: false,
           raw: 1,
           max: 2,
@@ -63,6 +70,8 @@ describe("scoreBatteryProfile", () => {
           position: 1,
           scoringModel: "accuracy-power-v1",
           status: "submitted",
+          sectionScored: true,
+          sectionValid: true,
           normEligible: true,
           raw: 0,
           max: 3,
@@ -110,6 +119,8 @@ describe("scoreBatteryProfile", () => {
         domain: "gf",
         position: 1,
         status: "submitted",
+        sectionScored: true,
+        sectionValid: true,
         normEligible: true,
         observations: [],
       },
