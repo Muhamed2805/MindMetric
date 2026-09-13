@@ -1022,8 +1022,7 @@ async function answerKeyed(userId: string, sessionId: string) {
   }
   return service.submitResponse(userId, sessionId, {
     itemInstanceId: current.itemInstanceId,
-    choiceId:
-      current.role === "sample" ? firstChoiceId(current) : "a",
+    choiceId: current.role === "sample" ? firstChoiceId(current) : "a",
     clientShownAt: null,
     clientFirstInteractionAt: null,
     clientAnsweredAt: null,
