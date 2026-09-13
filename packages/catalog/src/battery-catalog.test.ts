@@ -154,6 +154,81 @@ describe("assertBatteryCatalogReferences", () => {
       ),
     ).toThrow(/still a draft/);
   });
+
+  it("rejects a Gs form whose scored trial is too short", () => {
+    const decisions = Array.from({ length: 4 }, (_, index) => ({
+      id: `d${index + 1}`,
+      same: index % 2 === 0,
+      left: { kind: "single", elements: [{ shape: "circle", fill: "solid" }] },
+      right: {
+        kind: "single",
+        elements: [
+          {
+            shape: index % 2 === 0 ? "circle" : "square",
+            fill: "solid",
+          },
+        ],
+      },
+    }));
+
+    expect(() =>
+      assertBatteryCatalogReferences({
+        banks: [
+          parseItemBankDocument({
+            id: "bank_gs",
+            slug: "bank-gs",
+            domain: "gs",
+            engine: "speed-trial-v1",
+            items: [
+              {
+                id: "gs-1",
+                revisions: [
+                  {
+                    id: "gs-1-r1",
+                    revision: 1,
+                    status: "draft",
+                    content: {
+                      engine: "speed-trial-v1",
+                      domain: "gs",
+                      prompt: "Same or different?",
+                      k: 2,
+                      decisions,
+                    },
+                  },
+                ],
+              },
+            ],
+          }),
+        ],
+        forms: [
+          parseSubtestFormDocument({
+            id: "form_gs",
+            slug: "form-gs",
+            title: "Form Gs",
+            description: "Fixture",
+            domain: "gs",
+            engine: "speed-form-v1",
+            versions: [
+              {
+                id: "form_gs_v1",
+                version: 1,
+                status: "draft",
+                definition: {
+                  engine: "speed-form-v1",
+                  domain: "gs",
+                  scoringModel: "speed-corrected-v1",
+                  trialTimeLimitMs: 90_000,
+                  itemRevisionIds: ["gs-1-r1"],
+                },
+              },
+            ],
+          }),
+        ],
+        batteries: [],
+        ruleSets: [],
+      }),
+    ).toThrow(/too few decisions/);
+  });
 });
 
 describe("loadBatteryCatalog", () => {
@@ -164,6 +239,24 @@ describe("loadBatteryCatalog", () => {
 
     expect(loaded.batteries).toHaveLength(1);
     expect(scored.length).toBeGreaterThan(0);
+    expect(loaded.forms.map((entry) => entry.slug)).toEqual(
+      expect.arrayContaining(["gf-matrix-pilot", "gs-same-different-pilot"]),
+    );
+  });
+
+  it("ships a draft Gs same/different form that is not on the core battery", () => {
+    const loaded = loadBatteryCatalog();
+    const form = loaded.forms.find(
+      (entry) => entry.slug === "gs-same-different-pilot",
+    );
+    const batteryDomains =
+      loaded.batteries[0]?.versions[0]?.definition.sections.map(
+        (section) => section.domain,
+      ) ?? [];
+
+    expect(form?.engine).toBe("speed-form-v1");
+    expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(2);
+    expect(batteryDomains).not.toContain("gs");
   });
 
   it("ships a published quality rule set flagged as provisional", () => {

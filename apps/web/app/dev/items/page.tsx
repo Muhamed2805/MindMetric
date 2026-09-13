@@ -1,5 +1,12 @@
-import { loadBatteryCatalog } from "@mindmetric/catalog";
-import type { PowerMcqItemContent, PowerStimulus } from "@mindmetric/shared";
+import { type ItemContent, loadBatteryCatalog } from "@mindmetric/catalog";
+import {
+  isSpeedFormDefinition,
+  isSpeedTrialContent,
+  type PowerMcqItemContent,
+  type PowerStimulus,
+  type SpeedTrialContent,
+  speedKey,
+} from "@mindmetric/shared";
 import { FigureView } from "@mindmetric/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -13,7 +20,7 @@ type ReviewItem = {
   revisionId: string;
   revision: number;
   status: string;
-  content: PowerMcqItemContent;
+  content: ItemContent;
 };
 
 function Stimulus({
@@ -37,16 +44,17 @@ function Stimulus({
   );
 }
 
-function ItemCard({
+function PowerItemCard({
   entry,
   position,
   kind,
+  content,
 }: {
   entry: ReviewItem;
   position: number;
   kind: "scored" | "sample";
+  content: PowerMcqItemContent;
 }) {
-  const { content } = entry;
   return (
     <article className="mm-panel flex flex-col gap-4 p-5">
       <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-muted">
@@ -93,6 +101,88 @@ function ItemCard({
   );
 }
 
+function SpeedTrialCard({
+  entry,
+  position,
+  kind,
+  content,
+}: {
+  entry: ReviewItem;
+  position: number;
+  kind: "scored" | "sample";
+  content: SpeedTrialContent;
+}) {
+  return (
+    <article className="mm-panel flex flex-col gap-4 p-5">
+      <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-muted">
+        <span className="font-serif text-base text-ink">
+          {kind === "sample" ? "Sample trial" : `Trial ${position}`}
+        </span>
+        <span>{entry.itemId}</span>
+        <span>rev {entry.revision}</span>
+        <span>{entry.status}</span>
+        <span>{content.decisions.length} decisions</span>
+      </header>
+
+      <p className="font-serif text-lg text-ink">{content.prompt}</p>
+
+      <div className="flex flex-col gap-3">
+        {content.decisions.map((decision) => {
+          const key = speedKey(decision);
+          return (
+            <div
+              key={decision.id}
+              className="flex flex-wrap items-center gap-4 rounded-xl border border-line p-3"
+            >
+              <span className="text-sm text-muted">{decision.id}</span>
+              <FigureView
+                spec={decision.left}
+                idPrefix={`${entry.revisionId}-${decision.id}-l`}
+                cellSize={48}
+              />
+              <FigureView
+                spec={decision.right}
+                idPrefix={`${entry.revisionId}-${decision.id}-r`}
+                cellSize={48}
+              />
+              <span className="text-sm text-mark">{key}</span>
+            </div>
+          );
+        })}
+      </div>
+    </article>
+  );
+}
+
+function ItemCard({
+  entry,
+  position,
+  kind,
+}: {
+  entry: ReviewItem;
+  position: number;
+  kind: "scored" | "sample";
+}) {
+  if (isSpeedTrialContent(entry.content)) {
+    return (
+      <SpeedTrialCard
+        entry={entry}
+        position={position}
+        kind={kind}
+        content={entry.content}
+      />
+    );
+  }
+  return (
+    <PowerItemCard
+      entry={entry}
+      position={position}
+      kind={kind}
+      content={entry.content}
+    />
+  );
+}
+
 export default function DevItemsPage() {
   if (process.env.NODE_ENV !== "development") {
     notFound();
@@ -135,6 +225,9 @@ export default function DevItemsPage() {
           const scored = version.definition.itemRevisionIds
             .map((id) => byRevision.get(id))
             .filter((entry): entry is ReviewItem => entry !== undefined);
+          const timing = isSpeedFormDefinition(version.definition)
+            ? `Trial limit ${Math.round(version.definition.trialTimeLimitMs / 1000)}s`
+            : `Section limit ${Math.round(version.definition.sectionTimeLimitMs / 1000)}s · item ceiling ${Math.round(version.definition.itemCeilingMs / 1000)}s`;
 
           return (
             <section key={version.id} className="flex flex-col gap-4">
@@ -143,11 +236,7 @@ export default function DevItemsPage() {
                 {version.status}
               </h2>
               <p className="text-sm text-muted">
-                Section limit{" "}
-                {Math.round(version.definition.sectionTimeLimitMs / 1000)}s ·
-                item ceiling{" "}
-                {Math.round(version.definition.itemCeilingMs / 1000)}s ·{" "}
-                {scored.length} scored · {samples.length} sample
+                {timing} · {scored.length} scored · {samples.length} sample
               </p>
 
               {samples.map((entry, index) => (

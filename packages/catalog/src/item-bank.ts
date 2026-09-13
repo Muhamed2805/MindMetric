@@ -4,20 +4,30 @@ import {
   type PowerDomain,
   type PowerMcqItemContent,
   parsePowerMcqItemContent,
+  parseSpeedTrialContent,
+  SPEED_TRIAL_ENGINE,
+  type SpeedTrialContent,
 } from "@mindmetric/shared";
 import { isCatalogSlug, type VersionStatus } from "./document";
+
+export type ItemContent = PowerMcqItemContent | SpeedTrialContent;
 
 export type ItemRevisionDocument = {
   id: string;
   revision: number;
   status: VersionStatus;
-  content: PowerMcqItemContent;
+  content: ItemContent;
 };
 
 export type ItemDocument = {
   id: string;
   revisions: ItemRevisionDocument[];
 };
+
+export type ItemBankDomain = PowerDomain | "gs";
+export type ItemBankEngine =
+  | typeof POWER_MCQ_ENGINE
+  | typeof SPEED_TRIAL_ENGINE;
 
 /**
  * One bank file holds many items, each with its own revision history. Forms
@@ -26,8 +36,8 @@ export type ItemDocument = {
 export type ItemBankDocument = {
   id: string;
   slug: string;
-  domain: PowerDomain;
-  engine: typeof POWER_MCQ_ENGINE;
+  domain: ItemBankDomain;
+  engine: ItemBankEngine;
   items: ItemDocument[];
 };
 
@@ -39,9 +49,32 @@ function isVersionStatus(value: unknown): value is VersionStatus {
   return value === "published" || value === "draft";
 }
 
+function parseItemContent(
+  value: unknown,
+  domain: ItemBankDomain,
+  engine: ItemBankEngine,
+  source: string,
+): ItemContent {
+  if (engine === SPEED_TRIAL_ENGINE) {
+    const content = parseSpeedTrialContent(value, source);
+    if (content.domain !== domain) {
+      throw new Error(
+        `${source} content domain does not match the bank domain.`,
+      );
+    }
+    return content;
+  }
+  const content = parsePowerMcqItemContent(value, source);
+  if (content.domain !== domain) {
+    throw new Error(`${source} content domain does not match the bank domain.`);
+  }
+  return content;
+}
+
 function parseItemRevision(
   value: unknown,
-  domain: PowerDomain,
+  domain: ItemBankDomain,
+  engine: ItemBankEngine,
   source: string,
 ): ItemRevisionDocument {
   if (!isRecord(value)) {
@@ -61,16 +94,19 @@ function parseItemRevision(
   if (!isVersionStatus(status)) {
     throw new Error(`${source} has an invalid status.`);
   }
-  const content = parsePowerMcqItemContent(value.content, `${source} content`);
-  if (content.domain !== domain) {
-    throw new Error(`${source} content domain does not match the bank domain.`);
-  }
+  const content = parseItemContent(
+    value.content,
+    domain,
+    engine,
+    `${source} content`,
+  );
   return { id, revision, status, content };
 }
 
 function parseItem(
   value: unknown,
-  domain: PowerDomain,
+  domain: ItemBankDomain,
+  engine: ItemBankEngine,
   source: string,
 ): ItemDocument {
   if (!isRecord(value)) {
@@ -85,7 +121,7 @@ function parseItem(
   }
 
   const parsed = revisions.map((entry, index) =>
-    parseItemRevision(entry, domain, `${source} revision[${index}]`),
+    parseItemRevision(entry, domain, engine, `${source} revision[${index}]`),
   );
 
   const ids = new Set<string>();
@@ -115,21 +151,40 @@ export function parseItemBankDocument(
   if (!isCatalogSlug(slug)) {
     throw new Error(`${source} has an invalid slug.`);
   }
-  if (!isPowerDomain(domain)) {
-    throw new Error(`${source} (${slug}) has an unknown domain.`);
+  const bankEngine =
+    engine === SPEED_TRIAL_ENGINE
+      ? SPEED_TRIAL_ENGINE
+      : engine === POWER_MCQ_ENGINE
+        ? POWER_MCQ_ENGINE
+        : null;
+  if (!bankEngine) {
+    throw new Error(`${source} (${slug}) has an unknown engine.`);
   }
-  if (engine !== POWER_MCQ_ENGINE) {
-    throw new Error(`${source} (${slug}) must use ${POWER_MCQ_ENGINE}.`);
+  let bankDomain: ItemBankDomain;
+  if (bankEngine === SPEED_TRIAL_ENGINE) {
+    if (domain !== "gs") {
+      throw new Error(`${source} (${slug}) speed trials must measure gs.`);
+    }
+    bankDomain = "gs";
+  } else if (!isPowerDomain(domain)) {
+    throw new Error(`${source} (${slug}) has an unknown domain.`);
+  } else {
+    bankDomain = domain;
   }
   if (!Array.isArray(items) || items.length === 0) {
     throw new Error(`${source} (${slug}) needs at least one item.`);
   }
 
   const parsed = items.map((entry, index) =>
-    parseItem(entry, domain, `${source} (${slug}) item[${index}]`),
+    parseItem(
+      entry,
+      bankDomain,
+      bankEngine,
+      `${source} (${slug}) item[${index}]`,
+    ),
   );
 
-  return { id, slug, domain, engine: POWER_MCQ_ENGINE, items: parsed };
+  return { id, slug, domain: bankDomain, engine: bankEngine, items: parsed };
 }
 
 export function assertUniqueItemBanks(banks: ItemBankDocument[]) {

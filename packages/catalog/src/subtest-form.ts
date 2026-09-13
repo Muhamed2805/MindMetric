@@ -4,14 +4,23 @@ import {
   type PowerDomain,
   type PowerFormDefinition,
   parsePowerFormDefinition,
+  parseSpeedFormDefinition,
+  SPEED_FORM_ENGINE,
+  type SpeedFormDefinition,
 } from "@mindmetric/shared";
 import { isCatalogSlug, type VersionStatus } from "./document";
+
+export type SubtestFormDefinition = PowerFormDefinition | SpeedFormDefinition;
+export type SubtestFormDomain = PowerDomain | "gs";
+export type SubtestFormEngine =
+  | typeof POWER_FORM_ENGINE
+  | typeof SPEED_FORM_ENGINE;
 
 export type SubtestFormVersionDocument = {
   id: string;
   version: number;
   status: VersionStatus;
-  definition: PowerFormDefinition;
+  definition: SubtestFormDefinition;
 };
 
 /**
@@ -23,8 +32,8 @@ export type SubtestFormDocument = {
   slug: string;
   title: string;
   description: string;
-  domain: PowerDomain;
-  engine: typeof POWER_FORM_ENGINE;
+  domain: SubtestFormDomain;
+  engine: SubtestFormEngine;
   versions: SubtestFormVersionDocument[];
 };
 
@@ -38,7 +47,8 @@ function isVersionStatus(value: unknown): value is VersionStatus {
 
 function parseFormVersion(
   value: unknown,
-  domain: PowerDomain,
+  domain: SubtestFormDomain,
+  engine: SubtestFormEngine,
   source: string,
 ): SubtestFormVersionDocument {
   if (!isRecord(value)) {
@@ -58,10 +68,10 @@ function parseFormVersion(
   if (!isVersionStatus(status)) {
     throw new Error(`${source} has an invalid status.`);
   }
-  const definition = parsePowerFormDefinition(
-    value.definition,
-    `${source} definition`,
-  );
+  const definition =
+    engine === SPEED_FORM_ENGINE
+      ? parseSpeedFormDefinition(value.definition, `${source} definition`)
+      : parsePowerFormDefinition(value.definition, `${source} definition`);
   if (definition.domain !== domain) {
     throw new Error(`${source} definition domain does not match the form.`);
   }
@@ -88,18 +98,37 @@ export function parseSubtestFormDocument(
   if (typeof description !== "string" || description.length === 0) {
     throw new Error(`${source} (${slug}) is missing description.`);
   }
-  if (!isPowerDomain(domain)) {
-    throw new Error(`${source} (${slug}) has an unknown domain.`);
+  const formEngine =
+    engine === SPEED_FORM_ENGINE
+      ? SPEED_FORM_ENGINE
+      : engine === POWER_FORM_ENGINE
+        ? POWER_FORM_ENGINE
+        : null;
+  if (!formEngine) {
+    throw new Error(`${source} (${slug}) has an unknown engine.`);
   }
-  if (engine !== POWER_FORM_ENGINE) {
-    throw new Error(`${source} (${slug}) must use ${POWER_FORM_ENGINE}.`);
+  let formDomain: SubtestFormDomain;
+  if (formEngine === SPEED_FORM_ENGINE) {
+    if (domain !== "gs") {
+      throw new Error(`${source} (${slug}) speed forms must measure gs.`);
+    }
+    formDomain = "gs";
+  } else if (!isPowerDomain(domain)) {
+    throw new Error(`${source} (${slug}) has an unknown domain.`);
+  } else {
+    formDomain = domain;
   }
   if (!Array.isArray(versions) || versions.length === 0) {
     throw new Error(`${source} (${slug}) needs at least one version.`);
   }
 
   const parsed = versions.map((entry, index) =>
-    parseFormVersion(entry, domain, `${source} (${slug}) version[${index}]`),
+    parseFormVersion(
+      entry,
+      formDomain,
+      formEngine,
+      `${source} (${slug}) version[${index}]`,
+    ),
   );
 
   const ids = new Set<string>();
@@ -119,8 +148,8 @@ export function parseSubtestFormDocument(
     slug,
     title,
     description,
-    domain,
-    engine: POWER_FORM_ENGINE,
+    domain: formDomain,
+    engine: formEngine,
     versions: parsed,
   };
 }

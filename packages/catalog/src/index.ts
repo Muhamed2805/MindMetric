@@ -25,6 +25,9 @@ export { definitionsEqual, stableStringify } from "./equality";
 export {
   assertUniqueItemBanks,
   type ItemBankDocument,
+  type ItemBankDomain,
+  type ItemBankEngine,
+  type ItemContent,
   type ItemDocument,
   type ItemRevisionDocument,
   parseItemBankDocument,
@@ -40,6 +43,9 @@ export {
 export {
   assertUniqueSubtestForms,
   parseSubtestFormDocument,
+  type SubtestFormDefinition,
   type SubtestFormDocument,
+  type SubtestFormDomain,
+  type SubtestFormEngine,
   type SubtestFormVersionDocument,
 } from "./subtest-form";

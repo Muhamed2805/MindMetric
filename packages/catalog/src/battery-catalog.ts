@@ -2,6 +2,12 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  isSpeedFormDefinition,
+  isSpeedTrialContent,
+  SPEED_MIN_DECISIONS,
+  SPEED_MIN_SAMPLE_DECISIONS,
+} from "@mindmetric/shared";
+import {
   assertUniqueBatteries,
   type BatteryDocument,
   parseBatteryDocument,
@@ -81,7 +87,7 @@ function readDocuments<T>(
 export function assertBatteryCatalogReferences(catalog: BatteryCatalog) {
   const revisions = new Map<
     string,
-    { itemId: string; status: string; domain: string }
+    { itemId: string; status: string; domain: string; decisions: number }
   >();
   for (const bank of catalog.banks) {
     for (const item of bank.items) {
@@ -90,6 +96,9 @@ export function assertBatteryCatalogReferences(catalog: BatteryCatalog) {
           itemId: item.id,
           status: revision.status,
           domain: revision.content.domain,
+          decisions: isSpeedTrialContent(revision.content)
+            ? revision.content.decisions.length
+            : 0,
         });
       }
     }
@@ -136,6 +145,25 @@ export function assertBatteryCatalogReferences(catalog: BatteryCatalog) {
           );
         }
         itemIds.add(revision.itemId);
+      }
+
+      if (isSpeedFormDefinition(version.definition)) {
+        for (const revisionId of version.definition.sampleItemRevisionIds) {
+          const revision = revisions.get(revisionId);
+          if (revision && revision.decisions < SPEED_MIN_SAMPLE_DECISIONS) {
+            throw new Error(
+              `${label} sample ${revisionId} has too few decisions.`,
+            );
+          }
+        }
+        for (const revisionId of version.definition.itemRevisionIds) {
+          const revision = revisions.get(revisionId);
+          if (revision && revision.decisions < SPEED_MIN_DECISIONS) {
+            throw new Error(
+              `${label} scored trial ${revisionId} has too few decisions.`,
+            );
+          }
+        }
       }
     }
   }

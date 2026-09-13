@@ -1,0 +1,502 @@
+{
+  "id": "bank_gs_same_different",
+  "slug": "gs-same-different",
+  "domain": "gs",
+  "engine": "speed-trial-v1",
+  "items": [
+    {
+      "id": "gs-s-001",
+      "revisions": [
+        {
+          "id": "gs-s-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "speed-trial-v1",
+            "domain": "gs",
+            "prompt": "Are these two figures the same or different?",
+            "k": 2,
+            "decisions": [
+              {
+                "id": "gs-s-001-01",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "square",
+                      "fill": "hatch"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-s-001-02",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "triangle",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "triangle",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": true
+              },
+              {
+                "id": "gs-s-001-03",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "diamond",
+                      "fill": "none"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "arrow",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-s-001-04",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gs-t-001",
+      "revisions": [
+        {
+          "id": "gs-t-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "speed-trial-v1",
+            "domain": "gs",
+            "prompt": "Are these two figures the same or different?",
+            "k": 2,
+            "decisions": [
+              {
+                "id": "gs-t-001-01",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "triangle",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "triangle",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": true
+              },
+              {
+                "id": "gs-t-001-02",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "diamond",
+                      "fill": "none"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "arrow",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-t-001-03",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": true
+              },
+              {
+                "id": "gs-t-001-04",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "cross",
+                      "fill": "hatch"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "circle",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-t-001-05",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "arrow",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "arrow",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": true
+              },
+              {
+                "id": "gs-t-001-06",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "bar",
+                      "fill": "none"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "triangle",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-t-001-07",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "circle",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "circle",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": true
+              },
+              {
+                "id": "gs-t-001-08",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "square",
+                      "fill": "hatch"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gs-t-002",
+      "revisions": [
+        {
+          "id": "gs-t-002-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "speed-trial-v1",
+            "domain": "gs",
+            "prompt": "Are these two figures the same or different?",
+            "k": 2,
+            "decisions": [
+              {
+                "id": "gs-t-002-01",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "cross",
+                      "fill": "hatch"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "circle",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-t-002-02",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "arrow",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "arrow",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": true
+              },
+              {
+                "id": "gs-t-002-03",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "bar",
+                      "fill": "none"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "triangle",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-t-002-04",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "circle",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "circle",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": true
+              },
+              {
+                "id": "gs-t-002-05",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "square",
+                      "fill": "hatch"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-t-002-06",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "triangle",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "triangle",
+                      "fill": "dots"
+                    }
+                  ]
+                },
+                "same": true
+              },
+              {
+                "id": "gs-t-002-07",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "diamond",
+                      "fill": "none"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "arrow",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": false
+              },
+              {
+                "id": "gs-t-002-08",
+                "left": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "right": {
+                  "kind": "single",
+                  "elements": [
+                    {
+                      "shape": "hexagon",
+                      "fill": "solid"
+                    }
+                  ]
+                },
+                "same": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

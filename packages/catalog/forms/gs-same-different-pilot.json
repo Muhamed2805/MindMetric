@@ -1,0 +1,28 @@
+{
+  "id": "form_gs_same_different_pilot",
+  "slug": "gs-same-different-pilot",
+  "title": "Same or different (pilot form)",
+  "description": "Two strictly timed same/different trials. Draft fixture for the speed-corrected engine. Not a normed subtest.",
+  "domain": "gs",
+  "engine": "speed-form-v1",
+  "versions": [
+    {
+      "id": "form_gs_same_different_pilot_v1",
+      "version": 1,
+      "status": "draft",
+      "definition": {
+        "engine": "speed-form-v1",
+        "domain": "gs",
+        "scoringModel": "speed-corrected-v1",
+        "trialTimeLimitMs": 90000,
+        "sampleItemRevisionIds": [
+          "gs-s-001-r1"
+        ],
+        "itemRevisionIds": [
+          "gs-t-001-r1",
+          "gs-t-002-r1"
+        ]
+      }
+    }
+  ]
+}

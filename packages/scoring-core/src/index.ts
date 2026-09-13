@@ -26,6 +26,14 @@ export {
   scoreLikertCtt,
 } from "./ctt";
 export {
+  type SpeedCorrectedScore,
+  type SpeedDecisionRecord,
+  type SpeedTrialRecord,
+  type SpeedTrialScore,
+  scoreSpeedCorrected,
+  scoreSpeedTrial,
+} from "./speed-corrected";
+export {
   isStoredScore,
   isSumCorrectScore,
   type SumCorrectItemScore,
