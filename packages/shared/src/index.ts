@@ -1,6 +1,14 @@
 export const API_VERSION = "v1" as const;
 
 export {
+  type AdministeredForm,
+  type AdministeredItemContent,
+  formItemCeilingMs,
+  formSectionTimeLimitMs,
+  parseAdministeredForm,
+  parseAdministeredItemContent,
+} from "./administered";
+export {
   ADMINISTRATION_CONTEXTS,
   type AdministrationContext,
   BATTERY_DOMAINS,
@@ -35,17 +43,22 @@ export {
 } from "./battery";
 export {
   buildItemPresentation,
+  buildSpeedPresentation,
   CLIENT_QUALITY_EVENT_KINDS,
   type ClientQualityEventKind,
   classifyResponse,
+  classifySpeedTrial,
   type ItemPresentation,
   isClientQualityEventKind,
   parseItemPresentation,
+  parseSpeedDecisionSubmissions,
   QUALITY_EVENT_KINDS,
   type QualityEventKind,
   type ResponseClassification,
   type ResponseClassificationInput,
   SERVER_QUALITY_EVENT_KINDS,
+  type SpeedDecisionSubmission,
+  type SpeedTrialClassification,
   SUBMISSION_GRACE_MS,
   shuffleForPresentation,
 } from "./battery-session";

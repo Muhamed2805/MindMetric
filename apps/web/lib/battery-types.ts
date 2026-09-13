@@ -1,4 +1,4 @@
-import type { PowerStimulus } from "@mindmetric/shared";
+import type { FigureSpec, PowerStimulus } from "@mindmetric/shared";
 
 export type BatteryViewportMinimum = {
   widthPx: number;
@@ -55,7 +55,8 @@ export type BatteryChoice = {
   content: PowerStimulus;
 };
 
-export type BatteryItem = {
+export type BatteryPowerItem = {
+  engine?: "power-mcq-v1";
   itemInstanceId: string;
   position: number;
   role: "scored" | "sample";
@@ -64,6 +65,26 @@ export type BatteryItem = {
   stimulus: PowerStimulus;
   choices: BatteryChoice[];
 };
+
+export type BatterySpeedItem = {
+  engine: "speed-trial-v1";
+  itemInstanceId: string;
+  position: number;
+  role: "scored" | "sample";
+  shownAt: string | null;
+  prompt: string;
+  k: 2;
+  choices: Array<"same" | "different">;
+  decisions: Array<{ id: string; left: FigureSpec; right: FigureSpec }>;
+};
+
+export type BatteryItem = BatteryPowerItem | BatterySpeedItem;
+
+export function isSpeedBatteryItem(
+  item: BatteryItem,
+): item is BatterySpeedItem {
+  return item.engine === "speed-trial-v1";
+}
 
 export type BatteryCurrent = {
   sectionPosition: number;

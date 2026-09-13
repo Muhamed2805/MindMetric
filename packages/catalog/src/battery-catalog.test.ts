@@ -237,7 +237,7 @@ describe("loadBatteryCatalog", () => {
     const form = loaded.forms.find((entry) => entry.slug === "gf-matrix-pilot");
     const scored = form?.versions[0]?.definition.itemRevisionIds ?? [];
 
-    expect(loaded.batteries).toHaveLength(1);
+    expect(loaded.batteries).toHaveLength(2);
     expect(scored.length).toBeGreaterThan(0);
     expect(loaded.forms.map((entry) => entry.slug)).toEqual(
       expect.arrayContaining(["gf-matrix-pilot", "gs-same-different-pilot"]),
@@ -249,14 +249,24 @@ describe("loadBatteryCatalog", () => {
     const form = loaded.forms.find(
       (entry) => entry.slug === "gs-same-different-pilot",
     );
-    const batteryDomains =
-      loaded.batteries[0]?.versions[0]?.definition.sections.map(
-        (section) => section.domain,
-      ) ?? [];
+    const core = loaded.batteries.find(
+      (entry) => entry.slug === "core-cognitive",
+    );
+    const gsBattery = loaded.batteries.find(
+      (entry) => entry.slug === "gs-same-different-pilot",
+    );
+    const coreDomains =
+      core?.versions[0]?.definition.sections.map((section) => section.domain) ??
+      [];
 
     expect(form?.engine).toBe("speed-form-v1");
     expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(2);
-    expect(batteryDomains).not.toContain("gs");
+    expect(coreDomains).not.toContain("gs");
+    expect(
+      gsBattery?.versions[0]?.definition.sections.map(
+        (section) => section.domain,
+      ),
+    ).toEqual(["gs"]);
   });
 
   it("ships a published quality rule set flagged as provisional", () => {

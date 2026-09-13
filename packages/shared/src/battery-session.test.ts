@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   buildItemPresentation,
+  buildSpeedPresentation,
   classifyResponse,
+  classifySpeedTrial,
   parseItemPresentation,
   SUBMISSION_GRACE_MS,
   shuffleForPresentation,
@@ -141,5 +143,70 @@ describe("shuffleForPresentation", () => {
     for (const count of counts) {
       expect(count).toBeGreaterThan(350);
     }
+  });
+});
+
+describe("classifySpeedTrial", () => {
+  const authored = ["d1", "d2", "d3", "d4"];
+
+  function trial(
+    offsetMs: number,
+    submissions: Array<{ decisionId: string; choiceId: string | null }>,
+    extras: { isSample?: boolean; sectionLate?: boolean } = {},
+  ) {
+    return classifySpeedTrial({
+      shownAt,
+      receivedAt: at(offsetMs),
+      trialTimeLimitMs: CEILING,
+      sectionDeadlineAt: extras.sectionLate
+        ? new Date(shownAt.getTime() + 1_000)
+        : deadlineAt,
+      authoredIds: authored,
+      submissions,
+      allowedChoiceIds: ["same", "different"],
+      isSample: extras.isSample === true,
+    });
+  }
+
+  it("keeps listed answers and leaves the rest unreached", () => {
+    const result = trial(4_000, [
+      { decisionId: "d1", choiceId: "same" },
+      { decisionId: "d2", choiceId: "different" },
+    ]);
+
+    expect(result.trialCode).toBe("answered");
+    expect(result.decisions.map((row) => row.code)).toEqual([
+      "answered",
+      "answered",
+      "not_reached",
+      "not_reached",
+    ]);
+  });
+
+  it("times out the whole batch after the trial clock", () => {
+    const result = trial(CEILING + SUBMISSION_GRACE_MS + 1, [
+      { decisionId: "d1", choiceId: "same" },
+    ]);
+
+    expect(result.trialCode).toBe("timed_out");
+    expect(result.decisions.every((row) => row.code === "timed_out")).toBe(
+      true,
+    );
+  });
+
+  it("does not clock a sample trial", () => {
+    const result = trial(
+      CEILING + 60_000,
+      [{ decisionId: "d1", choiceId: "same" }],
+      { isSample: true },
+    );
+
+    expect(result.trialCode).toBe("answered");
+    expect(result.decisions[0]?.code).toBe("answered");
+    expect(result.decisions[1]?.code).toBe("omitted");
+  });
+
+  it("pins same/different in a fixed presentation order", () => {
+    expect(buildSpeedPresentation().choiceOrder).toEqual(["same", "different"]);
   });
 });

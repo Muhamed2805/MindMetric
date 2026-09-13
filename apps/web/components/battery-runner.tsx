@@ -5,9 +5,14 @@ import { Button, cn } from "@mindmetric/ui";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiSend } from "../lib/api";
-import type { BatterySection, BatterySessionState } from "../lib/battery-types";
+import {
+  type BatterySection,
+  type BatterySessionState,
+  isSpeedBatteryItem,
+} from "../lib/battery-types";
 import { clockLabel, domainLabel, minutesFromMs } from "../lib/format";
 import { BatteryReportPanel } from "./battery-report";
+import { SpeedTrialPlay } from "./speed-trial-play";
 import { StimulusView } from "./stimulus-view";
 
 /** Below this, the item clock is close enough to warn about. */
@@ -117,7 +122,10 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
   );
 
   const submit = useCallback(
-    (choiceId: string | null) => {
+    (
+      choiceId: string | null,
+      decisions?: Array<{ decisionId: string; choiceId: string | null }>,
+    ) => {
       if (!item) {
         return;
       }
@@ -130,6 +138,7 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
             body: JSON.stringify({
               itemInstanceId: target.itemInstanceId,
               choiceId,
+              decisions,
               clientShownAt: target.shownAt,
               clientFirstInteractionAt: firstInteraction.current,
               clientAnsweredAt: new Date().toISOString(),
@@ -185,6 +194,9 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
   // Submitting at the ceiling keeps a real choice out of the timed-out bucket.
   useEffect(() => {
     if (itemRemainingMs === null || itemRemainingMs > 0 || !item) {
+      return;
+    }
+    if (isSpeedBatteryItem(item)) {
       return;
     }
     void submit(selected);
@@ -245,7 +257,7 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
   }, []);
 
   useEffect(() => {
-    if (!item) {
+    if (!item || isSpeedBatteryItem(item)) {
       return;
     }
     const onKeyDown = (event: KeyboardEvent) => {
@@ -296,10 +308,14 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
   const section = session.sections.find(
     (entry) => entry.position === current.sectionPosition,
   );
+  const speed = isSpeedBatteryItem(item);
   const counter =
     item.role === "sample"
-      ? "Sample"
-      : `Item ${(section?.completedItemCount ?? 0) + 1} of ${section?.scoredItemCount ?? 0}`;
+      ? speed
+        ? "Sample trial"
+        : "Sample"
+      : `${speed ? "Trial" : "Item"} ${(section?.completedItemCount ?? 0) + 1} of ${section?.scoredItemCount ?? 0}`;
+  const mainRemainingMs = speed ? itemRemainingMs : sectionRemainingMs;
 
   return (
     <Shell>
@@ -311,19 +327,24 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
           </span>
           <span className="text-sm text-muted">{counter}</span>
         </div>
-        {sectionRemainingMs === null ? (
+        {mainRemainingMs === null ? (
           <span className="text-sm text-muted">Untimed</span>
         ) : (
           <p
             className={cn(
               "font-serif text-2xl tabular-nums",
-              sectionRemainingMs < SECTION_WARNING_MS
+              mainRemainingMs <
+                (speed ? CEILING_WARNING_MS : SECTION_WARNING_MS)
                 ? "text-danger"
                 : "text-ink",
             )}
           >
-            <span className="sr-only">Time left in this section </span>
-            {clockLabel(sectionRemainingMs)}
+            <span className="sr-only">
+              {speed
+                ? "Time left in this trial "
+                : "Time left in this section "}
+            </span>
+            {clockLabel(mainRemainingMs)}
           </p>
         )}
       </header>
@@ -341,64 +362,78 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
         </p>
       ) : null}
 
-      <StimulusView
-        stimulus={item.stimulus}
-        idPrefix={`${item.itemInstanceId}-stem`}
-        cellSize={84}
-      />
+      {speed ? (
+        <SpeedTrialPlay
+          key={item.itemInstanceId}
+          item={item}
+          pending={pending}
+          remainingMs={itemRemainingMs}
+          onSubmit={(decisions) => void submit(null, decisions)}
+        />
+      ) : (
+        <>
+          <StimulusView
+            stimulus={item.stimulus}
+            idPrefix={`${item.itemInstanceId}-stem`}
+            cellSize={84}
+          />
 
-      <div className="flex flex-wrap gap-3">
-        {item.choices.map((choice, index) => {
-          const active = selected === choice.id;
-          return (
-            <button
-              key={choice.id}
+          <div className="flex flex-wrap gap-3">
+            {item.choices.map((choice, index) => {
+              const active = selected === choice.id;
+              return (
+                <button
+                  key={choice.id}
+                  type="button"
+                  aria-pressed={active}
+                  disabled={pending}
+                  onClick={() => choose(choice.id)}
+                  className={cn(
+                    "flex flex-col items-center gap-2 rounded-xl border p-3 transition",
+                    active
+                      ? "border-accent bg-accent/5"
+                      : "border-line hover:border-mark",
+                    pending ? "opacity-60" : "",
+                  )}
+                >
+                  <StimulusView
+                    stimulus={choice.content}
+                    idPrefix={`${item.itemInstanceId}-${choice.id}`}
+                    cellSize={60}
+                  />
+                  <span className="text-xs text-muted tabular-nums">
+                    {index + 1}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {itemRemainingMs !== null && itemRemainingMs < CEILING_WARNING_MS ? (
+            <output className="text-sm text-danger">
+              Time on this item is almost up.
+            </output>
+          ) : null}
+
+          {error ? <Problem message={error} /> : null}
+
+          <div className="flex flex-col gap-2">
+            <Button
               type="button"
-              aria-pressed={active}
-              disabled={pending}
-              onClick={() => choose(choice.id)}
-              className={cn(
-                "flex flex-col items-center gap-2 rounded-xl border p-3 transition",
-                active
-                  ? "border-accent bg-accent/5"
-                  : "border-line hover:border-mark",
-                pending ? "opacity-60" : "",
-              )}
+              disabled={pending || !selected}
+              onClick={() => void submit(selected)}
             >
-              <StimulusView
-                stimulus={choice.content}
-                idPrefix={`${item.itemInstanceId}-${choice.id}`}
-                cellSize={60}
-              />
-              <span className="text-xs text-muted tabular-nums">
-                {index + 1}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+              {pending ? "Saving" : "Next"}
+            </Button>
+            <p className="text-xs text-muted">
+              Answers are final. A guess counts for more than a blank, and you
+              cannot come back to an item.
+            </p>
+          </div>
+        </>
+      )}
 
-      {itemRemainingMs !== null && itemRemainingMs < CEILING_WARNING_MS ? (
-        <output className="text-sm text-danger">
-          Time on this item is almost up.
-        </output>
-      ) : null}
-
-      {error ? <Problem message={error} /> : null}
-
-      <div className="flex flex-col gap-2">
-        <Button
-          type="button"
-          disabled={pending || !selected}
-          onClick={() => void submit(selected)}
-        >
-          {pending ? "Saving" : "Next"}
-        </Button>
-        <p className="text-xs text-muted">
-          Answers are final. A guess counts for more than a blank, and you
-          cannot come back to an item.
-        </p>
-      </div>
+      {speed && error ? <Problem message={error} /> : null}
     </Shell>
   );
 }
@@ -413,14 +448,15 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 function sectionBrief(section: BatterySection) {
   const clock = minutesFromMs(section.sectionTimeLimitMs);
+  const unit = section.domain === "gs" ? "trials" : "items";
   if (section.sampleItemCount === 0) {
-    return `${section.scoredItemCount} items under a ${clock} clock. The clock starts on the first item.`;
+    return `${section.scoredItemCount} ${unit} under a ${clock} clock. The clock starts on the first ${section.domain === "gs" ? "trial" : "item"}.`;
   }
   const samples =
     section.sampleItemCount === 1
       ? "One untimed sample comes"
       : `${section.sampleItemCount} untimed samples come`;
-  return `${samples} first, then ${section.scoredItemCount} items under a ${clock} clock.`;
+  return `${samples} first, then ${section.scoredItemCount} ${unit} under a ${clock} clock.`;
 }
 
 function Problem({ message }: { message: string }) {
@@ -461,8 +497,9 @@ function SectionIntro({
       <div className="mm-panel flex flex-col gap-3 p-5 text-sm leading-6 text-muted">
         <p>{sectionBrief(section)}</p>
         <p>
-          Work in order. Once you move on you cannot return, so answer with your
-          best guess rather than leaving an item blank.
+          {section.domain === "gs"
+            ? "Each trial presents many pairs on this device. Work quickly and accurately; random clicking scores near zero, and you cannot pause a running trial."
+            : "Work in order. Once you move on you cannot return, so answer with your best guess rather than leaving an item blank."}
         </p>
         {section.normEligible ? null : (
           <p className="text-ink">

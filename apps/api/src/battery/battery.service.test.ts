@@ -36,6 +36,9 @@ const GF_SCORED = ["gf_i1_r1", "gf_i2_r1", "gf_i3_r1"];
 const GV_SCORED = ["gv_i1_r1", "gv_i2_r1"];
 
 const SECTION_LIMIT_MS = 300_000;
+const GS_SAMPLE = "gs_s1_r1";
+const GS_SCORED = "gs_t1_r1";
+const GS_TRIAL_MS = 90_000;
 
 let db: Database;
 let service: BatteryService;
@@ -204,6 +207,114 @@ async function seedBatteries(now: Date) {
   ]);
 }
 
+function speedFig(shape: "circle" | "square") {
+  return { kind: "single", elements: [{ shape, fill: "solid" }] };
+}
+
+function speedTrial(revisionId: string, count: number) {
+  return {
+    engine: "speed-trial-v1",
+    domain: "gs",
+    prompt: "Same or different?",
+    k: 2,
+    decisions: Array.from({ length: count }, (_, index) => ({
+      id: `${revisionId}_d${index + 1}`,
+      same: index % 2 === 0,
+      left: speedFig("circle"),
+      right: speedFig(index % 2 === 0 ? "circle" : "square"),
+    })),
+  };
+}
+
+async function seedGs(now: Date) {
+  await db.insert(item).values([
+    {
+      id: `${GS_SAMPLE}_item`,
+      bankId: "bank_gs_test",
+      domain: "gs",
+      engine: "speed-trial-v1",
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: `${GS_SCORED}_item`,
+      bankId: "bank_gs_test",
+      domain: "gs",
+      engine: "speed-trial-v1",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+  await db.insert(itemRevision).values([
+    {
+      id: GS_SAMPLE,
+      itemId: `${GS_SAMPLE}_item`,
+      revision: 1,
+      status: "published",
+      content: speedTrial(GS_SAMPLE, 4),
+      publishedAt: now,
+      createdAt: now,
+    },
+    {
+      id: GS_SCORED,
+      itemId: `${GS_SCORED}_item`,
+      revision: 1,
+      status: "published",
+      content: speedTrial(GS_SCORED, 8),
+      publishedAt: now,
+      createdAt: now,
+    },
+  ]);
+  await db.insert(subtestForm).values({
+    id: "form_gs_test",
+    slug: "gs-test",
+    title: "Gs test form",
+    description: "Fixture",
+    domain: "gs",
+    engine: "speed-form-v1",
+    createdAt: now,
+    updatedAt: now,
+  });
+  await db.insert(subtestFormVersion).values({
+    id: "form_gs_test_v1",
+    formId: "form_gs_test",
+    version: 1,
+    status: "published",
+    definition: {
+      engine: "speed-form-v1",
+      domain: "gs",
+      scoringModel: "speed-corrected-v1",
+      trialTimeLimitMs: GS_TRIAL_MS,
+      sampleItemRevisionIds: [GS_SAMPLE],
+      itemRevisionIds: [GS_SCORED],
+    },
+    publishedAt: now,
+    createdAt: now,
+  });
+  await db.insert(battery).values({
+    id: "bat_gs",
+    slug: "gs-test-battery",
+    title: "Gs battery",
+    description: "Fixture",
+    createdAt: now,
+    updatedAt: now,
+  });
+  await db.insert(batteryVersion).values({
+    id: "bat_gs_v1",
+    batteryId: "bat_gs",
+    version: 1,
+    status: "published",
+    definition: {
+      engine: "battery-v1",
+      sections: [
+        { position: 1, domain: "gs", formVersionId: "form_gs_test_v1" },
+      ],
+    },
+    publishedAt: now,
+    createdAt: now,
+  });
+}
+
 async function seedRules(now: Date) {
   const open = { minViewport: null, normIneligibleDeviceClasses: [] };
   await db.insert(qualityRuleSet).values({
@@ -290,13 +401,18 @@ function startSession(
 
 type ServedItem = {
   itemInstanceId: string;
-  choices: Array<{ id: string }>;
+  choices: Array<{ id: string } | string>;
 };
+
+function firstChoiceId(item: ServedItem) {
+  const choice = item.choices[0];
+  return typeof choice === "string" ? choice : (choice?.id ?? null);
+}
 
 function respond(userId: string, sessionId: string, item: ServedItem) {
   return service.submitResponse(userId, sessionId, {
     itemInstanceId: item.itemInstanceId,
-    choiceId: item.choices[0]?.id ?? null,
+    choiceId: firstChoiceId(item),
     clientShownAt: null,
     clientFirstInteractionAt: null,
     clientAnsweredAt: null,
@@ -345,6 +461,7 @@ beforeAll(async () => {
   await seedItems(now);
   await seedForms(now);
   await seedBatteries(now);
+  await seedGs(now);
   await seedRules(now);
   service = new BatteryService(db);
 }, 120_000);
@@ -830,7 +947,7 @@ describe("expiry", () => {
     // The keystroke happened, so it is kept with an honest code; scoring
     // decides what a post-deadline answer is worth (ADR 0016).
     expect(rows[0]?.code).toBe("post_deadline");
-    expect(rows[0]?.choiceId).toBe(current.choices[0]?.id);
+    expect(rows[0]?.choiceId).toBe(firstChoiceId(current));
   });
 });
 
@@ -906,7 +1023,7 @@ async function answerKeyed(userId: string, sessionId: string) {
   return service.submitResponse(userId, sessionId, {
     itemInstanceId: current.itemInstanceId,
     choiceId:
-      current.role === "sample" ? (current.choices[0]?.id ?? null) : "a",
+      current.role === "sample" ? firstChoiceId(current) : "a",
     clientShownAt: null,
     clientFirstInteractionAt: null,
     clientAnsweredAt: null,
@@ -1052,5 +1169,112 @@ describe("session list", () => {
     expect(finished[0]?.report?.estimatedIq).toBeNull();
     expect(await service.listForUser(other)).toHaveLength(1);
     expect((await service.listForUser(other))[0]?.id).not.toBe(open.id);
+  });
+});
+
+describe("gs speed trials", () => {
+  function keyedDecisions(item: { decisions: Array<{ id: string }> }) {
+    return item.decisions.map((decision, index) => ({
+      decisionId: decision.id,
+      choiceId: index % 2 === 0 ? "same" : "different",
+    }));
+  }
+
+  it("keeps the key off the served trial and scores a keyed batch", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId, "gs-test-battery");
+    const overview = await service.getOverview("gs-test-battery");
+
+    expect(overview.timedMs).toBe(GS_TRIAL_MS);
+    expect(overview.sections[0]?.itemCeilingMs).toBe(GS_TRIAL_MS);
+
+    await service.startSection(userId, state.id, 1);
+    const sample = await service.serveNextItem(userId, state.id);
+    const sampleItem = sample.current?.item;
+    expect(
+      sampleItem && "engine" in sampleItem ? sampleItem.engine : null,
+    ).toBe("speed-trial-v1");
+    expect(JSON.stringify(sampleItem)).not.toContain('"same":true');
+    expect(JSON.stringify(sampleItem)).not.toContain('"same":false');
+
+    if (!sampleItem || !("decisions" in sampleItem)) {
+      throw new Error("expected a sample trial");
+    }
+    await service.submitResponse(userId, state.id, {
+      itemInstanceId: sampleItem.itemInstanceId,
+      choiceId: null,
+      decisions: keyedDecisions(sampleItem),
+      clientShownAt: null,
+      clientFirstInteractionAt: null,
+      clientAnsweredAt: null,
+    });
+
+    const scored = await service.serveNextItem(userId, state.id);
+    const trial = scored.current?.item;
+    if (!trial || !("decisions" in trial)) {
+      throw new Error("expected a scored trial");
+    }
+    const done = await service.submitResponse(userId, state.id, {
+      itemInstanceId: trial.itemInstanceId,
+      choiceId: null,
+      decisions: keyedDecisions(trial),
+      clientShownAt: null,
+      clientFirstInteractionAt: null,
+      clientAnsweredAt: null,
+    });
+
+    expect(done.status).toBe("completed");
+    expect(done.report?.sections[0]).toMatchObject({
+      domain: "gs",
+      scoringModel: "speed-corrected-v1",
+      raw: 8,
+      max: 8,
+      attempted: 8,
+      accuracyOnAttempted: null,
+    });
+  });
+
+  it("does not treat a late batch as correct answers", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId, "gs-test-battery");
+    await service.startSection(userId, state.id, 1);
+    const sample = await service.serveNextItem(userId, state.id);
+    const sampleItem = sample.current?.item;
+    if (!sampleItem || !("decisions" in sampleItem)) {
+      throw new Error("expected a sample trial");
+    }
+    await service.submitResponse(userId, state.id, {
+      itemInstanceId: sampleItem.itemInstanceId,
+      choiceId: null,
+      decisions: keyedDecisions(sampleItem),
+      clientShownAt: null,
+      clientFirstInteractionAt: null,
+      clientAnsweredAt: null,
+    });
+
+    const served = await service.serveNextItem(userId, state.id);
+    const trial = served.current?.item;
+    if (!trial || !("decisions" in trial) || !trial.shownAt) {
+      throw new Error("expected a scored trial");
+    }
+    await db
+      .update(schema.itemInstance)
+      .set({
+        shownAt: new Date(Date.now() - GS_TRIAL_MS - 5_000),
+      })
+      .where(eq(schema.itemInstance.id, trial.itemInstanceId));
+
+    const done = await service.submitResponse(userId, state.id, {
+      itemInstanceId: trial.itemInstanceId,
+      choiceId: null,
+      decisions: keyedDecisions(trial),
+      clientShownAt: null,
+      clientFirstInteractionAt: null,
+      clientAnsweredAt: null,
+    });
+
+    expect(done.status).toBe("completed");
+    expect(done.report?.sections[0]?.raw).toBe(0);
+    expect(done.report?.sections[0]?.timedOut).toBe(8);
   });
 });

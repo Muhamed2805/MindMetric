@@ -20,35 +20,49 @@ import {
   batteryProfileInputCanon,
   type PowerItemRecord,
   powerSectionInputCanon,
+  type SpeedTrialRecord,
   scoreAccuracyPower,
   scoreBatteryProfile,
+  scoreSpeedCorrected,
+  speedSectionInputCanon,
   toBatterySectionReport,
+  toSpeedSectionReport,
 } from "@mindmetric/scoring-core";
 import {
+  type AdministeredForm,
+  type AdministeredItemContent,
   type AdministrationContext,
   BATTERY_PROFILE_MODEL,
   type BatteryDomain,
   buildItemPresentation,
+  buildSpeedPresentation,
   classifyResponse,
+  classifySpeedTrial,
   DEVICE_CLASSES,
   type DeviceClass,
+  formItemCeilingMs,
+  formSectionTimeLimitMs,
   INPUT_MODES,
   type InputMode,
   type ItemOutcome,
   type ItemRole,
   isClientQualityEventKind,
   isPowerDomain,
-  type PowerFormDefinition,
-  type PowerMcqItemContent,
+  isSpeedFormDefinition,
+  isSpeedTrialContent,
+  POWER_MCQ_ENGINE,
+  parseAdministeredForm,
+  parseAdministeredItemContent,
   parseBatteryDefinition,
   parseItemPresentation,
-  parsePowerFormDefinition,
-  parsePowerMcqItemContent,
   parseQualityRuleSetDefinition,
+  parseSpeedDecisionSubmissions,
   type ResponseCode,
   resolveSectionEligibility,
+  SPEED_CHOICES,
   SUBMISSION_GRACE_MS,
   toClientPowerItem,
+  toClientSpeedTrial,
   VERSION_PIN_NONE,
 } from "@mindmetric/shared";
 import {
@@ -73,6 +87,8 @@ export type StartBatteryInput = {
 export type SubmitResponseInput = {
   itemInstanceId: string;
   choiceId: string | null;
+  /** Speed trials send every decision in one request so RTT is not scored. */
+  decisions?: unknown;
   clientShownAt: Date | null;
   clientFirstInteractionAt: Date | null;
   clientAnsweredAt: Date | null;
@@ -204,6 +220,7 @@ export class BatteryService {
 
   async getForUser(userId: string, sessionId: string) {
     await this.loadOwnedSession(userId, sessionId);
+    await this.closeExpiredSpeedTrials(sessionId);
     await this.closeSectionsPastDeadline(sessionId);
     return this.readState(userId, sessionId);
   }
@@ -272,14 +289,14 @@ export class BatteryService {
     for (const section of target.definition.sections) {
       const form = await this.loadFormDefinition(section.formVersionId);
       const rule = rules.definition.domains[section.domain];
-      timedMs += form.sectionTimeLimitMs;
+      timedMs += formSectionTimeLimitMs(form);
       sections.push({
         position: section.position,
         domain: section.domain,
         scoredItemCount: form.itemRevisionIds.length,
         sampleItemCount: form.sampleItemRevisionIds.length,
-        sectionTimeLimitMs: form.sectionTimeLimitMs,
-        itemCeilingMs: form.itemCeilingMs,
+        sectionTimeLimitMs: formSectionTimeLimitMs(form),
+        itemCeilingMs: formItemCeilingMs(form),
         minViewport: rule.minViewport,
         normIneligibleDeviceClasses: rule.normIneligibleDeviceClasses,
       });
@@ -304,6 +321,7 @@ export class BatteryService {
     if (session.session.status !== "in_progress") {
       throw new BadRequestException("This session is already closed.");
     }
+    await this.closeExpiredSpeedTrials(sessionId);
     await this.closeSectionsPastDeadline(sessionId);
 
     const sections = await this.loadSections(sessionId);
@@ -353,6 +371,7 @@ export class BatteryService {
   /** Stamps `shown_at`, which is what the item ceiling is measured from. */
   async serveNextItem(userId: string, sessionId: string) {
     await this.loadOwnedSession(userId, sessionId);
+    await this.closeExpiredSpeedTrials(sessionId);
     await this.closeSectionsPastDeadline(sessionId);
 
     const section = await this.activeSection(sessionId);
@@ -392,7 +411,7 @@ export class BatteryService {
       await this.db
         .update(sectionInstance)
         .set({
-          deadlineAt: new Date(now.getTime() + form.sectionTimeLimitMs),
+          deadlineAt: new Date(now.getTime() + formSectionTimeLimitMs(form)),
         })
         .where(eq(sectionInstance.id, section.id));
     }
@@ -439,60 +458,70 @@ export class BatteryService {
       throw new BadRequestException("That item is no longer open.");
     }
 
-    const presentation = parseItemPresentation(
-      inFlight.presentation,
-      "presentation",
-    );
-    if (
-      input.choiceId !== null &&
-      !presentation.choiceOrder.includes(input.choiceId)
-    ) {
-      throw new BadRequestException("That option was not offered.");
-    }
-
     const shownAt = inFlight.shownAt;
     if (!shownAt) {
       throw new BadRequestException("No item is waiting for an answer.");
     }
 
     const form = await this.loadFormDefinition(section.formVersionId);
-    const classification =
-      inFlight.role === "sample"
-        ? {
-            // Samples are untimed: they teach the format and are never scored.
-            code: (input.choiceId === null
-              ? "omitted"
-              : "answered") as ResponseCode,
-            responseTimeMs: receivedAt.getTime() - shownAt.getTime(),
-          }
-        : classifyResponse({
-            choiceId: input.choiceId,
-            shownAt,
-            deadlineAt:
-              section.deadlineAt ??
-              new Date(receivedAt.getTime() + SUBMISSION_GRACE_MS),
-            itemCeilingMs: form.itemCeilingMs,
-            receivedAt,
-          });
+    if (isSpeedFormDefinition(form)) {
+      await this.recordSpeedSubmission({
+        inFlight,
+        form,
+        sectionDeadlineAt: section.deadlineAt,
+        input,
+        receivedAt,
+      });
+    } else {
+      const presentation = parseItemPresentation(
+        inFlight.presentation,
+        "presentation",
+      );
+      if (
+        input.choiceId !== null &&
+        !presentation.choiceOrder.includes(input.choiceId)
+      ) {
+        throw new BadRequestException("That option was not offered.");
+      }
 
-    await this.db.insert(batteryResponse).values({
-      id: randomUUID(),
-      itemInstanceId: inFlight.id,
-      code: classification.code,
-      choiceId: input.choiceId,
-      responseTimeMs: classification.responseTimeMs,
-      clientShownAt: input.clientShownAt,
-      clientFirstInteractionAt: input.clientFirstInteractionAt,
-      clientAnsweredAt: input.clientAnsweredAt,
-      serverReceivedAt: receivedAt,
-      submittedAt: receivedAt,
-      payload: null,
-    });
+      const classification =
+        inFlight.role === "sample"
+          ? {
+              // Samples are untimed: they teach the format and are never scored.
+              code: (input.choiceId === null
+                ? "omitted"
+                : "answered") as ResponseCode,
+              responseTimeMs: receivedAt.getTime() - shownAt.getTime(),
+            }
+          : classifyResponse({
+              choiceId: input.choiceId,
+              shownAt,
+              deadlineAt:
+                section.deadlineAt ??
+                new Date(receivedAt.getTime() + SUBMISSION_GRACE_MS),
+              itemCeilingMs: formItemCeilingMs(form),
+              receivedAt,
+            });
 
-    await this.db
-      .update(itemInstance)
-      .set({ status: instanceStatusFor(classification.code) })
-      .where(eq(itemInstance.id, inFlight.id));
+      await this.db.insert(batteryResponse).values({
+        id: randomUUID(),
+        itemInstanceId: inFlight.id,
+        code: classification.code,
+        choiceId: input.choiceId,
+        responseTimeMs: classification.responseTimeMs,
+        clientShownAt: input.clientShownAt,
+        clientFirstInteractionAt: input.clientFirstInteractionAt,
+        clientAnsweredAt: input.clientAnsweredAt,
+        serverReceivedAt: receivedAt,
+        submittedAt: receivedAt,
+        payload: null,
+      });
+
+      await this.db
+        .update(itemInstance)
+        .set({ status: instanceStatusFor(classification.code) })
+        .where(eq(itemInstance.id, inFlight.id));
+    }
 
     const remaining = rows.filter((row) => row.id !== inFlight.id);
     if (remaining.length === 0) {
@@ -623,7 +652,7 @@ export class BatteryService {
 
   private async loadFormDefinition(
     formVersionId: string,
-  ): Promise<PowerFormDefinition> {
+  ): Promise<AdministeredForm> {
     const rows = await this.db
       .select({ definition: subtestFormVersion.definition })
       .from(subtestFormVersion)
@@ -634,12 +663,12 @@ export class BatteryService {
     if (!row) {
       throw new NotFoundException("Subtest form not found.");
     }
-    return parsePowerFormDefinition(row.definition, formVersionId);
+    return parseAdministeredForm(row.definition, formVersionId);
   }
 
   private async materializeItems(
     sectionInstanceId: string,
-    form: PowerFormDefinition,
+    form: AdministeredForm,
   ) {
     const ordered: Array<{ revisionId: string; role: ItemRole }> = [
       ...form.sampleItemRevisionIds.map((revisionId) => ({
@@ -672,7 +701,9 @@ export class BatteryService {
           role: entry.role,
           // Stored because a choice id means nothing without the order the
           // examinee saw, and positional bias is measured over it (ADR 0017).
-          presentation: buildItemPresentation(content, Math.random),
+          presentation: isSpeedTrialContent(content)
+            ? buildSpeedPresentation()
+            : buildItemPresentation(content, Math.random),
           itemFamilyId: null,
           generatorVersion: null,
           seed: null,
@@ -686,7 +717,7 @@ export class BatteryService {
 
   private async loadItemContents(revisionIds: string[]) {
     if (revisionIds.length === 0) {
-      return new Map<string, PowerMcqItemContent>();
+      return new Map<string, AdministeredItemContent>();
     }
     const rows = await this.db
       .select({ id: itemRevision.id, content: itemRevision.content })
@@ -696,7 +727,7 @@ export class BatteryService {
     return new Map(
       rows.map((row) => [
         row.id,
-        parsePowerMcqItemContent(row.content, row.id),
+        parseAdministeredItemContent(row.content, row.id),
       ]),
     );
   }
@@ -867,7 +898,7 @@ export class BatteryService {
         // no item rows yet and the intro still has to say how long it is.
         scoredItemCount: form.itemRevisionIds.length,
         sampleItemCount: form.sampleItemRevisionIds.length,
-        sectionTimeLimitMs: form.sectionTimeLimitMs,
+        sectionTimeLimitMs: formSectionTimeLimitMs(form),
         completedItemCount: scored.filter((row) => row.status !== "pending")
           .length,
       });
@@ -910,10 +941,17 @@ export class BatteryService {
       .where(eq(sectionInstance.id, sectionInstanceId))
       .limit(1);
     const section = rows[0];
-    if (!section || !isPowerDomain(section.domain)) {
+    if (!section) {
       return;
     }
     if (section.status !== "submitted" && section.status !== "expired") {
+      return;
+    }
+    if (section.domain === "gs") {
+      await this.persistSpeedSectionScore(section);
+      return;
+    }
+    if (!isPowerDomain(section.domain)) {
       return;
     }
 
@@ -943,7 +981,7 @@ export class BatteryService {
 
     const records: PowerItemRecord[] = scored.map((row) => {
       const content = contents.get(row.itemRevisionId);
-      if (!content) {
+      if (!content || isSpeedTrialContent(content)) {
         throw new NotFoundException(
           `Item revision ${row.itemRevisionId} is missing.`,
         );
@@ -1110,8 +1148,8 @@ export class BatteryService {
       sectionPosition: section.position,
       domain: section.domain,
       deadlineAt: section.deadlineAt,
-      itemCeilingMs: form.itemCeilingMs,
-      sectionTimeLimitMs: form.sectionTimeLimitMs,
+      itemCeilingMs: formItemCeilingMs(form),
+      sectionTimeLimitMs: formSectionTimeLimitMs(form),
       remainingItemCount: rows.length,
     };
 
@@ -1137,10 +1175,301 @@ export class BatteryService {
         role: inFlight.role as ItemRole,
         shownAt: inFlight.shownAt,
         // The key stays on the server (ADR 0015).
-        ...toClientPowerItem(content, presentation.choiceOrder),
+        ...(isSpeedTrialContent(content)
+          ? toClientSpeedTrial(content)
+          : {
+              engine: POWER_MCQ_ENGINE,
+              ...toClientPowerItem(content, presentation.choiceOrder),
+            }),
       },
     };
   }
+
+  private async recordSpeedSubmission(input: {
+    inFlight: typeof itemInstance.$inferSelect;
+    form: AdministeredForm;
+    sectionDeadlineAt: Date | null;
+    input: SubmitResponseInput;
+    receivedAt: Date;
+  }) {
+    if (!isSpeedFormDefinition(input.form) || !input.inFlight.shownAt) {
+      throw new BadRequestException("That trial is not open.");
+    }
+    const contents = await this.loadItemContents([
+      input.inFlight.itemRevisionId,
+    ]);
+    const content = contents.get(input.inFlight.itemRevisionId);
+    if (!isSpeedTrialContent(content)) {
+      throw new NotFoundException("Item content is missing.");
+    }
+
+    const authoredIds = content.decisions.map((decision) => decision.id);
+    let submissions: ReturnType<typeof parseSpeedDecisionSubmissions> = [];
+    try {
+      submissions = parseSpeedDecisionSubmissions(
+        input.input.decisions ?? [],
+        "decisions",
+      );
+    } catch (cause) {
+      throw new BadRequestException(
+        cause instanceof Error ? cause.message : "Invalid decisions.",
+      );
+    }
+    for (const row of submissions) {
+      if (!authoredIds.includes(row.decisionId)) {
+        throw new BadRequestException("That pair was not on this trial.");
+      }
+    }
+
+    const classification = classifySpeedTrial({
+      shownAt: input.inFlight.shownAt,
+      receivedAt: input.receivedAt,
+      trialTimeLimitMs: input.form.trialTimeLimitMs,
+      sectionDeadlineAt: input.sectionDeadlineAt,
+      authoredIds,
+      submissions,
+      allowedChoiceIds: [...SPEED_CHOICES],
+      isSample: input.inFlight.role === "sample",
+    });
+
+    await this.writeSpeedResponse(
+      input.inFlight.id,
+      classification.trialCode,
+      classification.responseTimeMs,
+      classification.decisions,
+      input.receivedAt,
+      input.input,
+    );
+  }
+
+  private async writeSpeedResponse(
+    itemInstanceId: string,
+    trialCode: ResponseCode,
+    responseTimeMs: number | null,
+    decisions: Array<{
+      decisionId: string;
+      code: ItemOutcome;
+      choiceId: string | null;
+    }>,
+    at: Date,
+    client: Pick<
+      SubmitResponseInput,
+      "clientShownAt" | "clientFirstInteractionAt" | "clientAnsweredAt"
+    > | null,
+  ) {
+    await this.db.insert(batteryResponse).values({
+      id: randomUUID(),
+      itemInstanceId,
+      code: trialCode,
+      choiceId: null,
+      responseTimeMs,
+      clientShownAt: client?.clientShownAt ?? null,
+      clientFirstInteractionAt: client?.clientFirstInteractionAt ?? null,
+      clientAnsweredAt: client?.clientAnsweredAt ?? null,
+      serverReceivedAt: at,
+      submittedAt: at,
+      payload: { decisions },
+    });
+    await this.db
+      .update(itemInstance)
+      .set({ status: instanceStatusFor(trialCode) })
+      .where(eq(itemInstance.id, itemInstanceId));
+  }
+
+  private async closeExpiredSpeedTrials(sessionId: string) {
+    const section = await this.activeSection(sessionId);
+    if (!section) {
+      return;
+    }
+    const form = await this.loadFormDefinition(section.formVersionId);
+    if (!isSpeedFormDefinition(form)) {
+      return;
+    }
+
+    const pending = await this.db
+      .select()
+      .from(itemInstance)
+      .where(
+        and(
+          eq(itemInstance.sectionInstanceId, section.id),
+          eq(itemInstance.status, "pending"),
+        ),
+      )
+      .orderBy(asc(itemInstance.position));
+    const inFlight = pending.find((row) => row.shownAt !== null);
+    if (!inFlight?.shownAt || inFlight.role === "sample") {
+      return;
+    }
+
+    const now = new Date();
+    if (
+      now.getTime() <=
+      inFlight.shownAt.getTime() + form.trialTimeLimitMs + SUBMISSION_GRACE_MS
+    ) {
+      return;
+    }
+
+    const contents = await this.loadItemContents([inFlight.itemRevisionId]);
+    const content = contents.get(inFlight.itemRevisionId);
+    if (!isSpeedTrialContent(content)) {
+      return;
+    }
+
+    const classification = classifySpeedTrial({
+      shownAt: inFlight.shownAt,
+      receivedAt: now,
+      trialTimeLimitMs: form.trialTimeLimitMs,
+      sectionDeadlineAt: section.deadlineAt,
+      authoredIds: content.decisions.map((decision) => decision.id),
+      submissions: [],
+      allowedChoiceIds: [...SPEED_CHOICES],
+      isSample: false,
+    });
+    await this.writeSpeedResponse(
+      inFlight.id,
+      classification.trialCode,
+      classification.responseTimeMs,
+      classification.decisions,
+      now,
+      null,
+    );
+
+    if (pending.every((row) => row.id === inFlight.id)) {
+      await this.closeSection(section.id, "submitted", now);
+      await this.completeSessionIfDone(sessionId);
+    }
+  }
+
+  private async persistSpeedSectionScore(section: {
+    id: string;
+    domain: string;
+    position: number;
+    status: "submitted" | "expired" | string;
+    formVersionId: string;
+    deviceNormEligible: boolean;
+    ruleVersionId: string | null;
+    eligibilityObservations: unknown;
+  }) {
+    if (section.status !== "submitted" && section.status !== "expired") {
+      return;
+    }
+    const form = await this.loadFormDefinition(section.formVersionId);
+    const instances = await this.db
+      .select()
+      .from(itemInstance)
+      .where(eq(itemInstance.sectionInstanceId, section.id))
+      .orderBy(asc(itemInstance.position));
+    const scored = instances.filter((row) => row.role === "scored");
+    const contents = await this.loadItemContents(
+      scored.map((row) => row.itemRevisionId),
+    );
+    const responses =
+      scored.length === 0
+        ? []
+        : await this.db
+            .select()
+            .from(batteryResponse)
+            .where(
+              inArray(
+                batteryResponse.itemInstanceId,
+                scored.map((row) => row.id),
+              ),
+            );
+    const byItem = new Map(responses.map((row) => [row.itemInstanceId, row]));
+
+    const records: SpeedTrialRecord[] = scored.map((row) => {
+      const content = contents.get(row.itemRevisionId);
+      if (!isSpeedTrialContent(content)) {
+        throw new NotFoundException(
+          `Item revision ${row.itemRevisionId} is missing.`,
+        );
+      }
+      const response = byItem.get(row.id);
+      return {
+        itemRevisionId: row.itemRevisionId,
+        content,
+        decisions: speedDecisionsFromPayload(
+          content.decisions.map((decision) => decision.id),
+          response?.payload,
+          response ? "timed_out" : "not_reached",
+        ),
+      };
+    });
+
+    const score = scoreSpeedCorrected(records);
+    const digest = hashCanon(speedSectionInputCanon(records));
+    const qualityRulesVersion = section.ruleVersionId ?? VERSION_PIN_NONE;
+    const existing = await this.db
+      .select({ id: sectionScore.id })
+      .from(sectionScore)
+      .where(
+        and(
+          eq(sectionScore.sectionInstanceId, section.id),
+          eq(sectionScore.scoringModel, form.scoringModel),
+          eq(sectionScore.qualityRulesVersion, qualityRulesVersion),
+          eq(sectionScore.normsVersionId, VERSION_PIN_NONE),
+        ),
+      )
+      .limit(1);
+    if (existing[0]) {
+      return;
+    }
+
+    const authoredDecisionCount = records.reduce(
+      (sum, record) => sum + record.content.decisions.length,
+      0,
+    );
+
+    await this.db.insert(sectionScore).values({
+      id: randomUUID(),
+      sectionInstanceId: section.id,
+      scoringModel: form.scoringModel,
+      qualityRulesVersion,
+      normsVersionId: VERSION_PIN_NONE,
+      inputDigest: digest,
+      payload: {
+        ...toSpeedSectionReport(
+          {
+            domain: "gs",
+            position: section.position,
+            status: section.status === "expired" ? "expired" : "submitted",
+            normEligible: section.deviceNormEligible,
+            observations: Array.isArray(section.eligibilityObservations)
+              ? section.eligibilityObservations
+              : [],
+          },
+          score,
+          authoredDecisionCount,
+        ),
+        trials: score.trials,
+      },
+      supersededAt: null,
+      createdAt: new Date(),
+    });
+  }
+}
+
+function speedDecisionsFromPayload(
+  authoredIds: string[],
+  payload: unknown,
+  fallback: ItemOutcome,
+) {
+  const body = payload && typeof payload === "object" ? payload : {};
+  const listed =
+    "decisions" in body && Array.isArray(body.decisions) ? body.decisions : [];
+  return authoredIds.map((decisionId) => {
+    const row = listed.find(
+      (entry) =>
+        entry &&
+        typeof entry === "object" &&
+        "decisionId" in entry &&
+        entry.decisionId === decisionId,
+    ) as { code?: unknown; choiceId?: unknown } | undefined;
+    const code =
+      typeof row?.code === "string" ? (row.code as ItemOutcome) : fallback;
+    const choiceId = typeof row?.choiceId === "string" ? row.choiceId : null;
+    return { decisionId, code, choiceId };
+  });
 }
 
 /**

@@ -51,6 +51,7 @@ export type ClientSpeedDecision = {
 
 /** The key never leaves the server. */
 export type ClientSpeedTrial = {
+  engine: typeof SPEED_TRIAL_ENGINE;
   prompt: string;
   k: 2;
   choices: SpeedChoiceId[];
@@ -183,6 +184,7 @@ export function toClientSpeedTrial(
   content: SpeedTrialContent,
 ): ClientSpeedTrial {
   return {
+    engine: SPEED_TRIAL_ENGINE,
     prompt: content.prompt,
     k: content.k,
     choices: [...SPEED_CHOICES],

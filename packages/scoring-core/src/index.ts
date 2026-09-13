@@ -13,7 +13,9 @@ export {
   type PowerDigestRecord,
   powerSectionInputCanon,
   scoreBatteryProfile,
+  speedSectionInputCanon,
   toBatterySectionReport,
+  toSpeedSectionReport,
 } from "./battery-profile";
 export {
   type CttBand,

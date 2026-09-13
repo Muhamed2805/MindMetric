@@ -1,5 +1,6 @@
-import type { ResponseCode } from "./battery";
+import type { ItemOutcome, ResponseCode } from "./battery";
 import type { PowerMcqItemContent } from "./power-mcq";
+import { SPEED_CHOICES } from "./speed";
 
 /**
  * Append-only evidence. Visibility, focus and resume are logged, never used as
@@ -122,6 +123,154 @@ export function buildItemPresentation(
       random,
     ),
   };
+}
+
+/** Same/different stay in a fixed order so motor mapping is stable. */
+export function buildSpeedPresentation(): ItemPresentation {
+  return { choiceOrder: [...SPEED_CHOICES] };
+}
+
+export type SpeedDecisionSubmission = {
+  decisionId: string;
+  choiceId: string | null;
+};
+
+export type SpeedTrialClassification = {
+  trialCode: ResponseCode;
+  responseTimeMs: number | null;
+  decisions: Array<{
+    decisionId: string;
+    code: ItemOutcome;
+    choiceId: string | null;
+  }>;
+};
+
+export function parseSpeedDecisionSubmissions(
+  value: unknown,
+  source: string,
+): SpeedDecisionSubmission[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`${source} must be an array.`);
+  }
+  const seen = new Set<string>();
+  return value.map((entry, index) => {
+    if (!isRecord(entry)) {
+      throw new Error(`${source}[${index}] is not an object.`);
+    }
+    if (typeof entry.decisionId !== "string" || entry.decisionId.length === 0) {
+      throw new Error(`${source}[${index}] is missing decisionId.`);
+    }
+    if (seen.has(entry.decisionId)) {
+      throw new Error(`${source} repeats ${entry.decisionId}.`);
+    }
+    seen.add(entry.decisionId);
+    const choiceId =
+      typeof entry.choiceId === "string" && entry.choiceId.length > 0
+        ? entry.choiceId
+        : null;
+    return { decisionId: entry.decisionId, choiceId };
+  });
+}
+
+/**
+ * One trial is one submission. The server clock decides whether the batch
+ * arrived in time; listed pairs are answered or omitted, unlisted pairs were
+ * never reached (ADR 0014, ADR 0016).
+ */
+export function classifySpeedTrial(input: {
+  shownAt: Date | null;
+  receivedAt: Date;
+  trialTimeLimitMs: number;
+  sectionDeadlineAt: Date | null;
+  authoredIds: readonly string[];
+  submissions: readonly SpeedDecisionSubmission[];
+  allowedChoiceIds: readonly string[];
+  isSample: boolean;
+}): SpeedTrialClassification {
+  const {
+    shownAt,
+    receivedAt,
+    trialTimeLimitMs,
+    sectionDeadlineAt,
+    authoredIds,
+    submissions,
+    allowedChoiceIds,
+    isSample,
+  } = input;
+  const byId = new Map(submissions.map((entry) => [entry.decisionId, entry]));
+
+  if (!shownAt) {
+    return {
+      trialCode: "invalid",
+      responseTimeMs: null,
+      decisions: authoredIds.map((decisionId) => ({
+        decisionId,
+        code: "invalid",
+        choiceId: null,
+      })),
+    };
+  }
+
+  const elapsedMs = receivedAt.getTime() - shownAt.getTime();
+  if (elapsedMs < 0) {
+    return {
+      trialCode: "invalid",
+      responseTimeMs: null,
+      decisions: authoredIds.map((decisionId) => ({
+        decisionId,
+        code: "invalid",
+        choiceId: null,
+      })),
+    };
+  }
+
+  let lateCode: ResponseCode | null = null;
+  if (
+    !isSample &&
+    sectionDeadlineAt &&
+    receivedAt.getTime() > sectionDeadlineAt.getTime() + SUBMISSION_GRACE_MS
+  ) {
+    lateCode = "post_deadline";
+  } else if (!isSample && elapsedMs > trialTimeLimitMs + SUBMISSION_GRACE_MS) {
+    lateCode = "timed_out";
+  }
+
+  const decisions: SpeedTrialClassification["decisions"] = authoredIds.map(
+    (decisionId) => {
+      if (lateCode) {
+        return { decisionId, code: lateCode, choiceId: null };
+      }
+      const submitted = byId.get(decisionId);
+      if (!submitted) {
+        return {
+          decisionId,
+          code: isSample ? "omitted" : "not_reached",
+          choiceId: null,
+        };
+      }
+      if (
+        submitted.choiceId !== null &&
+        !allowedChoiceIds.includes(submitted.choiceId)
+      ) {
+        return { decisionId, code: "invalid", choiceId: null };
+      }
+      return {
+        decisionId,
+        code: submitted.choiceId === null ? "omitted" : "answered",
+        choiceId: submitted.choiceId,
+      };
+    },
+  );
+
+  const trialCode = lateCode
+    ? lateCode
+    : decisions.some((row) => row.code === "answered")
+      ? "answered"
+      : decisions.some((row) => row.code === "invalid")
+        ? "invalid"
+        : "omitted";
+
+  return { trialCode, responseTimeMs: elapsedMs, decisions };
 }
 
 /**

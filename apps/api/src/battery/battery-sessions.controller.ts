@@ -76,6 +76,7 @@ export class BatterySessionsController {
     body: {
       itemInstanceId?: string;
       choiceId?: string | null;
+      decisions?: unknown;
       clientShownAt?: string;
       clientFirstInteractionAt?: string;
       clientAnsweredAt?: string;
@@ -87,6 +88,7 @@ export class BatterySessionsController {
         typeof body.choiceId === "string" && body.choiceId.length > 0
           ? body.choiceId
           : null,
+      decisions: body.decisions,
       clientShownAt: optionalDate(body.clientShownAt),
       clientFirstInteractionAt: optionalDate(body.clientFirstInteractionAt),
       clientAnsweredAt: optionalDate(body.clientAnsweredAt),

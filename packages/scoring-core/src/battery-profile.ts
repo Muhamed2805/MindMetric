@@ -2,8 +2,10 @@ import {
   BATTERY_PROFILE_MODEL,
   type BatteryDomain,
   type QualityObservation,
+  SPEED_CORRECTED_MODEL,
 } from "@mindmetric/shared";
 import type { AccuracyPowerScore } from "./accuracy-power";
+import type { SpeedCorrectedScore, SpeedTrialRecord } from "./speed-corrected";
 
 /**
  * S0: raw domain totals only. Standardization and the composite have no
@@ -96,6 +98,50 @@ export function scoreBatteryProfile(input: {
 }
 
 /** Stable serialization so the same answers always pin the same snapshot. */
+export function toSpeedSectionReport(
+  section: {
+    domain: BatteryDomain;
+    position: number;
+    status: "submitted" | "expired";
+    normEligible: boolean;
+    observations: QualityObservation[];
+  },
+  score: SpeedCorrectedScore,
+  authoredDecisionCount: number,
+): BatterySectionReport {
+  return {
+    domain: section.domain,
+    position: section.position,
+    scoringModel: score.model,
+    status: section.status,
+    normEligible: section.normEligible,
+    raw: score.trials.reduce((sum, trial) => sum + trial.displayRaw, 0),
+    max: authoredDecisionCount,
+    attempted: score.trials.reduce((sum, trial) => sum + trial.attempted, 0),
+    accuracyOnAttempted: null,
+    omitted: score.trials.reduce((sum, trial) => sum + trial.omitted, 0),
+    timedOut: score.trials.reduce((sum, trial) => sum + trial.timedOut, 0),
+    notReached: score.trials.reduce((sum, trial) => sum + trial.notReached, 0),
+    observations: section.observations,
+  };
+}
+
+export function speedSectionInputCanon(records: SpeedTrialRecord[]) {
+  const trials = [...records]
+    .map((record) => [
+      record.itemRevisionId,
+      ...record.decisions.map((row) => [
+        row.decisionId,
+        row.code,
+        row.choiceId ?? "",
+      ]),
+    ])
+    .sort((left, right) =>
+      String(left[0] ?? "").localeCompare(String(right[0] ?? "")),
+    );
+  return JSON.stringify({ model: SPEED_CORRECTED_MODEL, trials });
+}
+
 export function powerSectionInputCanon(records: PowerDigestRecord[]) {
   const items = [...records]
     .map((record) => [

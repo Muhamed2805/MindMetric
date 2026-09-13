@@ -15,13 +15,8 @@
         "domain": "gs",
         "scoringModel": "speed-corrected-v1",
         "trialTimeLimitMs": 90000,
-        "sampleItemRevisionIds": [
-          "gs-s-001-r1"
-        ],
-        "itemRevisionIds": [
-          "gs-t-001-r1",
-          "gs-t-002-r1"
-        ]
+        "sampleItemRevisionIds": ["gs-s-001-r1"],
+        "itemRevisionIds": ["gs-t-001-r1", "gs-t-002-r1"]
       }
     }
   ]

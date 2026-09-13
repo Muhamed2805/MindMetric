@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Cognitive battery",
 };
 
-const BATTERY_SLUG = "core-cognitive";
+const BATTERY_SLUGS = ["core-cognitive", "gs-same-different-pilot"] as const;
 
 function viewportNote(section: BatteryOverview["sections"][number]) {
   const parts: string[] = [];
@@ -26,34 +26,21 @@ function viewportNote(section: BatteryOverview["sections"][number]) {
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
-export default async function BatteryPage() {
-  let overview: BatteryOverview;
-  try {
-    overview = await apiGet<BatteryOverview>(
-      `/battery/catalog/${BATTERY_SLUG}`,
-    );
-  } catch (cause) {
-    return (
-      <ErrorState
-        title="The battery is unavailable"
-        description={
-          cause instanceof Error ? cause.message : "Please try again later."
-        }
-      />
-    );
-  }
-
+function BatteryCard({ overview }: { overview: BatteryOverview }) {
   const totalItems = overview.sections.reduce(
     (sum, section) => sum + section.scoredItemCount,
     0,
   );
+  const unit = overview.sections.every((section) => section.domain === "gs")
+    ? "scored trials"
+    : "scored items";
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-serif text-4xl font-medium tracking-tight">
+        <h2 className="font-serif text-3xl font-medium tracking-tight">
           {overview.title}
-        </h1>
+        </h2>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
           {overview.description}
         </p>
@@ -66,7 +53,7 @@ export default async function BatteryPage() {
             sections
           </span>
           <span className="text-muted">
-            <span className="text-ink">{totalItems}</span> scored items
+            <span className="text-ink">{totalItems}</span> {unit}
           </span>
           <span className="text-muted">
             <span className="text-ink">{minutesFromMs(overview.timedMs)}</span>{" "}
@@ -84,7 +71,8 @@ export default async function BatteryPage() {
               >
                 <span className="text-ink">{domainLabel(section.domain)}</span>
                 <span className="text-muted">
-                  {section.scoredItemCount} items ·{" "}
+                  {section.scoredItemCount}{" "}
+                  {section.domain === "gs" ? "trials" : "items"} ·{" "}
                   {minutesFromMs(section.sectionTimeLimitMs)}
                   {note ? ` · ${note}` : ""}
                 </span>
@@ -95,9 +83,9 @@ export default async function BatteryPage() {
       </div>
 
       <div className="mm-panel flex flex-col gap-3 p-5 text-sm leading-6 text-muted">
-        <h2 className="font-serif text-xl text-ink">
+        <h3 className="font-serif text-xl text-ink">
           What you will and will not get
-        </h2>
+        </h3>
         <p>
           This battery has no reference sample yet, so it reports how you did on
           each section and nothing more. There is no IQ score, no percentile and
@@ -119,6 +107,42 @@ export default async function BatteryPage() {
       </div>
 
       <StartBatteryButton slug={overview.slug} />
+    </div>
+  );
+}
+
+export default async function BatteryPage() {
+  const overviews = (
+    await Promise.all(
+      BATTERY_SLUGS.map((slug) =>
+        apiGet<BatteryOverview>(`/battery/catalog/${slug}`).catch(() => null),
+      ),
+    )
+  ).filter((entry): entry is BatteryOverview => entry !== null);
+
+  if (overviews.length === 0) {
+    return (
+      <ErrorState
+        title="The battery is unavailable"
+        description="Please try again later."
+      />
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-12">
+      <div>
+        <h1 className="font-serif text-4xl font-medium tracking-tight">
+          Cognitive batteries
+        </h1>
+        <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
+          Raw domain totals only. The core battery is still Gf; processing speed
+          is a separate practice form until it is pinned into the composition.
+        </p>
+      </div>
+      {overviews.map((overview) => (
+        <BatteryCard key={overview.slug} overview={overview} />
+      ))}
     </div>
   );
 }
