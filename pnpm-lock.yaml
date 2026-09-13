@@ -144,11 +144,30 @@ importers:
         specifier: 3.2.4
         version: 3.2.4(@types/node@22.18.6)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(tsx@4.23.13)
 
+  packages/catalog:
+    dependencies:
+      '@mindmetric/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      '@types/node':
+        specifier: 22.18.6
+        version: 22.18.6
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/node@22.18.6)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(tsx@4.23.13)
+
   packages/db:
     dependencies:
       '@electric-sql/pglite':
         specifier: 0.5.8
         version: 0.5.8
+      '@mindmetric/catalog':
+        specifier: workspace:*
+        version: link:../catalog
       '@mindmetric/shared':
         specifier: workspace:*
         version: link:../shared

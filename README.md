@@ -30,7 +30,7 @@ corepack pnpm dev
 - API readiness: http://localhost:3001/health/ready
 - Current user: http://localhost:3000/api/v1/me
 
-`db:migrate` seeds two Likert scales: Work attention and Workplace emotional awareness.
+`db:migrate` seeds published instruments from `packages/catalog/instruments`. Edit a published version by adding a new `version` object; migrate will refuse to overwrite existing published JSON.
 
 PGlite (`pglite:` URLs) is an emergency fallback only. Next and Nest cannot share one PGlite file.
 

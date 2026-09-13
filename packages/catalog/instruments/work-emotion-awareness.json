@@ -1,0 +1,149 @@
+{
+  "id": "inst_work_emotion",
+  "slug": "work-emotion-awareness",
+  "title": "Workplace emotional awareness",
+  "description": "A short Likert scale about noticing your own feelings and others' at work.",
+  "kind": "likert-v1",
+  "versions": [
+    {
+      "id": "ver_work_emotion_1",
+      "version": 1,
+      "status": "published",
+      "definition": {
+        "engine": "likert-v1",
+        "items": [
+          {
+            "id": "we-1",
+            "type": "likert",
+            "prompt": "I can name what I am feeling while I am still at work.",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "we-2",
+            "type": "likert",
+            "prompt": "I notice a colleague's mood only after I have already reacted.",
+            "reverse": true,
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "we-3",
+            "type": "likert",
+            "prompt": "When a meeting gets tense, I can still tell what I need.",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "we-4",
+            "type": "likert",
+            "prompt": "I push uncomfortable feelings aside until the workday is over.",
+            "reverse": true,
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "we-5",
+            "type": "likert",
+            "prompt": "I can tell a colleague is frustrated even when they stay polite.",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "we-6",
+            "type": "likert",
+            "prompt": "After a hard conversation, I know whether I am calm enough to continue.",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          }
+        ],
+        "scoring": {
+          "model": "ctt-v1",
+          "bands": [
+            {
+              "upTo": 14,
+              "id": "lower",
+              "label": "Lower reported emotional awareness at work"
+            },
+            {
+              "upTo": 22,
+              "id": "typical",
+              "label": "Typical reported emotional awareness at work"
+            },
+            {
+              "upTo": 30,
+              "id": "higher",
+              "label": "Higher reported emotional awareness at work"
+            }
+          ],
+          "norms": {
+            "kind": "development",
+            "points": [
+              { "score": 6, "percentile": 1 },
+              { "score": 10, "percentile": 8 },
+              { "score": 14, "percentile": 22 },
+              { "score": 18, "percentile": 48 },
+              { "score": 22, "percentile": 72 },
+              { "score": 26, "percentile": 90 },
+              { "score": 30, "percentile": 99 }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

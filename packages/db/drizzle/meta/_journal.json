@@ -36,6 +36,13 @@
       "when": 1789225200000,
       "tag": "0004_assessment_user_fk",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1789230000000,
+      "tag": "0005_instrument_version_unique",
+      "breakpoints": true
     }
   ]
 }

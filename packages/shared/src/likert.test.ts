@@ -38,6 +38,28 @@ describe("isLikertDefinition", () => {
     );
   });
 
+  it("rejects duplicate item ids", () => {
+    expect(
+      isLikertDefinition({
+        engine: LIKERT_ENGINE,
+        items: [
+          {
+            id: "q1",
+            type: "likert",
+            prompt: "One",
+            scale,
+          },
+          {
+            id: "q1",
+            type: "likert",
+            prompt: "Two",
+            scale,
+          },
+        ],
+      }),
+    ).toBe(false);
+  });
+
   it("accepts monotonic CTT scoring metadata", () => {
     expect(
       isLikertDefinition({

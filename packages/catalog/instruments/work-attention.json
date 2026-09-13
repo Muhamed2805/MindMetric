@@ -1,0 +1,149 @@
+{
+  "id": "inst_work_attention",
+  "slug": "work-attention",
+  "title": "Work attention",
+  "description": "A short Likert scale about staying with work despite interruptions.",
+  "kind": "likert-v1",
+  "versions": [
+    {
+      "id": "ver_work_attention_1",
+      "version": 1,
+      "status": "published",
+      "definition": {
+        "engine": "likert-v1",
+        "items": [
+          {
+            "id": "wa-1",
+            "type": "likert",
+            "prompt": "I stay with a task until the important parts are finished.",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "wa-2",
+            "type": "likert",
+            "prompt": "Nearby conversations pull my attention away from work.",
+            "reverse": true,
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "wa-3",
+            "type": "likert",
+            "prompt": "I notice when my focus has drifted and bring it back.",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "wa-4",
+            "type": "likert",
+            "prompt": "I start new tasks before the current one is in a stable place.",
+            "reverse": true,
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "wa-5",
+            "type": "likert",
+            "prompt": "I can work for a stretch without checking unrelated messages.",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          },
+          {
+            "id": "wa-6",
+            "type": "likert",
+            "prompt": "After an interruption, I return to the same point in the work.",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                { "value": 1, "label": "Strongly disagree" },
+                { "value": 2, "label": "Disagree" },
+                { "value": 3, "label": "Neither agree nor disagree" },
+                { "value": 4, "label": "Agree" },
+                { "value": 5, "label": "Strongly agree" }
+              ]
+            }
+          }
+        ],
+        "scoring": {
+          "model": "ctt-v1",
+          "bands": [
+            {
+              "upTo": 14,
+              "id": "lower",
+              "label": "Lower reported work attention"
+            },
+            {
+              "upTo": 22,
+              "id": "typical",
+              "label": "Typical reported work attention"
+            },
+            {
+              "upTo": 30,
+              "id": "higher",
+              "label": "Higher reported work attention"
+            }
+          ],
+          "norms": {
+            "kind": "development",
+            "points": [
+              { "score": 6, "percentile": 1 },
+              { "score": 10, "percentile": 8 },
+              { "score": 14, "percentile": 22 },
+              { "score": 18, "percentile": 48 },
+              { "score": 22, "percentile": 72 },
+              { "score": 26, "percentile": 90 },
+              { "score": 30, "percentile": 99 }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

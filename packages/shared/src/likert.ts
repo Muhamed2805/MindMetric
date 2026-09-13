@@ -61,6 +61,15 @@ export function isLikertDefinition(value: unknown): value is LikertDefinition {
   if (!value.items.every(isLikertItem)) {
     return false;
   }
+  const itemIds = value.items.map((item) => {
+    if (!isRecord(item) || typeof item.id !== "string") {
+      return "";
+    }
+    return item.id;
+  });
+  if (new Set(itemIds).size !== itemIds.length) {
+    return false;
+  }
   if (value.scoring === undefined) {
     return true;
   }

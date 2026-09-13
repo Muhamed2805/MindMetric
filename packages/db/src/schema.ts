@@ -73,17 +73,26 @@ export const instrument = pgTable("instrument", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
 });
 
-export const instrumentVersion = pgTable("instrument_version", {
-  id: text("id").primaryKey(),
-  instrumentId: text("instrument_id")
-    .notNull()
-    .references(() => instrument.id, { onDelete: "cascade" }),
-  version: integer("version").notNull(),
-  status: text("status").notNull(),
-  definition: jsonb("definition").notNull(),
-  publishedAt: timestamp("published_at", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
-});
+export const instrumentVersion = pgTable(
+  "instrument_version",
+  {
+    id: text("id").primaryKey(),
+    instrumentId: text("instrument_id")
+      .notNull()
+      .references(() => instrument.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    status: text("status").notNull(),
+    definition: jsonb("definition").notNull(),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    unique("instrument_version_instrument_id_version_unique").on(
+      table.instrumentId,
+      table.version,
+    ),
+  ],
+);
 
 export const assessment = pgTable("assessment", {
   id: text("id").primaryKey(),

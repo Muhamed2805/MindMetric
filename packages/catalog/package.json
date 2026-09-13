@@ -1,5 +1,5 @@
 {
-  "name": "@mindmetric/db",
+  "name": "@mindmetric/catalog",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -16,21 +16,13 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "generate": "drizzle-kit generate",
-    "migrate": "tsx src/migrate.ts"
+    "test": "vitest run"
   },
   "dependencies": {
-    "@electric-sql/pglite": "0.5.8",
-    "@mindmetric/catalog": "workspace:*",
-    "@mindmetric/shared": "workspace:*",
-    "drizzle-orm": "0.45.2",
-    "postgres": "3.4.9"
+    "@mindmetric/shared": "workspace:*"
   },
   "devDependencies": {
-    "drizzle-kit": "0.31.10",
     "@types/node": "22.18.6",
-    "tsx": "4.20.5",
     "typescript": "5.9.2",
     "vitest": "3.2.4"
   }
