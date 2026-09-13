@@ -8,6 +8,31 @@ export function engineLabel(kind: string) {
   return kind;
 }
 
+const DOMAIN_LABELS: Record<string, string> = {
+  gf: "Fluid reasoning",
+  gs: "Processing speed",
+  rq: "Numerical reasoning",
+  gv: "Spatial reasoning",
+  gwm: "Working memory",
+};
+
+export function domainLabel(domain: string) {
+  return DOMAIN_LABELS[domain] ?? domain;
+}
+
+/** Countdown face, so a section clock reads the way a clock reads. */
+export function clockLabel(remainingMs: number) {
+  const total = Math.max(0, Math.ceil(remainingMs / 1000));
+  const minutes = Math.floor(total / 60);
+  const seconds = total % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+export function minutesFromMs(ms: number) {
+  const minutes = Math.max(1, Math.round(ms / 60_000));
+  return minutes === 1 ? "1 minute" : `${minutes} minutes`;
+}
+
 export function minutesLabel(itemCount: number) {
   if (itemCount <= 0) {
     return null;

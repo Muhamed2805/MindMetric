@@ -100,14 +100,14 @@ export default async function WorkspaceHomePage() {
                     Not scored yet
                   </p>
                   <p className="mt-2 text-sm text-accent-fg/80">
-                    Take a cognitive assessment to fill this card. It is not an
-                    IQ until we ship a normed battery.
+                    The cognitive battery reports section performance only. It
+                    is not an IQ until a reference sample exists.
                   </p>
                   <Button
                     asChild
                     className="mt-4 bg-accent-fg text-accent hover:bg-accent-fg/90"
                   >
-                    <Link href="/tests">Open assessments</Link>
+                    <Link href="/battery">Open the battery</Link>
                   </Button>
                 </>
               )}

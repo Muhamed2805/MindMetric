@@ -362,6 +362,28 @@ describe("battery session start", () => {
     ]);
     expect(state.sections.every((row) => row.status === "pending")).toBe(true);
     expect(state.current).toBeNull();
+    expect(state.serverTime).toBeInstanceOf(Date);
+    // Planned counts come from the form, not from item rows that do not
+    // exist until the section starts.
+    expect(state.sections[0]).toMatchObject({
+      scoredItemCount: GF_SCORED.length,
+      sampleItemCount: GF_SAMPLES.length,
+      sectionTimeLimitMs: SECTION_LIMIT_MS,
+    });
+    expect(state.sections[1]).toMatchObject({
+      scoredItemCount: GV_SCORED.length,
+      sampleItemCount: 0,
+    });
+  });
+
+  it("returns the session when asked for an item and no section is running", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId);
+    const next = await service.serveNextItem(userId, state.id);
+
+    expect(next.id).toBe(state.id);
+    expect(next.current).toBeNull();
+    expect(next.status).toBe("in_progress");
   });
 
   it("administers a draft composition as practice only", async () => {
@@ -402,6 +424,47 @@ describe("battery session start", () => {
     const state = await startSession(userId);
 
     await expect(service.getForUser(other, state.id)).rejects.toThrow(
+      /not found/i,
+    );
+  });
+});
+
+describe("battery overview", () => {
+  it("describes the clock and device demands before anyone starts", async () => {
+    const overview = await service.getOverview("live-battery");
+
+    expect(overview.title).toBe("Live battery");
+    expect(overview.practiceOnly).toBe(false);
+    expect(overview.rulesProvisional).toBe(true);
+    expect(overview.normReferenceDeviceClass).toBe("desktop");
+    // Timed total is the sum of the section clocks, not wall-clock duration:
+    // instructions and samples run untimed on top of it.
+    expect(overview.timedMs).toBe(SECTION_LIMIT_MS + 120_000);
+    expect(overview.sections).toHaveLength(2);
+    expect(overview.sections[0]).toMatchObject({
+      position: 1,
+      domain: "gf",
+      scoredItemCount: GF_SCORED.length,
+      sampleItemCount: GF_SAMPLES.length,
+      minViewport: null,
+    });
+    expect(overview.sections[1]?.minViewport).toEqual({
+      widthPx: 820,
+      heightPx: 640,
+    });
+    expect(overview.sections[1]?.normIneligibleDeviceClasses).toEqual([
+      "phone",
+      "unknown",
+    ]);
+  });
+
+  it("marks a draft composition as practice only", async () => {
+    const overview = await service.getOverview("draft-battery");
+    expect(overview.practiceOnly).toBe(true);
+  });
+
+  it("reports an unknown battery rather than inventing one", async () => {
+    await expect(service.getOverview("no-such-battery")).rejects.toThrow(
       /not found/i,
     );
   });
@@ -509,6 +572,10 @@ describe("norm eligibility", () => {
       viewportWidth: 390,
       viewportHeight: 700,
     });
+    // Judged at session start so the intro can warn before anyone begins.
+    expect(state.sections[1]?.normEligible).toBe(false);
+    expect(state.sections[0]?.normEligible).toBe(true);
+
     await finishSection(userId, state.id, 1);
     const started = await service.startSection(userId, state.id, 2);
     const gv = started.sections[1];

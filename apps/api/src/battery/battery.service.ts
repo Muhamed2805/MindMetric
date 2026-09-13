@@ -129,6 +129,14 @@ export class BatteryService {
 
     const now = new Date();
     const sessionId = randomUUID();
+    const viewportWidth = optionalDimension(input.viewportWidth);
+    const viewportHeight = optionalDimension(input.viewportHeight);
+    const covariates = {
+      isPracticeMode: target.practiceOnly,
+      deviceClass: input.deviceClass,
+      viewportWidth,
+      viewportHeight,
+    };
 
     await this.db.insert(batterySession).values({
       id: sessionId,
@@ -141,18 +149,23 @@ export class BatteryService {
       ageYears: null,
       deviceClass: input.deviceClass,
       inputMode: input.inputMode,
-      viewportWidth: optionalDimension(input.viewportWidth),
-      viewportHeight: optionalDimension(input.viewportHeight),
+      viewportWidth,
+      viewportHeight,
       locale: input.locale,
       itemLanguage: ITEM_LANGUAGE,
       startedAt: now,
       completedAt: null,
     });
 
-    // Every section is laid out up front so order is fixed by the composition
-    // and forward-only navigation is a matter of position, not bookkeeping.
-    await this.db.insert(sectionInstance).values(
-      target.definition.sections.map((section) => ({
+    // Eligibility is judged now, from the snapshotted device, so the intro
+    // can say whether a section will count before anyone starts it.
+    const laidOut = [];
+    for (const section of target.definition.sections) {
+      const eligibility = await this.resolveEligibility(
+        section.domain as BatteryDomain,
+        covariates,
+      );
+      laidOut.push({
         id: randomUUID(),
         sessionId,
         formVersionId: section.formVersionId,
@@ -162,12 +175,13 @@ export class BatteryService {
         startedAt: null,
         deadlineAt: null,
         submittedAt: null,
-        deviceNormEligible: true,
-        ruleVersionId: null,
-        eligibilityObservations: null,
+        deviceNormEligible: eligibility.normEligible,
+        ruleVersionId: eligibility.ruleVersionId,
+        eligibilityObservations: eligibility.observations,
         createdAt: now,
-      })),
-    );
+      });
+    }
+    await this.db.insert(sectionInstance).values(laidOut);
 
     return this.getForUser(userId, sessionId);
   }
@@ -176,6 +190,46 @@ export class BatteryService {
     await this.loadOwnedSession(userId, sessionId);
     await this.closeSectionsPastDeadline(sessionId);
     return this.readState(userId, sessionId);
+  }
+
+  /**
+   * What an examinee is told before starting: how long each section runs, what
+   * the device has to be, and whether this attempt can count at all.
+   */
+  async getOverview(slug: string) {
+    const target = await this.loadBatteryVersion(slug);
+    const rules = await this.loadPublishedRules();
+
+    const sections = [];
+    let timedMs = 0;
+    for (const section of target.definition.sections) {
+      const form = await this.loadFormDefinition(section.formVersionId);
+      const rule = rules.definition.domains[section.domain];
+      timedMs += form.sectionTimeLimitMs;
+      sections.push({
+        position: section.position,
+        domain: section.domain,
+        scoredItemCount: form.itemRevisionIds.length,
+        sampleItemCount: form.sampleItemRevisionIds.length,
+        sectionTimeLimitMs: form.sectionTimeLimitMs,
+        itemCeilingMs: form.itemCeilingMs,
+        minViewport: rule.minViewport,
+        normIneligibleDeviceClasses: rule.normIneligibleDeviceClasses,
+      });
+    }
+
+    return {
+      slug: target.battery.slug,
+      title: target.battery.title,
+      description: target.battery.description,
+      version: target.version.version,
+      practiceOnly: target.practiceOnly,
+      /** Time under a clock. Instructions and samples are untimed on top. */
+      timedMs,
+      normReferenceDeviceClass: rules.definition.normReferenceDeviceClass,
+      rulesProvisional: rules.definition.provisional,
+      sections,
+    };
   }
 
   async startSection(userId: string, sessionId: string, position: number) {
@@ -204,7 +258,12 @@ export class BatteryService {
 
     const eligibility = await this.resolveEligibility(
       next.domain as BatteryDomain,
-      session.session,
+      {
+        isPracticeMode: session.session.isPracticeMode,
+        deviceClass: session.session.deviceClass as DeviceClass,
+        viewportWidth: session.session.viewportWidth,
+        viewportHeight: session.session.viewportHeight,
+      },
     );
 
     await this.db
@@ -231,7 +290,9 @@ export class BatteryService {
 
     const section = await this.activeSection(sessionId);
     if (!section) {
-      throw new BadRequestException("No section is running.");
+      // Between sections, or already finished: the runner asks for the next
+      // item after every answer, including the last one of a section.
+      return this.readState(userId, sessionId);
     }
 
     const pending = await this.db
@@ -573,10 +634,7 @@ export class BatteryService {
     );
   }
 
-  private async resolveEligibility(
-    domain: BatteryDomain,
-    session: typeof batterySession.$inferSelect,
-  ) {
+  private async loadPublishedRules() {
     const rows = await this.db
       .select()
       .from(qualityRuleVersion)
@@ -593,18 +651,33 @@ export class BatteryService {
       );
     }
 
-    const definition = parseQualityRuleSetDefinition(row.definition, row.id);
+    return {
+      id: row.id,
+      definition: parseQualityRuleSetDefinition(row.definition, row.id),
+    };
+  }
+
+  private async resolveEligibility(
+    domain: BatteryDomain,
+    covariates: {
+      isPracticeMode: boolean;
+      deviceClass: DeviceClass;
+      viewportWidth: number | null;
+      viewportHeight: number | null;
+    },
+  ) {
+    const { id, definition } = await this.loadPublishedRules();
     const resolved = resolveSectionEligibility(definition, domain, {
-      deviceClass: session.deviceClass as DeviceClass,
-      viewportWidth: session.viewportWidth,
-      viewportHeight: session.viewportHeight,
+      deviceClass: covariates.deviceClass,
+      viewportWidth: covariates.viewportWidth,
+      viewportHeight: covariates.viewportHeight,
     });
 
     return {
-      ruleVersionId: row.id,
+      ruleVersionId: id,
       observations: resolved.observations,
       // Practice never feeds norms, whatever the device says.
-      normEligible: session.isPracticeMode ? false : resolved.normEligible,
+      normEligible: covariates.isPracticeMode ? false : resolved.normEligible,
     };
   }
 
@@ -705,6 +778,7 @@ export class BatteryService {
 
     const sectionStates = [];
     for (const section of sections) {
+      const form = await this.loadFormDefinition(section.formVersionId);
       const counts = await this.db
         .select({ role: itemInstance.role, status: itemInstance.status })
         .from(itemInstance)
@@ -719,7 +793,11 @@ export class BatteryService {
         ruleVersionId: section.ruleVersionId,
         observations: section.eligibilityObservations,
         deadlineAt: section.deadlineAt,
-        scoredItemCount: scored.length,
+        // Planned counts come from the form, because a pending section has
+        // no item rows yet and the intro still has to say how long it is.
+        scoredItemCount: form.itemRevisionIds.length,
+        sampleItemCount: form.sampleItemRevisionIds.length,
+        sectionTimeLimitMs: form.sectionTimeLimitMs,
         completedItemCount: scored.filter((row) => row.status !== "pending")
           .length,
       });
@@ -739,6 +817,9 @@ export class BatteryService {
       completedAt: session.completedAt,
       sections: sectionStates,
       current: await this.readCurrentItem(sessionId),
+      // Deadlines are absolute server times, so a client with a skewed clock
+      // needs this to render a countdown that matches the real one.
+      serverTime: new Date(),
     };
   }
 

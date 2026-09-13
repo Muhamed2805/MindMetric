@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { durationLabel, engineLabel, firstName, minutesLabel } from "./format";
+import {
+  clockLabel,
+  durationLabel,
+  engineLabel,
+  firstName,
+  minutesFromMs,
+  minutesLabel,
+} from "./format";
 
 describe("format helpers", () => {
   it("labels the Likert engine for people", () => {
@@ -15,5 +22,15 @@ describe("format helpers", () => {
 
   it("uses the first name for the greeting", () => {
     expect(firstName("Ada Lovelace")).toBe("Ada");
+  });
+
+  it("renders a section clock the way a clock reads", () => {
+    expect(clockLabel(125_000)).toBe("2:05");
+    expect(clockLabel(-1)).toBe("0:00");
+  });
+
+  it("rounds timed work to whole minutes", () => {
+    expect(minutesFromMs(30_000)).toBe("1 minute");
+    expect(minutesFromMs(300_000)).toBe("5 minutes");
   });
 });
