@@ -54,7 +54,10 @@ export default async function ResultsPage() {
               {completed.map((row) => (
                 <tr key={row.id} className="border-t border-line">
                   <th className="px-5 py-4 font-medium text-ink" scope="row">
-                    <Link href={`/results/${row.id}`} className="hover:text-accent">
+                    <Link
+                      href={`/results/${row.id}`}
+                      className="hover:text-accent"
+                    >
                       {row.title}
                     </Link>
                   </th>

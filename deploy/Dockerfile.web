@@ -1,4 +1,4 @@
-FROM node:22.18-bookworm-slim
+FROM node:22-bookworm-slim
 
 RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
 
@@ -12,10 +12,14 @@ RUN pnpm install --frozen-lockfile --filter @mindmetric/web...
 
 ARG API_ORIGIN=http://api:3001
 ARG WEB_ORIGIN=http://localhost:3000
+ARG BETTER_AUTH_URL=http://localhost:3000
+ARG BETTER_AUTH_SECRET=ci-image-build-secret-not-for-runtime
 ARG DATABASE_URL=postgres://mindmetric:mindmetric@postgres:5432/mindmetric
 
 ENV API_ORIGIN=$API_ORIGIN
 ENV WEB_ORIGIN=$WEB_ORIGIN
+ENV BETTER_AUTH_URL=$BETTER_AUTH_URL
+ENV BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
 ENV DATABASE_URL=$DATABASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0

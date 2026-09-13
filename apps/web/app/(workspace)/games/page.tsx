@@ -31,7 +31,9 @@ export default function GamesPage() {
           <p className="text-[11px] font-medium uppercase tracking-widest text-mark">
             Today&apos;s pick
           </p>
-          <p className="mt-1 font-serif text-2xl font-medium">Sequence Memory</p>
+          <p className="mt-1 font-serif text-2xl font-medium">
+            Sequence Memory
+          </p>
           <p className="mt-1 text-sm text-muted">
             A focused three-minute session — coming with the games engine.
           </p>

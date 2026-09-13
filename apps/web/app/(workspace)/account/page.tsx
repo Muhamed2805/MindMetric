@@ -53,7 +53,9 @@ export default async function AccountPage() {
         </p>
       </div>
       <div className="mm-panel px-6 py-5">
-        <h2 className="font-serif text-xl font-medium">Overall profile completion</h2>
+        <h2 className="font-serif text-xl font-medium">
+          Overall profile completion
+        </h2>
         <p className="mt-2 font-serif text-4xl font-medium">{completion}%</p>
         <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-line">
           <div
@@ -110,7 +112,9 @@ export default async function AccountPage() {
       ) : null}
       {unfinished.length > 0 ? (
         <div className="mm-panel px-6 py-5">
-          <h2 className="font-serif text-xl font-medium">Unfinished sections</h2>
+          <h2 className="font-serif text-xl font-medium">
+            Unfinished sections
+          </h2>
           <ul className="mt-3 flex flex-col gap-1 text-sm text-muted">
             {unfinished.map((row) => (
               <li key={row.id}>{row.label} · Not started</li>

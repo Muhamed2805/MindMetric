@@ -41,13 +41,13 @@ export default async function WorkspaceHomePage() {
     cognitiveSlugs.includes(row.slug),
   );
   const filledBuckets = profileBuckets.filter((bucket) =>
-    bucket.slugs.some((slug) =>
-      completed.some((row) => row.slug === slug),
-    ),
+    bucket.slugs.some((slug) => completed.some((row) => row.slug === slug)),
   ).length;
   const completion = Math.round((filledBuckets / profileBuckets.length) * 100);
   const doneSlugs = new Set(completed.map((row) => row.slug));
-  const recommended = instruments.filter((item) => !doneSlugs.has(item.slug)).slice(0, 2);
+  const recommended = instruments
+    .filter((item) => !doneSlugs.has(item.slug))
+    .slice(0, 2);
   const glance = profileBuckets.map((bucket) => {
     const match = completed.find((row) => bucket.slugs.includes(row.slug));
     const percent =
@@ -90,17 +90,23 @@ export default async function WorkspaceHomePage() {
                   <p className="mt-3 inline-flex rounded-full bg-accent-fg/15 px-3 py-1 text-sm">
                     {latestCognitive.score.percentile !== null
                       ? `${latestCognitive.score.percentile}th percentile`
-                      : latestCognitive.score.band?.label ?? latestCognitive.title}
+                      : (latestCognitive.score.band?.label ??
+                        latestCognitive.title)}
                   </p>
                 </>
               ) : (
                 <>
-                  <p className="mt-3 font-serif text-2xl font-medium">Not scored yet</p>
-                  <p className="mt-2 text-sm text-accent-fg/80">
-                    Take a cognitive assessment to fill this card. It is not an IQ
-                    until we ship a normed battery.
+                  <p className="mt-3 font-serif text-2xl font-medium">
+                    Not scored yet
                   </p>
-                  <Button asChild className="mt-4 bg-accent-fg text-accent hover:bg-accent-fg/90">
+                  <p className="mt-2 text-sm text-accent-fg/80">
+                    Take a cognitive assessment to fill this card. It is not an
+                    IQ until we ship a normed battery.
+                  </p>
+                  <Button
+                    asChild
+                    className="mt-4 bg-accent-fg text-accent hover:bg-accent-fg/90"
+                  >
                     <Link href="/tests">Open assessments</Link>
                   </Button>
                 </>
@@ -125,7 +131,9 @@ export default async function WorkspaceHomePage() {
           </div>
           <div className="mm-panel px-6 py-5">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="font-serif text-xl font-medium">Your profile at a glance</h2>
+              <h2 className="font-serif text-xl font-medium">
+                Your profile at a glance
+              </h2>
               <Link href="/account" className="text-sm text-accent">
                 View profile →
               </Link>
@@ -158,12 +166,16 @@ export default async function WorkspaceHomePage() {
                     {continueRow.title}
                   </h2>
                   <Button asChild className="mt-5">
-                    <Link href={`/run/${continueRow.id}`}>Continue assessment</Link>
+                    <Link href={`/run/${continueRow.id}`}>
+                      Continue assessment
+                    </Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <h2 className="mt-2 font-serif text-2xl font-medium">Nothing open</h2>
+                  <h2 className="mt-2 font-serif text-2xl font-medium">
+                    Nothing open
+                  </h2>
                   <p className="mt-2 text-sm text-muted">
                     Start a published scale when you have a quiet few minutes.
                   </p>
@@ -178,7 +190,9 @@ export default async function WorkspaceHomePage() {
                 Recommended next assessments
               </h2>
               {recommended.length === 0 ? (
-                <p className="mt-3 text-sm text-muted">You have a result on every live scale.</p>
+                <p className="mt-3 text-sm text-muted">
+                  You have a result on every live scale.
+                </p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2 text-sm text-muted">
                   {recommended.map((item) => (
@@ -203,9 +217,14 @@ export default async function WorkspaceHomePage() {
                 <ul className="mt-3 flex flex-col gap-2 text-sm">
                   {completed.slice(0, 3).map((row) => (
                     <li key={row.id}>
-                      <Link href={`/results/${row.id}`} className="text-ink hover:text-accent">
+                      <Link
+                        href={`/results/${row.id}`}
+                        className="text-ink hover:text-accent"
+                      >
                         {row.title}
-                        {row.score ? ` · ${row.score.raw} / ${row.score.max}` : ""}
+                        {row.score
+                          ? ` · ${row.score.raw} / ${row.score.max}`
+                          : ""}
                       </Link>
                     </li>
                   ))}
@@ -213,7 +232,9 @@ export default async function WorkspaceHomePage() {
               )}
             </div>
             <div className="mm-panel px-6 py-5">
-              <h2 className="font-serif text-xl font-medium">Quick access to Brain Games</h2>
+              <h2 className="font-serif text-xl font-medium">
+                Quick access to Brain Games
+              </h2>
               <p className="mt-2 text-sm text-muted">
                 Short drills are on the board. They are not in the engine yet.
               </p>
