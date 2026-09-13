@@ -1,9 +1,12 @@
 import { type ItemContent, loadBatteryCatalog } from "@mindmetric/catalog";
 import {
+  isSpanFormDefinition,
+  isSpanTrialContent,
   isSpeedFormDefinition,
   isSpeedTrialContent,
   type PowerMcqItemContent,
   type PowerStimulus,
+  type SpanTrialContent,
   type SpeedTrialContent,
   speedKey,
 } from "@mindmetric/shared";
@@ -154,6 +157,38 @@ function SpeedTrialCard({
   );
 }
 
+function SpanTrialCard({
+  entry,
+  position,
+  kind,
+  content,
+}: {
+  entry: ReviewItem;
+  position: number;
+  kind: "scored" | "sample";
+  content: SpanTrialContent;
+}) {
+  return (
+    <article className="mm-panel flex flex-col gap-4 p-5">
+      <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-muted">
+        <span className="font-serif text-base text-ink">
+          {kind === "sample" ? "Sample trial" : `Trial ${position}`}
+        </span>
+        <span>{entry.itemId}</span>
+        <span>rev {entry.revision}</span>
+        <span>{entry.status}</span>
+        <span>length {content.length}</span>
+        <span>{content.recall}</span>
+      </header>
+      <p className="text-sm leading-6 text-muted">
+        {content.procedure} on a {content.grid.rows}×{content.grid.cols} grid.
+        The sequence is generated per session, so there is no fixed key to
+        review here.
+      </p>
+    </article>
+  );
+}
+
 function ItemCard({
   entry,
   position,
@@ -166,6 +201,16 @@ function ItemCard({
   if (isSpeedTrialContent(entry.content)) {
     return (
       <SpeedTrialCard
+        entry={entry}
+        position={position}
+        kind={kind}
+        content={entry.content}
+      />
+    );
+  }
+  if (isSpanTrialContent(entry.content)) {
+    return (
+      <SpanTrialCard
         entry={entry}
         position={position}
         kind={kind}
@@ -227,7 +272,9 @@ export default function DevItemsPage() {
             .filter((entry): entry is ReviewItem => entry !== undefined);
           const timing = isSpeedFormDefinition(version.definition)
             ? `Trial limit ${Math.round(version.definition.trialTimeLimitMs / 1000)}s`
-            : `Section limit ${Math.round(version.definition.sectionTimeLimitMs / 1000)}s · item ceiling ${Math.round(version.definition.itemCeilingMs / 1000)}s`;
+            : isSpanFormDefinition(version.definition)
+              ? `Section limit ${Math.round(version.definition.sectionTimeLimitMs / 1000)}s · stimulus ${version.definition.stimulusMs}ms · recall ceiling ${Math.round(version.definition.recallCeilingMs / 1000)}s`
+              : `Section limit ${Math.round(version.definition.sectionTimeLimitMs / 1000)}s · item ceiling ${Math.round(version.definition.itemCeilingMs / 1000)}s`;
 
           return (
             <section key={version.id} className="flex flex-col gap-4">

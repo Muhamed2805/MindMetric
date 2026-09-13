@@ -2,9 +2,11 @@ import {
   BATTERY_PROFILE_MODEL,
   type BatteryDomain,
   type QualityObservation,
+  SPAN_PARTIAL_MODEL,
   SPEED_CORRECTED_MODEL,
 } from "@mindmetric/shared";
 import type { AccuracyPowerScore } from "./accuracy-power";
+import type { SpanPartialScore, SpanTrialRecord } from "./span-partial";
 import type { SpeedCorrectedScore, SpeedTrialRecord } from "./speed-corrected";
 
 /**
@@ -124,6 +126,58 @@ export function toSpeedSectionReport(
     notReached: score.trials.reduce((sum, trial) => sum + trial.notReached, 0),
     observations: section.observations,
   };
+}
+
+export function toSpanSectionReport(
+  section: {
+    domain: BatteryDomain;
+    position: number;
+    status: "submitted" | "expired";
+    normEligible: boolean;
+    observations: QualityObservation[];
+  },
+  score: SpanPartialScore,
+): BatterySectionReport {
+  const combined = score.procedures.length > 1;
+  return {
+    domain: section.domain,
+    position: section.position,
+    scoringModel: score.model,
+    status: section.status,
+    normEligible: section.normEligible,
+    raw: combined
+      ? Math.round(score.combinedProportion * 1000) / 10
+      : score.raw,
+    max: combined ? 100 : score.max,
+    attempted: score.attempted,
+    accuracyOnAttempted: null,
+    omitted: score.omitted,
+    timedOut: score.timedOut,
+    notReached: score.notReached,
+    observations: section.observations,
+  };
+}
+
+export function spanSectionInputCanon(
+  procedures: Array<{ id: string; trials: SpanTrialRecord[] }>,
+) {
+  const rows = [...procedures]
+    .map((procedure) => [
+      procedure.id,
+      ...[...procedure.trials]
+        .map((trial) => [
+          trial.itemRevisionId,
+          trial.code,
+          (trial.recalled ?? []).join(","),
+        ])
+        .sort((left, right) =>
+          String(left[0] ?? "").localeCompare(String(right[0] ?? "")),
+        ),
+    ])
+    .sort((left, right) =>
+      String(left[0] ?? "").localeCompare(String(right[0] ?? "")),
+    );
+  return JSON.stringify({ model: SPAN_PARTIAL_MODEL, procedures: rows });
 }
 
 export function speedSectionInputCanon(records: SpeedTrialRecord[]) {

@@ -4,13 +4,19 @@ import {
   type PowerDomain,
   type PowerMcqItemContent,
   parsePowerMcqItemContent,
+  parseSpanTrialContent,
   parseSpeedTrialContent,
+  SPAN_TRIAL_ENGINE,
   SPEED_TRIAL_ENGINE,
+  type SpanTrialContent,
   type SpeedTrialContent,
 } from "@mindmetric/shared";
 import { isCatalogSlug, type VersionStatus } from "./document";
 
-export type ItemContent = PowerMcqItemContent | SpeedTrialContent;
+export type ItemContent =
+  | PowerMcqItemContent
+  | SpeedTrialContent
+  | SpanTrialContent;
 
 export type ItemRevisionDocument = {
   id: string;
@@ -24,10 +30,11 @@ export type ItemDocument = {
   revisions: ItemRevisionDocument[];
 };
 
-export type ItemBankDomain = PowerDomain | "gs";
+export type ItemBankDomain = PowerDomain | "gs" | "gwm";
 export type ItemBankEngine =
   | typeof POWER_MCQ_ENGINE
-  | typeof SPEED_TRIAL_ENGINE;
+  | typeof SPEED_TRIAL_ENGINE
+  | typeof SPAN_TRIAL_ENGINE;
 
 /**
  * One bank file holds many items, each with its own revision history. Forms
@@ -57,6 +64,15 @@ function parseItemContent(
 ): ItemContent {
   if (engine === SPEED_TRIAL_ENGINE) {
     const content = parseSpeedTrialContent(value, source);
+    if (content.domain !== domain) {
+      throw new Error(
+        `${source} content domain does not match the bank domain.`,
+      );
+    }
+    return content;
+  }
+  if (engine === SPAN_TRIAL_ENGINE) {
+    const content = parseSpanTrialContent(value, source);
     if (content.domain !== domain) {
       throw new Error(
         `${source} content domain does not match the bank domain.`,
@@ -154,9 +170,11 @@ export function parseItemBankDocument(
   const bankEngine =
     engine === SPEED_TRIAL_ENGINE
       ? SPEED_TRIAL_ENGINE
-      : engine === POWER_MCQ_ENGINE
-        ? POWER_MCQ_ENGINE
-        : null;
+      : engine === SPAN_TRIAL_ENGINE
+        ? SPAN_TRIAL_ENGINE
+        : engine === POWER_MCQ_ENGINE
+          ? POWER_MCQ_ENGINE
+          : null;
   if (!bankEngine) {
     throw new Error(`${source} (${slug}) has an unknown engine.`);
   }
@@ -166,6 +184,11 @@ export function parseItemBankDocument(
       throw new Error(`${source} (${slug}) speed trials must measure gs.`);
     }
     bankDomain = "gs";
+  } else if (bankEngine === SPAN_TRIAL_ENGINE) {
+    if (domain !== "gwm") {
+      throw new Error(`${source} (${slug}) span trials must measure gwm.`);
+    }
+    bankDomain = "gwm";
   } else if (!isPowerDomain(domain)) {
     throw new Error(`${source} (${slug}) has an unknown domain.`);
   } else {

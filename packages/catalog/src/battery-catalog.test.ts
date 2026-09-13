@@ -237,7 +237,7 @@ describe("loadBatteryCatalog", () => {
     const form = loaded.forms.find((entry) => entry.slug === "gf-matrix-pilot");
     const scored = form?.versions[0]?.definition.itemRevisionIds ?? [];
 
-    expect(loaded.batteries).toHaveLength(4);
+    expect(loaded.batteries).toHaveLength(5);
     expect(scored.length).toBeGreaterThan(0);
     expect(loaded.forms.map((entry) => entry.slug)).toEqual(
       expect.arrayContaining([
@@ -245,6 +245,7 @@ describe("loadBatteryCatalog", () => {
         "gs-same-different-pilot",
         "rq-quant-pilot",
         "gv-rotation-pilot",
+        "wm-spatial-reverse-pilot",
       ]),
     );
   });
@@ -269,6 +270,7 @@ describe("loadBatteryCatalog", () => {
     expect(coreDomains).not.toContain("gs");
     expect(coreDomains).not.toContain("rq");
     expect(coreDomains).not.toContain("gv");
+    expect(coreDomains).not.toContain("gwm");
     expect(
       gsBattery?.versions[0]?.definition.sections.map(
         (section) => section.domain,
@@ -308,6 +310,34 @@ describe("loadBatteryCatalog", () => {
         (section) => section.domain,
       ),
     ).toEqual(["gv"]);
+  });
+
+  it("ships a draft WM reverse spatial-span form that is not on the core battery", () => {
+    const loaded = loadBatteryCatalog();
+    const form = loaded.forms.find(
+      (entry) => entry.slug === "wm-spatial-reverse-pilot",
+    );
+    const wmBattery = loaded.batteries.find(
+      (entry) => entry.slug === "wm-spatial-reverse-pilot",
+    );
+    const scored = form?.versions[0]?.definition.itemRevisionIds ?? [];
+    const lengths = loaded.banks
+      .flatMap((bank) => bank.items)
+      .filter((entry) => scored.includes(entry.revisions[0]?.id ?? ""))
+      .map((entry) =>
+        entry.revisions[0] && "length" in entry.revisions[0].content
+          ? entry.revisions[0].content.length
+          : 0,
+      );
+
+    expect(form?.engine).toBe("span-form-v1");
+    expect(scored).toHaveLength(12);
+    expect(lengths.reduce((sum, length) => sum + length, 0)).toBe(66);
+    expect(
+      wmBattery?.versions[0]?.definition.sections.map(
+        (section) => section.domain,
+      ),
+    ).toEqual(["gwm"]);
   });
 
   it("ships a published quality rule set flagged as provisional", () => {

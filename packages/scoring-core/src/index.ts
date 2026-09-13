@@ -13,8 +13,10 @@ export {
   type PowerDigestRecord,
   powerSectionInputCanon,
   scoreBatteryProfile,
+  spanSectionInputCanon,
   speedSectionInputCanon,
   toBatterySectionReport,
+  toSpanSectionReport,
   toSpeedSectionReport,
 } from "./battery-profile";
 export {
@@ -27,6 +29,13 @@ export {
   SCORING_MODEL,
   scoreLikertCtt,
 } from "./ctt";
+export {
+  type SpanPartialScore,
+  type SpanProcedureScore,
+  type SpanTrialRecord,
+  type SpanTrialScore,
+  scoreSpanPartial,
+} from "./span-partial";
 export {
   type SpeedCorrectedScore,
   type SpeedDecisionRecord,

@@ -1,0 +1,260 @@
+{
+  "id": "bank_wm_spatial_reverse",
+  "slug": "wm-spatial-reverse",
+  "domain": "gwm",
+  "engine": "span-trial-v1",
+  "items": [
+    {
+      "id": "wm-sr-s-001",
+      "revisions": [
+        {
+          "id": "wm-sr-s-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 2,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-s-002",
+      "revisions": [
+        {
+          "id": "wm-sr-s-002-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 3,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-003a",
+      "revisions": [
+        {
+          "id": "wm-sr-003a-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 3,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-003b",
+      "revisions": [
+        {
+          "id": "wm-sr-003b-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 3,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-004a",
+      "revisions": [
+        {
+          "id": "wm-sr-004a-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 4,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-004b",
+      "revisions": [
+        {
+          "id": "wm-sr-004b-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 4,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-005a",
+      "revisions": [
+        {
+          "id": "wm-sr-005a-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 5,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-005b",
+      "revisions": [
+        {
+          "id": "wm-sr-005b-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 5,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-006a",
+      "revisions": [
+        {
+          "id": "wm-sr-006a-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 6,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-006b",
+      "revisions": [
+        {
+          "id": "wm-sr-006b-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 6,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-007a",
+      "revisions": [
+        {
+          "id": "wm-sr-007a-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 7,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-007b",
+      "revisions": [
+        {
+          "id": "wm-sr-007b-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 7,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-008a",
+      "revisions": [
+        {
+          "id": "wm-sr-008a-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 8,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "wm-sr-008b",
+      "revisions": [
+        {
+          "id": "wm-sr-008b-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "span-trial-v1",
+            "domain": "gwm",
+            "procedure": "spatial-reverse-v1",
+            "length": 8,
+            "recall": "reverse",
+            "grid": { "rows": 3, "cols": 3 }
+          }
+        }
+      ]
+    }
+  ]
+}

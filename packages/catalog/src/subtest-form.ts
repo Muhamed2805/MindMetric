@@ -4,17 +4,24 @@ import {
   type PowerDomain,
   type PowerFormDefinition,
   parsePowerFormDefinition,
+  parseSpanFormDefinition,
   parseSpeedFormDefinition,
+  SPAN_FORM_ENGINE,
   SPEED_FORM_ENGINE,
+  type SpanFormDefinition,
   type SpeedFormDefinition,
 } from "@mindmetric/shared";
 import { isCatalogSlug, type VersionStatus } from "./document";
 
-export type SubtestFormDefinition = PowerFormDefinition | SpeedFormDefinition;
-export type SubtestFormDomain = PowerDomain | "gs";
+export type SubtestFormDefinition =
+  | PowerFormDefinition
+  | SpeedFormDefinition
+  | SpanFormDefinition;
+export type SubtestFormDomain = PowerDomain | "gs" | "gwm";
 export type SubtestFormEngine =
   | typeof POWER_FORM_ENGINE
-  | typeof SPEED_FORM_ENGINE;
+  | typeof SPEED_FORM_ENGINE
+  | typeof SPAN_FORM_ENGINE;
 
 export type SubtestFormVersionDocument = {
   id: string;
@@ -71,7 +78,9 @@ function parseFormVersion(
   const definition =
     engine === SPEED_FORM_ENGINE
       ? parseSpeedFormDefinition(value.definition, `${source} definition`)
-      : parsePowerFormDefinition(value.definition, `${source} definition`);
+      : engine === SPAN_FORM_ENGINE
+        ? parseSpanFormDefinition(value.definition, `${source} definition`)
+        : parsePowerFormDefinition(value.definition, `${source} definition`);
   if (definition.domain !== domain) {
     throw new Error(`${source} definition domain does not match the form.`);
   }
@@ -101,9 +110,11 @@ export function parseSubtestFormDocument(
   const formEngine =
     engine === SPEED_FORM_ENGINE
       ? SPEED_FORM_ENGINE
-      : engine === POWER_FORM_ENGINE
-        ? POWER_FORM_ENGINE
-        : null;
+      : engine === SPAN_FORM_ENGINE
+        ? SPAN_FORM_ENGINE
+        : engine === POWER_FORM_ENGINE
+          ? POWER_FORM_ENGINE
+          : null;
   if (!formEngine) {
     throw new Error(`${source} (${slug}) has an unknown engine.`);
   }
@@ -113,6 +124,11 @@ export function parseSubtestFormDocument(
       throw new Error(`${source} (${slug}) speed forms must measure gs.`);
     }
     formDomain = "gs";
+  } else if (formEngine === SPAN_FORM_ENGINE) {
+    if (domain !== "gwm") {
+      throw new Error(`${source} (${slug}) span forms must measure gwm.`);
+    }
+    formDomain = "gwm";
   } else if (!isPowerDomain(domain)) {
     throw new Error(`${source} (${slug}) has an unknown domain.`);
   } else {

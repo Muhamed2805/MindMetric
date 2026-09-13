@@ -2,8 +2,10 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  isSpanTrialContent,
   isSpeedFormDefinition,
   isSpeedTrialContent,
+  SPAN_MIN_SCORED_LENGTH,
   SPEED_MIN_DECISIONS,
   SPEED_MIN_SAMPLE_DECISIONS,
 } from "@mindmetric/shared";
@@ -87,7 +89,13 @@ function readDocuments<T>(
 export function assertBatteryCatalogReferences(catalog: BatteryCatalog) {
   const revisions = new Map<
     string,
-    { itemId: string; status: string; domain: string; decisions: number }
+    {
+      itemId: string;
+      status: string;
+      domain: string;
+      decisions: number;
+      length: number;
+    }
   >();
   for (const bank of catalog.banks) {
     for (const item of bank.items) {
@@ -98,6 +106,9 @@ export function assertBatteryCatalogReferences(catalog: BatteryCatalog) {
           domain: revision.content.domain,
           decisions: isSpeedTrialContent(revision.content)
             ? revision.content.decisions.length
+            : 0,
+          length: isSpanTrialContent(revision.content)
+            ? revision.content.length
             : 0,
         });
       }
@@ -163,6 +174,19 @@ export function assertBatteryCatalogReferences(catalog: BatteryCatalog) {
               `${label} scored trial ${revisionId} has too few decisions.`,
             );
           }
+        }
+      }
+
+      for (const revisionId of version.definition.itemRevisionIds) {
+        const revision = revisions.get(revisionId);
+        if (
+          revision &&
+          revision.length > 0 &&
+          revision.length < SPAN_MIN_SCORED_LENGTH
+        ) {
+          throw new Error(
+            `${label} scored trial ${revisionId} is shorter than the ladder.`,
+          );
         }
       }
     }

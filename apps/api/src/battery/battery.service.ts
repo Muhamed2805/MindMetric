@@ -48,6 +48,7 @@ import {
   type ItemRole,
   isClientQualityEventKind,
   isPowerDomain,
+  isSpanTrialContent,
   isSpeedFormDefinition,
   isSpeedTrialContent,
   POWER_MCQ_ENGINE,
@@ -693,6 +694,11 @@ export class BatteryService {
             `Item revision ${entry.revisionId} is missing.`,
           );
         }
+        if (isSpanTrialContent(content)) {
+          throw new BadRequestException(
+            "Working-memory span trials are defined but not administered yet.",
+          );
+        }
         return {
           id: randomUUID(),
           sectionInstanceId,
@@ -981,7 +987,11 @@ export class BatteryService {
 
     const records: PowerItemRecord[] = scored.map((row) => {
       const content = contents.get(row.itemRevisionId);
-      if (!content || isSpeedTrialContent(content)) {
+      if (
+        !content ||
+        isSpeedTrialContent(content) ||
+        isSpanTrialContent(content)
+      ) {
         throw new NotFoundException(
           `Item revision ${row.itemRevisionId} is missing.`,
         );
@@ -1161,6 +1171,11 @@ export class BatteryService {
     const content = contents.get(inFlight.itemRevisionId);
     if (!content) {
       throw new NotFoundException("Item content is missing.");
+    }
+    if (isSpanTrialContent(content)) {
+      throw new BadRequestException(
+        "Working-memory span trials are defined but not administered yet.",
+      );
     }
     const presentation = parseItemPresentation(
       inFlight.presentation,

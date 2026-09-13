@@ -1,0 +1,39 @@
+{
+  "id": "form_wm_spatial_reverse_pilot",
+  "slug": "wm-spatial-reverse-pilot",
+  "title": "Spatial span reverse (pilot form)",
+  "description": "Fixed reverse spatial-span ladder used to exercise WM. Sequences are generated per session. Not a normed subtest. The updating procedure is not in this form.",
+  "domain": "gwm",
+  "engine": "span-form-v1",
+  "versions": [
+    {
+      "id": "form_wm_spatial_reverse_pilot_v1",
+      "version": 1,
+      "status": "draft",
+      "definition": {
+        "engine": "span-form-v1",
+        "domain": "gwm",
+        "scoringModel": "span-partial-v1",
+        "sectionTimeLimitMs": 480000,
+        "stimulusMs": 1000,
+        "isiMs": 250,
+        "recallCeilingMs": 20000,
+        "sampleItemRevisionIds": ["wm-sr-s-001-r1", "wm-sr-s-002-r1"],
+        "itemRevisionIds": [
+          "wm-sr-003a-r1",
+          "wm-sr-003b-r1",
+          "wm-sr-004a-r1",
+          "wm-sr-004b-r1",
+          "wm-sr-005a-r1",
+          "wm-sr-005b-r1",
+          "wm-sr-006a-r1",
+          "wm-sr-006b-r1",
+          "wm-sr-007a-r1",
+          "wm-sr-007b-r1",
+          "wm-sr-008a-r1",
+          "wm-sr-008b-r1"
+        ]
+      }
+    }
+  ]
+}
