@@ -224,6 +224,39 @@ export const batteryVersion = pgTable(
   ],
 );
 
+// Validity thresholds are versioned data, never constants in scoring code, so a
+// result stays reproducible under the rules it was judged by (ADR 0017).
+export const qualityRuleSet = pgTable("quality_rule_set", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  engine: text("engine").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
+});
+
+export const qualityRuleVersion = pgTable(
+  "quality_rule_version",
+  {
+    id: text("id").primaryKey(),
+    ruleSetId: text("rule_set_id")
+      .notNull()
+      .references(() => qualityRuleSet.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    status: text("status").notNull(),
+    definition: jsonb("definition").notNull(),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    unique("quality_rule_version_rule_set_id_version_unique").on(
+      table.ruleSetId,
+      table.version,
+    ),
+  ],
+);
+
 // Covariates are snapshotted here because norms must never read the mutable
 // profile: age and device change, a scored session does not (ADR 0014).
 export const batterySession = pgTable("battery_session", {
@@ -266,7 +299,15 @@ export const sectionInstance = pgTable(
     // Absolute, so a refresh cannot buy extra time.
     deadlineAt: timestamp("deadline_at", { withTimezone: true }),
     submittedAt: timestamp("submitted_at", { withTimezone: true }),
+    // Device and viewport family only; session-level eligibility (attempt
+    // number, practice mode) is decided separately (ADR 0017).
     deviceNormEligible: boolean("device_norm_eligible").notNull().default(true),
+    // The rule version that decided it, with what was measured against which
+    // threshold, so the decision can be re-evaluated without guessing.
+    ruleVersionId: text("rule_version_id").references(
+      () => qualityRuleVersion.id,
+    ),
+    eligibilityObservations: jsonb("eligibility_observations"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
   },
   (table) => [

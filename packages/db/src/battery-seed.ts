@@ -1,6 +1,7 @@
 import type {
   BatteryDocument,
   ItemBankDocument,
+  QualityRuleSetDocument,
   SubtestFormDocument,
 } from "@mindmetric/catalog";
 import { loadBatteryCatalog, planVersionWrite } from "@mindmetric/catalog";
@@ -11,6 +12,8 @@ import {
   batteryVersion,
   item,
   itemRevision,
+  qualityRuleSet,
+  qualityRuleVersion,
   subtestForm,
   subtestFormVersion,
 } from "./schema";
@@ -241,6 +244,80 @@ async function seedBatteries(
   }
 }
 
+async function seedQualityRuleSets(
+  db: Database,
+  ruleSets: QualityRuleSetDocument[],
+  now: Date,
+) {
+  for (const document of ruleSets) {
+    const existing = await db
+      .select({ id: qualityRuleSet.id })
+      .from(qualityRuleSet)
+      .where(eq(qualityRuleSet.slug, document.slug))
+      .limit(1);
+
+    if (existing.length === 0) {
+      await db.insert(qualityRuleSet).values({
+        id: document.id,
+        slug: document.slug,
+        title: document.title,
+        description: document.description,
+        engine: document.engine,
+        createdAt: now,
+        updatedAt: now,
+      });
+    } else {
+      await db
+        .update(qualityRuleSet)
+        .set({
+          title: document.title,
+          description: document.description,
+          engine: document.engine,
+          updatedAt: now,
+        })
+        .where(eq(qualityRuleSet.id, document.id));
+    }
+
+    for (const version of document.versions) {
+      const rows = await db
+        .select({
+          id: qualityRuleVersion.id,
+          status: qualityRuleVersion.status,
+          definition: qualityRuleVersion.definition,
+        })
+        .from(qualityRuleVersion)
+        .where(eq(qualityRuleVersion.id, version.id))
+        .limit(1);
+
+      const action = planVersionWrite(rows[0], version, document.slug);
+
+      if (action === "insert") {
+        await db.insert(qualityRuleVersion).values({
+          id: version.id,
+          ruleSetId: document.id,
+          version: version.version,
+          status: version.status,
+          definition: version.definition,
+          publishedAt: version.status === "published" ? now : null,
+          createdAt: now,
+        });
+        continue;
+      }
+
+      if (action === "update-draft") {
+        await db
+          .update(qualityRuleVersion)
+          .set({
+            definition: version.definition,
+            status: version.status,
+            publishedAt: version.status === "published" ? now : null,
+          })
+          .where(eq(qualityRuleVersion.id, version.id));
+      }
+    }
+  }
+}
+
 /** Item revisions, then forms, then batteries: references must already exist. */
 export async function seedBatteryCatalog(db: Database) {
   const catalog = loadBatteryCatalog();
@@ -248,4 +325,5 @@ export async function seedBatteryCatalog(db: Database) {
   await seedItemBanks(db, catalog.banks, now);
   await seedSubtestForms(db, catalog.forms, now);
   await seedBatteries(db, catalog.batteries, now);
+  await seedQualityRuleSets(db, catalog.ruleSets, now);
 }

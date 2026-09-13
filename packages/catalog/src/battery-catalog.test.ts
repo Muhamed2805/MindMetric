@@ -107,6 +107,7 @@ function catalog(overrides: Partial<BatteryCatalog>): BatteryCatalog {
     banks: [bankWith("published")],
     forms: [formWith("published", ["x-1-r1"])],
     batteries: [batteryWith("published", "gf")],
+    ruleSets: [],
     ...overrides,
   };
 }
@@ -163,6 +164,15 @@ describe("loadBatteryCatalog", () => {
 
     expect(loaded.batteries).toHaveLength(1);
     expect(scored.length).toBeGreaterThan(0);
+  });
+
+  it("ships a published quality rule set flagged as provisional", () => {
+    const loaded = loadBatteryCatalog();
+    const version = loaded.ruleSets[0]?.versions[0];
+
+    expect(version?.status).toBe("published");
+    expect(version?.definition.provisional).toBe(true);
+    expect(version?.definition.domains.gv.minViewport).not.toBeNull();
   });
 
   it("ships every battery item as a reviewable draft", () => {

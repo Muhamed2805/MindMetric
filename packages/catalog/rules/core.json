@@ -1,0 +1,51 @@
+{
+  "id": "qrs_core",
+  "slug": "core-quality-rules",
+  "title": "Core battery quality rules",
+  "description": "Validity and norm-eligibility thresholds for the core cognitive battery. V1 values are provisional estimates derived from the rendered section layout, not from observed distributions; S2 replaces them by publishing a new version.",
+  "engine": "quality-rules-v1",
+  "versions": [
+    {
+      "id": "qrs_core_v1",
+      "version": 1,
+      "status": "published",
+      "definition": {
+        "engine": "quality-rules-v1",
+        "provisional": true,
+        "normReferenceDeviceClass": "desktop",
+        "domains": {
+          "gf": {
+            "minViewport": null,
+            "normIneligibleDeviceClasses": []
+          },
+          "gs": {
+            "minViewport": null,
+            "normIneligibleDeviceClasses": []
+          },
+          "rq": {
+            "minViewport": null,
+            "normIneligibleDeviceClasses": []
+          },
+          "gv": {
+            "minViewport": { "widthPx": 820, "heightPx": 640 },
+            "normIneligibleDeviceClasses": ["phone", "unknown"]
+          },
+          "gwm": {
+            "minViewport": null,
+            "normIneligibleDeviceClasses": []
+          }
+        },
+        "severity": {
+          "viewport_below_minimum": {
+            "default": "info",
+            "byDomain": { "gv": "invalidating" }
+          },
+          "device_class_not_normed": {
+            "default": "info",
+            "byDomain": { "gv": "invalidating" }
+          }
+        }
+      }
+    }
+  ]
+}

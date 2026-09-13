@@ -12,6 +12,11 @@ import {
   parseItemBankDocument,
 } from "./item-bank";
 import {
+  assertUniqueQualityRuleSets,
+  parseQualityRuleSetDocument,
+  type QualityRuleSetDocument,
+} from "./rule-set";
+import {
   assertUniqueSubtestForms,
   parseSubtestFormDocument,
   type SubtestFormDocument,
@@ -21,12 +26,14 @@ export type BatteryCatalog = {
   banks: ItemBankDocument[];
   forms: SubtestFormDocument[];
   batteries: BatteryDocument[];
+  ruleSets: QualityRuleSetDocument[];
 };
 
 export type BatteryCatalogDirs = {
   items?: string;
   forms?: string;
   batteries?: string;
+  rules?: string;
 };
 
 function packageDir() {
@@ -43,6 +50,10 @@ export function catalogFormsDir() {
 
 export function catalogBatteriesDir() {
   return join(packageDir(), "batteries");
+}
+
+export function catalogRulesDir() {
+  return join(packageDir(), "rules");
 }
 
 function readDocuments<T>(
@@ -173,7 +184,13 @@ export function loadBatteryCatalog(dirs: BatteryCatalogDirs = {}) {
   );
   assertUniqueBatteries(batteries);
 
-  const catalog: BatteryCatalog = { banks, forms, batteries };
+  const ruleSets = readDocuments(
+    dirs.rules ?? catalogRulesDir(),
+    parseQualityRuleSetDocument,
+  );
+  assertUniqueQualityRuleSets(ruleSets);
+
+  const catalog: BatteryCatalog = { banks, forms, batteries, ruleSets };
   assertBatteryCatalogReferences(catalog);
   return catalog;
 }

@@ -34,6 +34,16 @@ export {
   VERSION_PIN_NONE,
 } from "./battery";
 export {
+  buildItemPresentation,
+  classifyResponse,
+  type ItemPresentation,
+  parseItemPresentation,
+  type ResponseClassification,
+  type ResponseClassificationInput,
+  SUBMISSION_GRACE_MS,
+  shuffleForPresentation,
+} from "./battery-session";
+export {
   definitionEstimatedSeconds,
   definitionItemCount,
   type EngineDefinition,
@@ -107,3 +117,19 @@ export {
   parsePowerMcqItemContent,
   toClientPowerItem,
 } from "./power-mcq";
+export {
+  type DomainQualityRule,
+  parseQualityRuleSetDefinition,
+  QUALITY_FLAGS,
+  QUALITY_RULES_ENGINE,
+  QUALITY_SEVERITIES,
+  type QualityFlag,
+  type QualityObservation,
+  type QualityRuleSetDefinition,
+  type QualitySeverity,
+  resolveSectionEligibility,
+  type SectionCovariates,
+  type SectionEligibility,
+  type SeverityRule,
+  type ViewportMinimum,
+} from "./quality-rules";

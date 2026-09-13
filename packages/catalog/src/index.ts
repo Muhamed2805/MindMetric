@@ -5,6 +5,7 @@ export {
   catalogBatteriesDir,
   catalogFormsDir,
   catalogItemsDir,
+  catalogRulesDir,
   loadBatteryCatalog,
 } from "./battery-catalog";
 export {
@@ -30,6 +31,12 @@ export {
 } from "./item-bank";
 export { catalogInstrumentsDir, loadCatalogDocuments } from "./load";
 export { planVersionWrite, type StoredVersion } from "./publish";
+export {
+  assertUniqueQualityRuleSets,
+  parseQualityRuleSetDocument,
+  type QualityRuleSetDocument,
+  type QualityRuleVersionDocument,
+} from "./rule-set";
 export {
   assertUniqueSubtestForms,
   parseSubtestFormDocument,
