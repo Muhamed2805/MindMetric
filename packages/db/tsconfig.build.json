@@ -7,5 +7,5 @@
     "declaration": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/migrate.ts", "src/seed.ts"]
+  "exclude": ["src/migrate.ts", "src/seed.ts", "src/**/*.test.ts"]
 }

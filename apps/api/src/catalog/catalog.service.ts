@@ -5,7 +5,7 @@ import {
   toClientLikertItem,
 } from "@mindmetric/shared";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { DATABASE } from "../database/database.module";
 
 @Injectable()
@@ -25,7 +25,7 @@ export class CatalogService {
       .from(instrumentVersion)
       .innerJoin(instrument, eq(instrument.id, instrumentVersion.instrumentId))
       .where(eq(instrumentVersion.status, "published"))
-      .orderBy(desc(instrumentVersion.publishedAt));
+      .orderBy(asc(instrument.title), desc(instrumentVersion.publishedAt));
 
     const seen = new Set<string>();
     return versions.filter((row) => {
