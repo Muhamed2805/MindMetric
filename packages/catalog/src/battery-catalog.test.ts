@@ -238,6 +238,22 @@ describe("loadBatteryCatalog", () => {
     const scored = form?.versions[0]?.definition.itemRevisionIds ?? [];
 
     expect(loaded.batteries).toHaveLength(5);
+    const core = loaded.batteries.find(
+      (entry) => entry.slug === "core-cognitive",
+    );
+    const coreSections = core?.versions[0]?.definition.sections ?? [];
+    expect(coreSections.map((section) => section.domain)).toEqual([
+      "gf",
+      "gs",
+      "rq",
+      "gv",
+      "gwm",
+    ]);
+    expect(coreSections[3]).toMatchObject({
+      domain: "gv",
+      breakAfter: true,
+      breakMaxMs: 120_000,
+    });
     expect(scored.length).toBeGreaterThan(0);
     expect(loaded.forms.map((entry) => entry.slug)).toEqual(
       expect.arrayContaining([
@@ -250,7 +266,7 @@ describe("loadBatteryCatalog", () => {
     );
   });
 
-  it("ships a draft Gs same/different form that is not on the core battery", () => {
+  it("ships a draft Gs same/different form and pins it into the core battery", () => {
     const loaded = loadBatteryCatalog();
     const form = loaded.forms.find(
       (entry) => entry.slug === "gs-same-different-pilot",
@@ -267,10 +283,7 @@ describe("loadBatteryCatalog", () => {
 
     expect(form?.engine).toBe("speed-form-v1");
     expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(2);
-    expect(coreDomains).not.toContain("gs");
-    expect(coreDomains).not.toContain("rq");
-    expect(coreDomains).not.toContain("gv");
-    expect(coreDomains).not.toContain("gwm");
+    expect(coreDomains).toEqual(["gf", "gs", "rq", "gv", "gwm"]);
     expect(
       gsBattery?.versions[0]?.definition.sections.map(
         (section) => section.domain,
@@ -278,7 +291,7 @@ describe("loadBatteryCatalog", () => {
     ).toEqual(["gs"]);
   });
 
-  it("ships a draft RQ form that is not on the core battery", () => {
+  it("ships a draft RQ form as a standalone practice battery", () => {
     const loaded = loadBatteryCatalog();
     const form = loaded.forms.find((entry) => entry.slug === "rq-quant-pilot");
     const rqBattery = loaded.batteries.find(
@@ -294,7 +307,7 @@ describe("loadBatteryCatalog", () => {
     ).toEqual(["rq"]);
   });
 
-  it("ships a draft Gv rotation form that is not on the core battery", () => {
+  it("ships a draft Gv rotation form as a standalone practice battery", () => {
     const loaded = loadBatteryCatalog();
     const form = loaded.forms.find(
       (entry) => entry.slug === "gv-rotation-pilot",
@@ -312,7 +325,7 @@ describe("loadBatteryCatalog", () => {
     ).toEqual(["gv"]);
   });
 
-  it("ships a draft WM reverse spatial-span form that is not on the core battery", () => {
+  it("ships a draft WM reverse spatial-span form as a standalone practice battery", () => {
     const loaded = loadBatteryCatalog();
     const form = loaded.forms.find(
       (entry) => entry.slug === "wm-spatial-reverse-pilot",

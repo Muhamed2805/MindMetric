@@ -33,6 +33,7 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [breakDismissed, setBreakDismissed] = useState(false);
   const [now, setNow] = useState(() => Date.now());
 
   // Deadlines are absolute server times, so every comparison is made against
@@ -289,6 +290,36 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
   }
 
   const upcoming = nextSection(session);
+  const previous = upcoming
+    ? (session.sections.find(
+        (section) => section.position === upcoming.position - 1,
+      ) ?? null)
+    : null;
+  const breakRemainingMs =
+    previous?.breakAfter && previous.submittedAt && previous.breakMaxMs
+      ? new Date(previous.submittedAt).getTime() +
+        previous.breakMaxMs -
+        serverNow
+      : null;
+  if (
+    !current &&
+    upcoming &&
+    previous?.breakAfter &&
+    previous.submittedAt &&
+    !breakDismissed &&
+    breakRemainingMs !== null &&
+    breakRemainingMs > 0
+  ) {
+    return (
+      <BreakScreen
+        next={upcoming}
+        remainingMs={breakRemainingMs}
+        practice={session.isPracticeMode}
+        onContinue={() => setBreakDismissed(true)}
+      />
+    );
+  }
+
   if (!current && upcoming) {
     return (
       <SectionIntro
@@ -487,6 +518,50 @@ function Problem({ message }: { message: string }) {
     <p className="text-sm text-danger" role="alert">
       {message}
     </p>
+  );
+}
+
+function BreakScreen({
+  next,
+  remainingMs,
+  practice,
+  onContinue,
+}: {
+  next: BatterySection;
+  remainingMs: number | null;
+  practice: boolean;
+  onContinue: () => void;
+}) {
+  return (
+    <Shell>
+      <div className="flex flex-col gap-2">
+        <span className="text-[11px] font-medium uppercase tracking-widest text-mark">
+          Optional break
+          {practice ? " · practice" : ""}
+        </span>
+        <h1 className="font-serif text-4xl font-medium tracking-tight">
+          Rest before {domainLabel(next.domain).toLowerCase()}
+        </h1>
+      </div>
+
+      <div className="mm-panel flex flex-col gap-3 p-5 text-sm leading-6 text-muted">
+        <p>
+          The next section is {domainLabel(next.domain).toLowerCase()}. A short
+          rest is part of the battery so that section is not measured at the end
+          of fatigue. You can continue whenever you are ready.
+        </p>
+        {remainingMs !== null ? (
+          <p className="font-serif text-2xl tabular-nums text-ink">
+            <span className="sr-only">Time left in this break </span>
+            {clockLabel(remainingMs)}
+          </p>
+        ) : null}
+      </div>
+
+      <Button type="button" onClick={onContinue}>
+        Continue
+      </Button>
+    </Shell>
   );
 }
 

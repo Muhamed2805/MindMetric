@@ -81,6 +81,9 @@ function BatteryCard({ overview }: { overview: BatteryOverview }) {
                     ? "trials"
                     : "items"}{" "}
                   · {minutesFromMs(section.sectionTimeLimitMs)}
+                  {section.breakAfter && section.breakMaxMs
+                    ? ` · optional ${minutesFromMs(section.breakMaxMs)} break`
+                    : ""}
                   {note ? ` · ${note}` : ""}
                 </span>
               </div>
@@ -143,10 +146,9 @@ export default async function BatteryPage() {
           Cognitive batteries
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-          Raw domain totals only. The core battery is still Gf. Processing
-          speed, quantitative reasoning, spatial reasoning, and working memory
-          are separate practice forms until they are pinned into the
-          composition.
+          Raw domain totals only. The core battery now runs all five domains in
+          the locked order, still as practice. Separate single-domain forms
+          remain available if you want to take one section on its own.
         </p>
       </div>
       {overviews.map((overview) => (

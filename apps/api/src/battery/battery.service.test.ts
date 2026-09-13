@@ -413,6 +413,39 @@ async function seedWm(now: Date) {
   });
 }
 
+async function seedComposed(now: Date) {
+  await db.insert(battery).values({
+    id: "bat_composed",
+    slug: "composed-test-battery",
+    title: "Composed battery",
+    description: "Fixture",
+    createdAt: now,
+    updatedAt: now,
+  });
+  await db.insert(batteryVersion).values({
+    id: "bat_composed_v1",
+    batteryId: "bat_composed",
+    version: 1,
+    status: "published",
+    definition: {
+      engine: "battery-v1",
+      sections: [
+        {
+          position: 1,
+          domain: "gf",
+          formVersionId: "form_gf_test_v1",
+          breakAfter: true,
+          breakMaxMs: 15_000,
+        },
+        { position: 2, domain: "gs", formVersionId: "form_gs_test_v1" },
+        { position: 3, domain: "gwm", formVersionId: "form_wm_test_v1" },
+      ],
+    },
+    publishedAt: now,
+    createdAt: now,
+  });
+}
+
 async function seedRules(now: Date) {
   const open = { minViewport: null, normIneligibleDeviceClasses: [] };
   await db.insert(qualityRuleSet).values({
@@ -561,6 +594,7 @@ beforeAll(async () => {
   await seedBatteries(now);
   await seedGs(now);
   await seedWm(now);
+  await seedComposed(now);
   await seedRules(now);
   service = new BatteryService(db);
 }, 120_000);
@@ -1500,5 +1534,97 @@ describe("wm span trials", () => {
     expect(
       leftover.filter((row) => row.role === "scored").map((row) => row.status),
     ).toEqual(["omitted", "omitted", "not_reached"]);
+  });
+});
+
+describe("composed battery", () => {
+  function keyedDecisions(item: { decisions: Array<{ id: string }> }) {
+    return item.decisions.map((decision, index) => ({
+      decisionId: decision.id,
+      choiceId: index % 2 === 0 ? "same" : "different",
+    }));
+  }
+
+  it("runs Gf, Gs, and WM in order, with a break after Gf", async () => {
+    const userId = await freshUser();
+    const overview = await service.getOverview("composed-test-battery");
+    expect(overview.sections.map((row) => row.domain)).toEqual([
+      "gf",
+      "gs",
+      "gwm",
+    ]);
+    expect(overview.sections[0]).toMatchObject({
+      breakAfter: true,
+      breakMaxMs: 15_000,
+    });
+
+    const state = await startSession(userId, "composed-test-battery");
+    expect(state.sections.map((row) => row.domain)).toEqual([
+      "gf",
+      "gs",
+      "gwm",
+    ]);
+    expect(state.sections[0]?.breakAfter).toBe(true);
+
+    const afterGf = await finishSection(userId, state.id, 1);
+    expect(afterGf.sections[0]?.status).toBe("submitted");
+    expect(afterGf.sections[0]?.submittedAt).toBeTruthy();
+    expect(afterGf.sections[0]?.breakAfter).toBe(true);
+    expect(afterGf.current).toBeNull();
+    expect(afterGf.report).toBeNull();
+
+    await service.startSection(userId, state.id, 2);
+    const gsSample = await service.serveNextItem(userId, state.id);
+    const gsSampleItem = gsSample.current?.item;
+    if (!gsSampleItem || !("decisions" in gsSampleItem)) {
+      throw new Error("expected a Gs sample");
+    }
+    await service.submitResponse(userId, state.id, {
+      itemInstanceId: gsSampleItem.itemInstanceId,
+      choiceId: null,
+      decisions: keyedDecisions(gsSampleItem),
+      clientShownAt: null,
+      clientFirstInteractionAt: null,
+      clientAnsweredAt: null,
+    });
+    const gsTrial = await service.serveNextItem(userId, state.id);
+    const gsItem = gsTrial.current?.item;
+    if (!gsItem || !("decisions" in gsItem)) {
+      throw new Error("expected a Gs trial");
+    }
+    await service.submitResponse(userId, state.id, {
+      itemInstanceId: gsItem.itemInstanceId,
+      choiceId: null,
+      decisions: keyedDecisions(gsItem),
+      clientShownAt: null,
+      clientFirstInteractionAt: null,
+      clientAnsweredAt: null,
+    });
+
+    await service.startSection(userId, state.id, 3);
+    for (let index = 0; index < 3; index += 1) {
+      const served = await service.serveNextItem(userId, state.id);
+      const trial = served.current?.item;
+      if (!trial || !("sequence" in trial)) {
+        throw new Error("expected a span trial");
+      }
+      const done = await service.submitResponse(userId, state.id, {
+        itemInstanceId: trial.itemInstanceId,
+        choiceId: null,
+        recalled: [],
+        clientShownAt: null,
+        clientFirstInteractionAt: null,
+        clientAnsweredAt: null,
+      });
+      if (index === 2) {
+        expect(done.status).toBe("completed");
+        expect(done.report?.estimatedIq).toBeNull();
+        expect(done.report?.sections.map((row) => row.domain)).toEqual([
+          "gf",
+          "gs",
+          "gwm",
+        ]);
+      }
+    }
   });
 });

@@ -315,6 +315,8 @@ export class BatteryService {
         sampleItemCount: form.sampleItemRevisionIds.length,
         sectionTimeLimitMs: formSectionTimeLimitMs(form),
         itemCeilingMs: formItemCeilingMs(form),
+        breakAfter: section.breakAfter,
+        breakMaxMs: section.breakMaxMs,
         minViewport: rule.minViewport,
         normIneligibleDeviceClasses: rule.normIneligibleDeviceClasses,
       });
@@ -937,6 +939,14 @@ export class BatteryService {
     const sections = await this.loadSections(sessionId);
     const session = owned.session;
 
+    const planned = parseBatteryDefinition(
+      owned.version.definition,
+      `battery ${owned.batteryRow.slug}`,
+    );
+    const plannedByPosition = new Map(
+      planned.sections.map((section) => [section.position, section]),
+    );
+
     const sectionStates = [];
     for (const section of sections) {
       const form = await this.loadFormDefinition(section.formVersionId);
@@ -946,6 +956,7 @@ export class BatteryService {
         .where(eq(itemInstance.sectionInstanceId, section.id));
       const scored = counts.filter((row) => row.role === "scored");
 
+      const plan = plannedByPosition.get(section.position);
       sectionStates.push({
         position: section.position,
         domain: section.domain,
@@ -954,6 +965,9 @@ export class BatteryService {
         ruleVersionId: section.ruleVersionId,
         observations: section.eligibilityObservations,
         deadlineAt: section.deadlineAt,
+        submittedAt: section.submittedAt,
+        breakAfter: plan?.breakAfter ?? false,
+        breakMaxMs: plan?.breakMaxMs ?? null,
         // Planned counts come from the form, because a pending section has
         // no item rows yet and the intro still has to say how long it is.
         scoredItemCount: form.itemRevisionIds.length,

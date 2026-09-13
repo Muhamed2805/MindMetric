@@ -21,6 +21,8 @@ export type BatteryOverviewSection = {
   sampleItemCount: number;
   sectionTimeLimitMs: number;
   itemCeilingMs: number;
+  breakAfter: boolean;
+  breakMaxMs: number | null;
   minViewport: BatteryViewportMinimum | null;
   normIneligibleDeviceClasses: string[];
 };
@@ -53,6 +55,9 @@ export type BatterySection = {
   ruleVersionId: string | null;
   observations: BatteryObservation[] | null;
   deadlineAt: string | null;
+  submittedAt: string | null;
+  breakAfter: boolean;
+  breakMaxMs: number | null;
   scoredItemCount: number;
   sampleItemCount: number;
   sectionTimeLimitMs: number;

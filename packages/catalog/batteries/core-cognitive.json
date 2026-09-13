@@ -2,7 +2,7 @@
   "id": "bat_core_cognitive",
   "slug": "core-cognitive",
   "title": "Core cognitive battery",
-  "description": "Fixed non-verbal battery. Reports raw domain performance only; there is no IQ score, percentile, or confidence interval until norms exist.",
+  "description": "Draft five-domain practice composition in the locked order. Reports raw domain performance only; there is no IQ score, percentile, or confidence interval until norms exist.",
   "versions": [
     {
       "id": "bat_core_cognitive_v1",
@@ -15,6 +15,28 @@
             "position": 1,
             "domain": "gf",
             "formVersionId": "form_gf_matrix_pilot_v1"
+          },
+          {
+            "position": 2,
+            "domain": "gs",
+            "formVersionId": "form_gs_same_different_pilot_v1"
+          },
+          {
+            "position": 3,
+            "domain": "rq",
+            "formVersionId": "form_rq_quant_pilot_v1"
+          },
+          {
+            "position": 4,
+            "domain": "gv",
+            "formVersionId": "form_gv_rotation_pilot_v1",
+            "breakAfter": true,
+            "breakMaxMs": 120000
+          },
+          {
+            "position": 5,
+            "domain": "gwm",
+            "formVersionId": "form_wm_spatial_reverse_pilot_v1"
           }
         ]
       }
