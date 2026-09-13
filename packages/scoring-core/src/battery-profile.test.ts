@@ -22,6 +22,10 @@ describe("scoreBatteryProfile", () => {
           max: 7,
           attempted: 7,
           accuracyOnAttempted: 57.1,
+          omitted: 0,
+          timedOut: 0,
+          notReached: 0,
+          observations: [],
         },
       ],
     });
@@ -49,6 +53,10 @@ describe("scoreBatteryProfile", () => {
           max: 2,
           attempted: 1,
           accuracyOnAttempted: 100,
+          omitted: 0,
+          timedOut: 1,
+          notReached: 1,
+          observations: [],
         },
         {
           domain: "gf",
@@ -60,6 +68,10 @@ describe("scoreBatteryProfile", () => {
           max: 3,
           attempted: 3,
           accuracyOnAttempted: 0,
+          omitted: 0,
+          timedOut: 0,
+          notReached: 0,
+          observations: [],
         },
       ],
     });
@@ -99,12 +111,15 @@ describe("scoreBatteryProfile", () => {
         position: 1,
         status: "submitted",
         normEligible: true,
+        observations: [],
       },
       score,
     );
 
     expect(report.raw).toBe(1);
     expect(report.max).toBe(1);
+    expect(report.notReached).toBe(0);
+    expect(report.observations).toEqual([]);
     expect(report).not.toHaveProperty("items");
     expect(report).not.toHaveProperty("correctChoiceId");
   });

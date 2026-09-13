@@ -993,6 +993,9 @@ export class BatteryService {
             position: section.position,
             status: section.status,
             normEligible: section.deviceNormEligible,
+            observations: Array.isArray(section.eligibilityObservations)
+              ? section.eligibilityObservations
+              : [],
           },
           score,
         ),
@@ -1187,6 +1190,14 @@ function storedSectionReport(
       body.accuracyOnAttempted === null)
       ? body.accuracyOnAttempted
       : null;
+  const count = (key: string) =>
+    key in body && typeof (body as Record<string, unknown>)[key] === "number"
+      ? ((body as Record<string, number>)[key] ?? 0)
+      : 0;
+  const observations =
+    "observations" in body && Array.isArray(body.observations)
+      ? body.observations
+      : [];
   return {
     domain: section.domain as BatteryDomain,
     position: section.position,
@@ -1197,6 +1208,10 @@ function storedSectionReport(
     max,
     attempted,
     accuracyOnAttempted,
+    omitted: count("omitted"),
+    timedOut: count("timedOut"),
+    notReached: count("notReached"),
+    observations,
   };
 }
 

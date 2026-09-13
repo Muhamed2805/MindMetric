@@ -107,6 +107,10 @@ export type BatteryReportSection = {
   max: number;
   attempted: number;
   accuracyOnAttempted: number | null;
+  omitted?: number;
+  timedOut?: number;
+  notReached?: number;
+  observations?: BatteryObservation[];
 };
 
 export type BatteryReport = {

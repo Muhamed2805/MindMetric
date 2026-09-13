@@ -1,4 +1,8 @@
-import { BATTERY_PROFILE_MODEL, type BatteryDomain } from "@mindmetric/shared";
+import {
+  BATTERY_PROFILE_MODEL,
+  type BatteryDomain,
+  type QualityObservation,
+} from "@mindmetric/shared";
 import type { AccuracyPowerScore } from "./accuracy-power";
 
 /**
@@ -17,6 +21,10 @@ export type BatterySectionReport = {
   max: number;
   attempted: number;
   accuracyOnAttempted: number | null;
+  omitted: number;
+  timedOut: number;
+  notReached: number;
+  observations: QualityObservation[];
 };
 
 export type BatteryProfileScore = {
@@ -43,6 +51,7 @@ export function toBatterySectionReport(
     position: number;
     status: "submitted" | "expired";
     normEligible: boolean;
+    observations: QualityObservation[];
   },
   score: AccuracyPowerScore,
 ): BatterySectionReport {
@@ -56,6 +65,10 @@ export function toBatterySectionReport(
     max: score.max,
     attempted: score.attempted,
     accuracyOnAttempted: score.accuracyOnAttempted,
+    omitted: score.omitted,
+    timedOut: score.timedOut,
+    notReached: score.notReached,
+    observations: section.observations,
   };
 }
 

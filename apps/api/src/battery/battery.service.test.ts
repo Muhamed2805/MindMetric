@@ -996,6 +996,40 @@ describe("raw scoring", () => {
     expect(gf?.max).toBe(GF_SCORED.length);
     expect(gf?.max).not.toBe(GF_SAMPLES.length + GF_SCORED.length);
   });
+
+  it("carries completion quality onto the finished report", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId, "live-battery", {
+      deviceClass: "phone",
+      inputMode: "touch",
+      viewportWidth: 390,
+      viewportHeight: 700,
+    });
+
+    await service.startSection(userId, state.id, 1);
+    await answerNext(userId, state.id);
+    await answerNext(userId, state.id);
+    await service.serveNextItem(userId, state.id);
+    await db
+      .update(schema.sectionInstance)
+      .set({ deadlineAt: new Date(Date.now() - 60_000) })
+      .where(eq(schema.sectionInstance.id, await sectionIdFor(state.id, 1)));
+    await service.getForUser(userId, state.id);
+
+    const done = await finishSectionKeyed(userId, state.id, 2);
+    const gf = done.report?.sections.find((section) => section.domain === "gf");
+    const gv = done.report?.sections.find((section) => section.domain === "gv");
+
+    expect(gf?.status).toBe("expired");
+    expect(gf?.notReached).toBe(2);
+    expect(gf?.timedOut).toBe(1);
+    expect(gf?.normEligible).toBe(true);
+    expect(gv?.normEligible).toBe(false);
+    expect(gv?.observations?.map((row) => row.flag).sort()).toEqual([
+      "device_class_not_normed",
+      "viewport_below_minimum",
+    ]);
+  });
 });
 
 describe("session list", () => {
