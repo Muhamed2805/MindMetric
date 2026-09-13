@@ -29,6 +29,7 @@ corepack pnpm dev
 - API liveness: http://localhost:3001/health
 - API readiness: http://localhost:3001/health/ready
 - Current user: http://localhost:3000/api/v1/me
+- Catalog (public): http://localhost:3000/api/v1/instruments
 
 `db:migrate` seeds published instruments from `packages/catalog/instruments`. Edit a published version by adding a new `version` object; migrate will refuse to overwrite existing published JSON.
 

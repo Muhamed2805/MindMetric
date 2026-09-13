@@ -29,7 +29,7 @@ export function StartAssessmentButton({ slug }: { slug: string }) {
   return (
     <div className="flex flex-col items-start gap-3">
       <Button type="button" disabled={pending} onClick={onClick}>
-        {pending ? "Starting" : "Start"}
+        {pending ? "Starting" : "Start this test"}
       </Button>
       {error ? (
         <p className="text-sm text-danger" role="alert">

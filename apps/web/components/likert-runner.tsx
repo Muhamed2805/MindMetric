@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@mindmetric/ui";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { apiSend } from "../lib/api";
@@ -90,7 +91,15 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-8 px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
       <header className="flex items-center justify-between gap-4">
         <p className="text-sm font-semibold tracking-tight">{session.title}</p>
-        <p className="text-sm text-muted">{progress}</p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted">{progress}</p>
+          <Link
+            href="/tests"
+            className="text-sm font-medium text-ink underline"
+          >
+            Exit
+          </Link>
+        </div>
       </header>
       <div className="h-1 overflow-hidden rounded-full bg-line">
         <div

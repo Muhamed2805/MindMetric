@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { PageIntro } from "../../../components/page-intro";
 import { SignOutButton } from "../../../components/sign-out-button";
 import { getServerSession } from "../../../lib/session";
 
@@ -15,9 +16,13 @@ export default async function AccountPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Account</h1>
-      <dl className="grid gap-4 text-base">
+    <div className="mx-auto flex max-w-3xl flex-col gap-8">
+      <PageIntro
+        kicker="Profile"
+        title="Account"
+        description="This is the identity attached to your sessions and reports."
+      />
+      <dl className="grid gap-5 rounded-lg bg-surface px-5 py-5 ring-1 ring-line">
         <div>
           <dt className="text-sm text-muted">Name</dt>
           <dd className="mt-1 text-ink">{session.user.name}</dd>

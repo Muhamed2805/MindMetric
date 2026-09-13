@@ -22,6 +22,10 @@ export default async function RegisterPage() {
         <h1 className="mt-4 text-2xl font-semibold tracking-tight">
           Create account
         </h1>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          Your results stay on this account. Password must be at least 10
+          characters.
+        </p>
       </div>
       <AuthForm mode="register" nextPath="/home" />
     </main>

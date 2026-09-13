@@ -28,6 +28,9 @@ export default async function LoginPage({
           <Link href="/">MindMetric</Link>
         </p>
         <h1 className="mt-4 text-2xl font-semibold tracking-tight">Sign in</h1>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          Use the email and password for your MindMetric account.
+        </p>
       </div>
       <AuthForm mode="login" nextPath={nextPath} />
     </main>

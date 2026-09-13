@@ -1,9 +1,11 @@
 import { ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { PageIntro } from "../../../../components/page-intro";
 import { StartAssessmentButton } from "../../../../components/start-assessment-button";
 import { apiGet } from "../../../../lib/api.server";
 import type { InstrumentDetail } from "../../../../lib/assessment-types";
+import { engineLabel, minutesLabel } from "../../../../lib/format";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -13,7 +15,12 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  return { title: slug };
+  try {
+    const detail = await apiGet<InstrumentDetail>(`/instruments/${slug}`);
+    return { title: detail.title };
+  } catch {
+    return { title: "Test" };
+  }
 }
 
 export default async function InstrumentPage({ params }: PageProps) {
@@ -41,19 +48,23 @@ export default async function InstrumentPage({ params }: PageProps) {
     );
   }
 
+  const time = minutesLabel(detail.itemCount);
+
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {detail.title}
-        </h1>
-        <p className="mt-2 max-w-xl text-base leading-7 text-muted">
-          {detail.description}
-        </p>
-        <p className="mt-3 text-sm text-muted">
-          {detail.itemCount} items · version {detail.version}
-        </p>
-      </div>
+    <div className="mx-auto flex max-w-3xl flex-col gap-8">
+      <PageIntro
+        kicker={engineLabel(detail.kind)}
+        title={detail.title}
+        description={detail.description}
+      />
+      <p className="text-sm text-muted">
+        {detail.itemCount} items
+        {time ? ` · ${time}` : ""} · version {detail.version}
+      </p>
+      <p className="max-w-xl text-sm leading-6 text-muted">
+        You will answer one statement at a time. Reverse-keyed items are recoded
+        when you finish. Percentiles are development tables, not clinical norms.
+      </p>
       <StartAssessmentButton slug={detail.slug} />
     </div>
   );

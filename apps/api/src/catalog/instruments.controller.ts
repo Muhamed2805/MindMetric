@@ -1,4 +1,5 @@
 import { Controller, Get, Inject, Param } from "@nestjs/common";
+import { Public } from "../auth/public.decorator";
 import { CatalogService } from "./catalog.service";
 
 @Controller("instruments")
@@ -7,6 +8,7 @@ export class InstrumentsController {
     @Inject(CatalogService) private readonly catalog: CatalogService,
   ) {}
 
+  @Public()
   @Get()
   list() {
     return this.catalog.listPublished();

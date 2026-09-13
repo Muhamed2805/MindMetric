@@ -1,6 +1,7 @@
 import { ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { InstrumentCard } from "../../../components/instrument-card";
+import { PageIntro } from "../../../components/page-intro";
 import { apiGet } from "../../../lib/api.server";
 import type { CatalogInstrument } from "../../../lib/assessment-types";
 
@@ -20,8 +21,12 @@ export default async function TestsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Tests</h1>
+    <div className="mx-auto flex max-w-3xl flex-col gap-6">
+      <PageIntro
+        kicker="Catalog"
+        title="Tests"
+        description="Published scales you can take now. Each version is frozen so a later edit cannot change a score you already have."
+      />
       {loadError ? (
         <ErrorState description={loadError} />
       ) : instruments.length === 0 ? (
@@ -30,15 +35,7 @@ export default async function TestsPage() {
         <ul className="flex flex-col gap-3">
           {instruments.map((instrument) => (
             <li key={instrument.slug}>
-              <Link
-                href={`/tests/${instrument.slug}`}
-                className="block rounded-md bg-surface px-4 py-4 ring-1 ring-line"
-              >
-                <p className="font-medium text-ink">{instrument.title}</p>
-                <p className="mt-1 text-sm leading-6 text-muted">
-                  {instrument.description}
-                </p>
-              </Link>
+              <InstrumentCard instrument={instrument} />
             </li>
           ))}
         </ul>

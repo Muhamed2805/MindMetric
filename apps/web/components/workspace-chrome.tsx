@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { WorkspaceNav } from "./workspace-nav";
 
@@ -12,13 +13,17 @@ export function WorkspaceChrome({ children }: { children: ReactNode }) {
       </a>
       <aside className="hidden w-56 shrink-0 border-r border-line bg-surface md:flex md:flex-col">
         <div className="flex min-h-14 items-center px-4">
-          <p className="text-sm font-semibold tracking-tight">MindMetric</p>
+          <p className="text-sm font-semibold tracking-tight">
+            <Link href="/home">MindMetric</Link>
+          </p>
         </div>
         <WorkspaceNav variant="side" />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex min-h-14 items-center border-b border-line bg-surface px-4 md:hidden">
-          <p className="text-sm font-semibold tracking-tight">MindMetric</p>
+          <p className="text-sm font-semibold tracking-tight">
+            <Link href="/home">MindMetric</Link>
+          </p>
         </header>
         {/* biome-ignore lint/correctness/useUniqueElementIds: skip-link target */}
         <main

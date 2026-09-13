@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: "MindMetric",
     template: "%s · MindMetric",
   },
-  description: "Psychometric and cognitive assessments",
+  description: "Structured psychometric and cognitive assessments",
 };
 
 export const viewport: Viewport = {

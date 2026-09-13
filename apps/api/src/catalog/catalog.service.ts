@@ -21,6 +21,7 @@ export class CatalogService {
         kind: instrument.kind,
         versionId: instrumentVersion.id,
         version: instrumentVersion.version,
+        definition: instrumentVersion.definition,
       })
       .from(instrumentVersion)
       .innerJoin(instrument, eq(instrument.id, instrumentVersion.instrumentId))
@@ -28,13 +29,25 @@ export class CatalogService {
       .orderBy(asc(instrument.title), desc(instrumentVersion.publishedAt));
 
     const seen = new Set<string>();
-    return versions.filter((row) => {
-      if (seen.has(row.slug)) {
-        return false;
-      }
-      seen.add(row.slug);
-      return true;
-    });
+    return versions
+      .filter((row) => {
+        if (seen.has(row.slug)) {
+          return false;
+        }
+        seen.add(row.slug);
+        return true;
+      })
+      .map((row) => ({
+        slug: row.slug,
+        title: row.title,
+        description: row.description,
+        kind: row.kind,
+        versionId: row.versionId,
+        version: row.version,
+        itemCount: isLikertDefinition(row.definition)
+          ? row.definition.items.length
+          : 0,
+      }));
   }
 
   async getPublishedBySlug(slug: string) {

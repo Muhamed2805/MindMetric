@@ -1,16 +1,3 @@
-export type CatalogInstrument = {
-  slug: string;
-  title: string;
-  description: string;
-  kind: string;
-  versionId: string;
-  version: number;
-};
-
-export type InstrumentDetail = CatalogInstrument & {
-  itemCount: number;
-};
-
 export type LikertAnchor = { value: number; label: string };
 
 export type ClientLikertItem = {
@@ -18,6 +5,20 @@ export type ClientLikertItem = {
   type: "likert";
   prompt: string;
   scale: { min: number; max: number; anchors: LikertAnchor[] };
+};
+
+export type CatalogInstrument = {
+  slug: string;
+  title: string;
+  description: string;
+  kind: string;
+  versionId: string;
+  version: number;
+  itemCount: number;
+};
+
+export type InstrumentDetail = CatalogInstrument & {
+  items: ClientLikertItem[];
 };
 
 export type AssessmentSession = {
