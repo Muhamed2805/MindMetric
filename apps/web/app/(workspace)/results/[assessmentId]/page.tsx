@@ -41,7 +41,7 @@ export default async function ResultDetailPage({ params }: PageProps) {
         }
       />
       {completed && session.score ? (
-        <div className="rounded-lg bg-surface px-5 py-6 ring-1 ring-line">
+        <div className="mm-panel px-6 py-8">
           <ResultScore score={session.score} items={session.items} />
         </div>
       ) : (

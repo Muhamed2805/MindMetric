@@ -12,6 +12,9 @@ coverage
 .env.*.local
 
 .data/
+.tmp-figma-untitled
+
+
 
 AGENTS.md
 CLAUDE.md

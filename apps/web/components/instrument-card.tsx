@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { CatalogInstrument } from "../lib/assessment-types";
-import { durationLabel, engineLabel } from "../lib/format";
+import { durationLabel } from "../lib/format";
 
 export function InstrumentCard({
   instrument,
@@ -12,19 +12,19 @@ export function InstrumentCard({
   return (
     <Link
       href={`/tests/${instrument.slug}`}
-      className="block rounded-lg bg-surface px-5 py-5 ring-1 ring-line transition-colors hover:bg-canvas"
+      className="mm-panel flex h-full flex-col px-5 py-5"
     >
-      <p className="text-xs font-medium uppercase tracking-wide text-accent">
-        {engineLabel(instrument.kind)}
+      <div className="flex items-center justify-between gap-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-accent" />
+        {time ? <p className="text-xs text-muted">{time}</p> : null}
+      </div>
+      <p className="mt-5 font-serif text-xl font-medium text-ink">
+        {instrument.title}
       </p>
-      <p className="mt-2 text-base font-medium text-ink">{instrument.title}</p>
-      <p className="mt-1 text-sm leading-6 text-muted">
+      <p className="mt-2 flex-1 text-sm leading-6 text-muted">
         {instrument.description}
       </p>
-      <p className="mt-3 text-sm text-muted">
-        {instrument.itemCount} items
-        {time ? ` · ${time}` : ""} · version {instrument.version}
-      </p>
+      <p className="mt-4 text-sm font-medium text-accent">View assessment →</p>
     </Link>
   );
 }

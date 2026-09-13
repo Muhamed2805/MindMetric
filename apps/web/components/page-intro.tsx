@@ -10,11 +10,13 @@ export function PageIntro({
   return (
     <div className="flex flex-col gap-2">
       {kicker ? (
-        <p className="text-xs font-medium uppercase tracking-wide text-accent">
+        <p className="text-xs font-medium uppercase tracking-widest text-mark">
           {kicker}
         </p>
       ) : null}
-      <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+      <h1 className="font-serif text-3xl font-medium tracking-tight md:text-[2.1rem]">
+        {title}
+      </h1>
       {description ? (
         <p className="max-w-xl text-base leading-7 text-muted">{description}</p>
       ) : null}

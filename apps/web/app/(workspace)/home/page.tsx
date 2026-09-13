@@ -1,24 +1,19 @@
 import { Button, ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { InstrumentCard } from "../../../components/instrument-card";
-import { PageIntro } from "../../../components/page-intro";
 import { apiGet } from "../../../lib/api.server";
 import type {
   AssessmentSummary,
   CatalogInstrument,
 } from "../../../lib/assessment-types";
-import { firstName, formatDateTime } from "../../../lib/format";
-import { getServerSession } from "../../../lib/session";
+import { durationLabel } from "../../../lib/format";
+import { profileBuckets } from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
   title: "Home",
 };
 
 export default async function WorkspaceHomePage() {
-  const session = await getServerSession();
-  const name = session?.user.name ? firstName(session.user.name) : "there";
-
   let instruments: CatalogInstrument[] = [];
   let assessments: AssessmentSummary[] = [];
   let loadError: string | null = null;
@@ -36,92 +31,197 @@ export default async function WorkspaceHomePage() {
   }
 
   const inProgress = assessments.filter((row) => row.status === "in_progress");
-  const latestResult = assessments.find(
+  const completed = assessments.filter(
     (row) => row.status === "completed" && row.score,
   );
+  const continueRow = inProgress[0];
+  const cognitiveSlugs =
+    profileBuckets.find((bucket) => bucket.id === "cognitive")?.slugs ?? [];
+  const latestCognitive = completed.find((row) =>
+    cognitiveSlugs.includes(row.slug),
+  );
+  const filledBuckets = profileBuckets.filter((bucket) =>
+    bucket.slugs.some((slug) =>
+      completed.some((row) => row.slug === slug),
+    ),
+  ).length;
+  const completion = Math.round((filledBuckets / profileBuckets.length) * 100);
+  const doneSlugs = new Set(completed.map((row) => row.slug));
+  const recommended = instruments.filter((item) => !doneSlugs.has(item.slug)).slice(0, 2);
+  const glance = profileBuckets.map((bucket) => {
+    const match = completed.find((row) => bucket.slugs.includes(row.slug));
+    const percent =
+      match?.score && match.score.max > 0
+        ? Math.round((match.score.raw / match.score.max) * 100)
+        : null;
+    return { ...bucket, percent };
+  });
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10">
-      <PageIntro
-        kicker="Home"
-        title={`Hello, ${name}`}
-        description="Continue a scale you started, read the last report, or pick something new from the catalog."
-      />
+    <div className="flex flex-col gap-5">
+      <div>
+        <p className="text-[11px] font-medium uppercase tracking-widest text-mark">
+          Your MindMetric
+        </p>
+        <h1 className="mt-1 font-serif text-4xl font-medium tracking-tight">
+          Welcome back
+        </h1>
+        <p className="mt-2 text-sm text-muted">
+          A clear view of your developing cognitive profile.
+        </p>
+      </div>
       {loadError ? (
         <ErrorState description={loadError} />
       ) : (
         <>
-          {inProgress.length > 0 ? (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-lg font-semibold tracking-tight">Continue</h2>
-              <ul className="flex flex-col gap-3">
-                {inProgress.map((row) => (
-                  <li
-                    key={row.id}
-                    className="flex flex-col gap-3 rounded-lg bg-surface px-5 py-5 ring-1 ring-line sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div>
-                      <p className="font-medium text-ink">{row.title}</p>
-                      <p className="mt-1 text-sm text-muted">
-                        Started {formatDateTime(row.startedAt)}
-                      </p>
-                    </div>
-                    <Button asChild>
-                      <Link href={`/run/${row.id}`}>Resume</Link>
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-          {latestResult ? (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-lg font-semibold tracking-tight">
-                Latest result
-              </h2>
-              <Link
-                href={`/results/${latestResult.id}`}
-                className="block rounded-lg bg-surface px-5 py-5 ring-1 ring-line transition-colors hover:bg-canvas"
-              >
-                <p className="font-medium text-ink">{latestResult.title}</p>
-                <p className="mt-1 text-sm leading-6 text-muted">
-                  {latestResult.score
-                    ? `${latestResult.score.raw} / ${latestResult.score.max}`
-                    : null}
-                  {latestResult.score?.band
-                    ? ` · ${latestResult.score.band.label}`
-                    : ""}
-                  {latestResult.completedAt
-                    ? ` · ${formatDateTime(latestResult.completedAt)}`
-                    : ""}
-                </p>
-              </Link>
-            </section>
-          ) : null}
-          <section className="flex flex-col gap-3">
-            <div className="flex items-baseline justify-between gap-4">
-              <h2 className="text-lg font-semibold tracking-tight">Catalog</h2>
-              <Link
-                href="/tests"
-                className="text-sm font-medium text-ink underline"
-              >
-                All tests
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl bg-accent px-6 py-6 text-accent-fg">
+              <p className="text-[11px] uppercase tracking-widest text-accent-fg/70">
+                Latest cognitive score
+              </p>
+              {latestCognitive?.score ? (
+                <>
+                  <p className="mt-3 font-serif text-5xl font-medium">
+                    {latestCognitive.score.raw}
+                    <span className="ml-2 text-xl text-accent-fg/70">
+                      / {latestCognitive.score.max}
+                    </span>
+                  </p>
+                  <p className="mt-3 inline-flex rounded-full bg-accent-fg/15 px-3 py-1 text-sm">
+                    {latestCognitive.score.percentile !== null
+                      ? `${latestCognitive.score.percentile}th percentile`
+                      : latestCognitive.score.band?.label ?? latestCognitive.title}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="mt-3 font-serif text-2xl font-medium">Not scored yet</p>
+                  <p className="mt-2 text-sm text-accent-fg/80">
+                    Take a cognitive assessment to fill this card. It is not an IQ
+                    until we ship a normed battery.
+                  </p>
+                  <Button asChild className="mt-4 bg-accent-fg text-accent hover:bg-accent-fg/90">
+                    <Link href="/tests">Open assessments</Link>
+                  </Button>
+                </>
+              )}
+            </div>
+            <div className="mm-panel px-6 py-6">
+              <p className="text-sm text-muted">Profile completion</p>
+              <p className="mt-2 font-serif text-4xl font-medium text-ink">
+                {completion}%
+              </p>
+              <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-line">
+                <div
+                  style={{ width: `${completion}%` }}
+                  className="h-full rounded-full bg-accent"
+                />
+              </div>
+              <p className="mt-3 text-sm text-muted">
+                {filledBuckets} of {profileBuckets.length} profile areas have a
+                completed scale.
+              </p>
+            </div>
+          </div>
+          <div className="mm-panel px-6 py-5">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="font-serif text-xl font-medium">Your profile at a glance</h2>
+              <Link href="/account" className="text-sm text-accent">
+                View profile →
               </Link>
             </div>
-            {instruments.length === 0 ? (
-              <p className="text-sm text-muted">
-                No published assessments yet.
+            <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              {glance.map((bucket) => (
+                <li key={bucket.id}>
+                  <p className="text-sm text-ink">{bucket.label}</p>
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+                    <div
+                      className="h-full rounded-full bg-accent"
+                      style={{ width: `${bucket.percent ?? 0}%` }}
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-muted">
+                    {bucket.percent === null ? "—" : `${bucket.percent}%`}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="mm-panel px-6 py-5">
+              <p className="text-[11px] font-medium uppercase tracking-widest text-mark">
+                Continue assessment
               </p>
-            ) : (
-              <ul className="flex flex-col gap-3">
-                {instruments.map((instrument) => (
-                  <li key={instrument.slug}>
-                    <InstrumentCard instrument={instrument} />
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+              {continueRow ? (
+                <>
+                  <h2 className="mt-2 font-serif text-2xl font-medium">
+                    {continueRow.title}
+                  </h2>
+                  <Button asChild className="mt-5">
+                    <Link href={`/run/${continueRow.id}`}>Continue assessment</Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <h2 className="mt-2 font-serif text-2xl font-medium">Nothing open</h2>
+                  <p className="mt-2 text-sm text-muted">
+                    Start a published scale when you have a quiet few minutes.
+                  </p>
+                  <Button asChild className="mt-5">
+                    <Link href="/tests">Explore assessments</Link>
+                  </Button>
+                </>
+              )}
+            </div>
+            <div className="mm-panel px-6 py-5">
+              <h2 className="font-serif text-xl font-medium">
+                Recommended next assessments
+              </h2>
+              {recommended.length === 0 ? (
+                <p className="mt-3 text-sm text-muted">You have a result on every live scale.</p>
+              ) : (
+                <ul className="mt-3 flex flex-col gap-2 text-sm text-muted">
+                  {recommended.map((item) => (
+                    <li key={item.slug}>
+                      {item.title}
+                      {durationLabel(item.estimatedSeconds, item.itemCount)
+                        ? ` · ${durationLabel(item.estimatedSeconds, item.itemCount)}`
+                        : ""}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Button asChild variant="secondary" className="mt-5">
+                <Link href="/tests">Explore assessments</Link>
+              </Button>
+            </div>
+            <div className="mm-panel px-6 py-5">
+              <h2 className="font-serif text-xl font-medium">Recent results</h2>
+              {completed.length === 0 ? (
+                <p className="mt-3 text-sm text-muted">No keyed totals yet.</p>
+              ) : (
+                <ul className="mt-3 flex flex-col gap-2 text-sm">
+                  {completed.slice(0, 3).map((row) => (
+                    <li key={row.id}>
+                      <Link href={`/results/${row.id}`} className="text-ink hover:text-accent">
+                        {row.title}
+                        {row.score ? ` · ${row.score.raw} / ${row.score.max}` : ""}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="mm-panel px-6 py-5">
+              <h2 className="font-serif text-xl font-medium">Quick access to Brain Games</h2>
+              <p className="mt-2 text-sm text-muted">
+                Short drills are on the board. They are not in the engine yet.
+              </p>
+              <Button asChild variant="secondary" className="mt-5">
+                <Link href="/games">See Brain Games</Link>
+              </Button>
+            </div>
+          </div>
         </>
       )}
     </div>

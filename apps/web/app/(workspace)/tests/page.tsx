@@ -1,15 +1,20 @@
 import { ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
 import { InstrumentCard } from "../../../components/instrument-card";
-import { PageIntro } from "../../../components/page-intro";
 import { apiGet } from "../../../lib/api.server";
 import type { CatalogInstrument } from "../../../lib/assessment-types";
 
 export const metadata: Metadata = {
-  title: "Tests",
+  title: "Assessments",
 };
 
-export default async function TestsPage() {
+export default async function TestsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
+  const query = q?.trim().toLowerCase() ?? "";
   let instruments: CatalogInstrument[] = [];
   let loadError: string | null = null;
 
@@ -20,20 +25,32 @@ export default async function TestsPage() {
       cause instanceof Error ? cause.message : "Could not load tests.";
   }
 
+  const visible = query
+    ? instruments.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query) ||
+          item.description.toLowerCase().includes(query),
+      )
+    : instruments;
+
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6">
-      <PageIntro
-        kicker="Catalog"
-        title="Tests"
-        description="Published scales you can take now. Each version is frozen so a later edit cannot change a score you already have."
-      />
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="font-serif text-4xl font-medium tracking-tight">
+          Assessments
+        </h1>
+        <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
+          Focused measures for a more complete picture of how you think.
+          Personality and memory batteries are still ahead of the live catalog.
+        </p>
+      </div>
       {loadError ? (
         <ErrorState description={loadError} />
-      ) : instruments.length === 0 ? (
-        <p className="text-muted">No published assessments yet.</p>
+      ) : visible.length === 0 ? (
+        <p className="text-muted">No published assessments match.</p>
       ) : (
-        <ul className="flex flex-col gap-3">
-          {instruments.map((instrument) => (
+        <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {visible.map((instrument) => (
             <li key={instrument.slug}>
               <InstrumentCard instrument={instrument} />
             </li>

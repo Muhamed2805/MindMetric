@@ -22,10 +22,7 @@ function Meter({
         <p className="text-sm font-medium text-ink">{label}</p>
         <p className="text-sm text-muted">{valueLabel}</p>
       </div>
-      <div
-        className="h-3 overflow-hidden rounded-full bg-line"
-        aria-hidden="true"
-      >
+      <div className="h-2 overflow-hidden bg-line" aria-hidden="true">
         <div className="h-full bg-accent" style={{ width: `${width}%` }} />
       </div>
     </div>
@@ -64,7 +61,9 @@ function LikertResult({
   return (
     <div className="flex flex-col gap-8">
       {score.band ? (
-        <p className="text-lg font-medium text-ink">{score.band.label}</p>
+        <p className="font-serif text-2xl font-medium text-ink">
+          {score.band.label}
+        </p>
       ) : null}
       <Meter
         label="Keyed total"
@@ -105,7 +104,7 @@ function LikertResult({
                 <p className="text-sm leading-6 text-ink">
                   {prompts[entry.id] ?? entry.id}
                 </p>
-                <div className="h-2 overflow-hidden rounded-full bg-line">
+                <div className="h-1.5 overflow-hidden bg-line">
                   <div
                     className="h-full bg-accent"
                     style={{
@@ -136,7 +135,9 @@ function McqResult({
   return (
     <div className="flex flex-col gap-8">
       {score.band ? (
-        <p className="text-lg font-medium text-ink">{score.band.label}</p>
+        <p className="font-serif text-2xl font-medium text-ink">
+          {score.band.label}
+        </p>
       ) : null}
       <Meter
         label="Correct"

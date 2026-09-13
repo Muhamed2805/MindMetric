@@ -142,21 +142,23 @@ export function McqTimedRunner({ initial }: { initial: AssessmentSession }) {
   const answered = session.answers[item.id] !== undefined;
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-8 px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-      <header className="flex items-center justify-between gap-4">
-        <p className="text-sm font-semibold tracking-tight">{session.title}</p>
-        <div className="flex items-center gap-3">
-          <p className="text-sm text-muted">{progress}</p>
+    <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-10 px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <header className="flex items-start justify-between gap-4">
+        <p className="font-serif text-lg font-medium tracking-tight">
+          {session.title}
+        </p>
+        <div className="flex items-center gap-4">
+          <p className="text-sm tabular-nums text-muted">{progress}</p>
           <Link
             href="/tests"
-            className="text-sm font-medium text-ink underline"
+            className="text-sm font-medium text-ink underline decoration-line underline-offset-4"
           >
             Exit
           </Link>
         </div>
       </header>
       <div className="flex items-center justify-between gap-4">
-        <div className="h-1 flex-1 overflow-hidden rounded-full bg-line">
+        <div className="h-px flex-1 overflow-hidden bg-line">
           <div
             className="h-full bg-accent"
             style={{
@@ -164,22 +166,25 @@ export function McqTimedRunner({ initial }: { initial: AssessmentSession }) {
             }}
           />
         </div>
-        <p className="text-sm font-medium tabular-nums text-ink">
+        <p className="text-sm font-medium tabular-nums text-mark">
           {answered ? "Saved" : `${seconds}s`}
         </p>
       </div>
-      <p className="text-xl font-medium leading-8 text-ink md:text-2xl">
+      <p className="font-serif text-2xl font-medium leading-snug text-ink md:text-[1.75rem]">
         {item.prompt}
       </p>
       <div className="flex flex-col gap-2">
-        {item.choices.map((choice) => (
+        {item.choices.map((choice, choiceIndex) => (
           <button
             key={choice.id}
             type="button"
             disabled={pending || answered}
             onClick={() => onChoose(choice.id)}
-            className="min-h-12 rounded-md bg-surface px-4 text-left text-base text-ink ring-1 ring-line disabled:opacity-50"
+            className="mm-panel flex min-h-12 items-center gap-4 px-4 py-3 text-left text-base text-ink disabled:opacity-50"
           >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-canvas text-sm font-medium text-muted">
+              {String.fromCharCode(65 + choiceIndex)}
+            </span>
             {choice.label}
           </button>
         ))}

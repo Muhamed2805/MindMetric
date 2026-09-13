@@ -1,25 +1,54 @@
 import { Button } from "@mindmetric/ui";
 import Link from "next/link";
 import { getServerSession } from "../lib/session";
+import { BrandMark } from "./brand-mark";
+
+const links = [
+  { href: "/#assessments", label: "Assessments" },
+  { href: "/#games", label: "Brain Games" },
+  { href: "/#method", label: "How It Works" },
+];
 
 export async function MarketingHeader() {
   const session = await getServerSession();
 
   return (
-    <header className="border-b border-line bg-surface">
-      <div className="mx-auto flex min-h-14 max-w-5xl items-center justify-between px-4">
-        <p className="text-base font-semibold tracking-tight">
-          <Link href={session ? "/home" : "/"}>MindMetric</Link>
-        </p>
-        {session ? (
-          <Button asChild variant="secondary" size="sm">
-            <Link href="/home">Workspace</Link>
-          </Button>
-        ) : (
-          <Button asChild variant="secondary" size="sm">
-            <Link href="/login">Sign in</Link>
-          </Button>
-        )}
+    <header className="sticky top-0 z-20 border-b border-line/70 bg-canvas/90 backdrop-blur-sm">
+      <div className="mx-auto grid min-h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-4">
+        <BrandMark href={session ? "/home" : "/"} />
+        <nav
+          aria-label="Marketing"
+          className="hidden items-center gap-7 md:flex"
+        >
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-[13.5px] text-muted hover:text-ink"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="flex items-center justify-end gap-4">
+          {session ? (
+            <Button asChild size="sm">
+              <Link href="/home">Workspace</Link>
+            </Button>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden text-[13.5px] text-muted hover:text-ink sm:inline"
+              >
+                Log In
+              </Link>
+              <Button asChild size="sm">
+                <Link href="/register">Get Started</Link>
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

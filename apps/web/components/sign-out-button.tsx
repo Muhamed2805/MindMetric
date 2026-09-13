@@ -19,11 +19,12 @@ export function SignOutButton() {
   return (
     <Button
       type="button"
-      variant="secondary"
+      variant="ghost"
+      className="h-10 w-full justify-start px-0 text-[13.5px] font-normal text-muted"
       disabled={pending}
       onClick={onClick}
     >
-      {pending ? "Signing out" : "Sign out"}
+      {pending ? "Signing out" : "Log out"}
     </Button>
   );
 }
