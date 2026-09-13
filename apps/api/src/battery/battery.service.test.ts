@@ -997,3 +997,26 @@ describe("raw scoring", () => {
     expect(gf?.max).not.toBe(GF_SAMPLES.length + GF_SCORED.length);
   });
 });
+
+describe("session list", () => {
+  it("returns only the examinee's sessions, with totals only when complete", async () => {
+    const userId = await freshUser();
+    const other = await freshUser();
+    const open = await startSession(userId);
+    await startSession(other);
+
+    const listed = await service.listForUser(userId);
+    expect(listed.map((row) => row.id)).toEqual([open.id]);
+    expect(listed[0]?.report).toBeNull();
+
+    await finishSectionKeyed(userId, open.id, 1);
+    await finishSectionKeyed(userId, open.id, 2);
+
+    const finished = await service.listForUser(userId);
+    expect(finished[0]?.status).toBe("completed");
+    expect(finished[0]?.report?.sections[0]?.max).toBe(GF_SCORED.length);
+    expect(finished[0]?.report?.estimatedIq).toBeNull();
+    expect(await service.listForUser(other)).toHaveLength(1);
+    expect((await service.listForUser(other))[0]?.id).not.toBe(open.id);
+  });
+});

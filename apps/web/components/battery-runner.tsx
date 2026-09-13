@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { apiSend } from "../lib/api";
 import type { BatterySection, BatterySessionState } from "../lib/battery-types";
 import { clockLabel, domainLabel, minutesFromMs } from "../lib/format";
+import { BatteryReportPanel } from "./battery-report";
 import { StimulusView } from "./stimulus-view";
 
 /** Below this, the item clock is close enough to warn about. */
@@ -512,44 +513,12 @@ function Completed({ session }: { session: BatterySessionState }) {
         </p>
       </div>
 
-      <div className="mm-panel flex flex-col gap-4 p-5">
-        {report
-          ? report.sections.map((section) => (
-              <div
-                key={section.position}
-                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"
-              >
-                <span className="text-ink">{domainLabel(section.domain)}</span>
-                <span className="text-right text-sm text-muted">
-                  <span className="font-serif text-2xl tabular-nums text-ink">
-                    {section.raw}
-                  </span>
-                  <span> / {section.max}</span>
-                  {section.accuracyOnAttempted !== null
-                    ? ` · ${section.accuracyOnAttempted}% of attempted`
-                    : ""}
-                  {section.status === "expired" ? " · ran out of time" : ""}
-                  {section.normEligible
-                    ? ""
-                    : " · outside the reference sample"}
-                </span>
-              </div>
-            ))
-          : session.sections.map((section) => (
-              <div
-                key={section.position}
-                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm"
-              >
-                <span className="text-ink">{domainLabel(section.domain)}</span>
-                <span className="text-muted">
-                  {section.completedItemCount} of {section.scoredItemCount}{" "}
-                  completed
-                </span>
-              </div>
-            ))}
-      </div>
+      <BatteryReportPanel report={report} fallback={session.sections} />
 
-      <div>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button asChild>
+          <Link href={`/results/battery/${session.id}`}>Open report</Link>
+        </Button>
         <Button asChild variant="secondary">
           <Link href="/home">Back to your workspace</Link>
         </Button>

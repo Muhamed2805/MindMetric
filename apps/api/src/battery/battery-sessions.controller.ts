@@ -21,6 +21,11 @@ export class BatterySessionsController {
     @Inject(BatteryService) private readonly battery: BatteryService,
   ) {}
 
+  @Get()
+  list(@CurrentUser() user: SessionUser) {
+    return this.battery.listForUser(user.id);
+  }
+
   @Post()
   start(
     @CurrentUser() user: SessionUser,

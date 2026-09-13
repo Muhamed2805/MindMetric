@@ -1,11 +1,13 @@
 import { Button, ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { batteryRawLabel } from "../../../components/battery-report";
 import { apiGet } from "../../../lib/api.server";
 import type {
   AssessmentSummary,
   CatalogInstrument,
 } from "../../../lib/assessment-types";
+import type { BatterySessionSummary } from "../../../lib/battery-types";
 import { durationLabel } from "../../../lib/format";
 import { profileBuckets } from "../../../lib/workspace-nav";
 
@@ -16,15 +18,18 @@ export const metadata: Metadata = {
 export default async function WorkspaceHomePage() {
   let instruments: CatalogInstrument[] = [];
   let assessments: AssessmentSummary[] = [];
+  let batteries: BatterySessionSummary[] = [];
   let loadError: string | null = null;
 
   try {
-    const [catalog, rows] = await Promise.all([
+    const [catalog, rows, batteryRows] = await Promise.all([
       apiGet<CatalogInstrument[]>("/instruments"),
       apiGet<AssessmentSummary[]>("/assessments"),
+      apiGet<BatterySessionSummary[]>("/battery/sessions").catch(() => []),
     ]);
     instruments = catalog;
     assessments = rows;
+    batteries = batteryRows;
   } catch (cause) {
     loadError =
       cause instanceof Error ? cause.message : "Could not load your workspace.";
@@ -34,7 +39,33 @@ export default async function WorkspaceHomePage() {
   const completed = assessments.filter(
     (row) => row.status === "completed" && row.score,
   );
+  const continueBattery = batteries.find((row) => row.status === "in_progress");
+  const completedBatteries = batteries.filter(
+    (row) => row.status === "completed",
+  );
   const continueRow = inProgress[0];
+  const recent = [
+    ...completed.map((row) => ({
+      id: row.id,
+      href: `/results/${row.id}`,
+      title: row.title,
+      detail: row.score ? `${row.score.raw} / ${row.score.max}` : "",
+      at: row.completedAt,
+    })),
+    ...completedBatteries.map((row) => ({
+      id: row.id,
+      href: `/results/battery/${row.id}`,
+      title: row.batteryTitle,
+      detail: batteryRawLabel(row.report),
+      at: row.completedAt,
+    })),
+  ]
+    .sort((left, right) => {
+      const leftAt = left.at ? new Date(left.at).getTime() : 0;
+      const rightAt = right.at ? new Date(right.at).getTime() : 0;
+      return rightAt - leftAt;
+    })
+    .slice(0, 3);
   const cognitiveSlugs =
     profileBuckets.find((bucket) => bucket.id === "cognitive")?.slugs ?? [];
   const latestCognitive = completed.find((row) =>
@@ -160,7 +191,18 @@ export default async function WorkspaceHomePage() {
               <p className="text-[11px] font-medium uppercase tracking-widest text-mark">
                 Continue assessment
               </p>
-              {continueRow ? (
+              {continueBattery ? (
+                <>
+                  <h2 className="mt-2 font-serif text-2xl font-medium">
+                    {continueBattery.batteryTitle}
+                  </h2>
+                  <Button asChild className="mt-5">
+                    <Link href={`/run/battery/${continueBattery.id}`}>
+                      Continue battery
+                    </Link>
+                  </Button>
+                </>
+              ) : continueRow ? (
                 <>
                   <h2 className="mt-2 font-serif text-2xl font-medium">
                     {continueRow.title}
@@ -211,20 +253,18 @@ export default async function WorkspaceHomePage() {
             </div>
             <div className="mm-panel px-6 py-5">
               <h2 className="font-serif text-xl font-medium">Recent results</h2>
-              {completed.length === 0 ? (
+              {recent.length === 0 ? (
                 <p className="mt-3 text-sm text-muted">No keyed totals yet.</p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2 text-sm">
-                  {completed.slice(0, 3).map((row) => (
+                  {recent.map((row) => (
                     <li key={row.id}>
                       <Link
-                        href={`/results/${row.id}`}
+                        href={row.href}
                         className="text-ink hover:text-accent"
                       >
                         {row.title}
-                        {row.score
-                          ? ` · ${row.score.raw} / ${row.score.max}`
-                          : ""}
+                        {row.detail ? ` · ${row.detail}` : ""}
                       </Link>
                     </li>
                   ))}

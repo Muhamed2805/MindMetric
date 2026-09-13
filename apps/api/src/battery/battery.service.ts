@@ -208,6 +208,57 @@ export class BatteryService {
     return this.readState(userId, sessionId);
   }
 
+  async listForUser(userId: string) {
+    const rows = await this.db
+      .select({
+        session: batterySession,
+        version: batteryVersion,
+        batteryRow: battery,
+      })
+      .from(batterySession)
+      .innerJoin(
+        batteryVersion,
+        eq(batteryVersion.id, batterySession.batteryVersionId),
+      )
+      .innerJoin(battery, eq(battery.id, batteryVersion.batteryId))
+      .where(eq(batterySession.userId, userId))
+      .orderBy(desc(batterySession.startedAt));
+
+    const ids = rows.map((row) => row.session.id);
+    const scores =
+      ids.length === 0
+        ? []
+        : await this.db
+            .select()
+            .from(batteryScore)
+            .where(inArray(batteryScore.sessionId, ids));
+
+    const latest = new Map<string, (typeof scores)[number]>();
+    for (const score of scores) {
+      const previous = latest.get(score.sessionId);
+      if (!previous || score.createdAt > previous.createdAt) {
+        latest.set(score.sessionId, score);
+      }
+    }
+
+    return rows.map((row) => ({
+      id: row.session.id,
+      status: row.session.status,
+      batterySlug: row.batteryRow.slug,
+      batteryTitle: row.batteryRow.title,
+      batteryVersion: row.version.version,
+      isPracticeMode: row.session.isPracticeMode,
+      attemptNumber: row.session.attemptNumber,
+      startedAt: row.session.startedAt,
+      completedAt: row.session.completedAt,
+      // Same rule as get: a total exists only after the battery closes.
+      report:
+        row.session.status === "completed"
+          ? toClientReport(latest.get(row.session.id)?.payload)
+          : null,
+    }));
+  }
+
   /**
    * What an examinee is told before starting: how long each section runs, what
    * the device has to be, and whether this attempt can count at all.
@@ -1030,20 +1081,7 @@ export class BatteryService {
       .where(eq(batteryScore.sessionId, sessionId))
       .orderBy(desc(batteryScore.createdAt))
       .limit(1);
-    const payload = rows[0]?.payload;
-    if (!payload || typeof payload !== "object") {
-      return null;
-    }
-    const profile = payload as BatteryProfileScore;
-    return {
-      maturity: profile.maturity,
-      durationMs: profile.durationMs,
-      composite: profile.composite,
-      estimatedIq: profile.estimatedIq,
-      percentile: profile.percentile,
-      interval: profile.interval,
-      sections: profile.sections,
-    };
+    return toClientReport(rows[0]?.payload);
   }
 
   private async readCurrentItem(sessionId: string) {
@@ -1107,6 +1145,25 @@ export class BatteryService {
  * the item closed. The exact code stays on the response row, which is what
  * scoring reads (ADR 0016).
  */
+function toClientReport(payload: unknown) {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+  const profile = payload as BatteryProfileScore;
+  if (!Array.isArray(profile.sections)) {
+    return null;
+  }
+  return {
+    maturity: profile.maturity,
+    durationMs: profile.durationMs,
+    composite: profile.composite,
+    estimatedIq: profile.estimatedIq,
+    percentile: profile.percentile,
+    interval: profile.interval,
+    sections: profile.sections,
+  };
+}
+
 function storedSectionReport(
   section: {
     domain: string;

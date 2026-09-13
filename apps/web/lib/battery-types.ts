@@ -118,3 +118,16 @@ export type BatteryReport = {
   interval: null;
   sections: BatteryReportSection[];
 };
+
+export type BatterySessionSummary = {
+  id: string;
+  status: string;
+  batterySlug: string;
+  batteryTitle: string;
+  batteryVersion: number;
+  isPracticeMode: boolean;
+  attemptNumber: number;
+  startedAt: string;
+  completedAt: string | null;
+  report: BatteryReport | null;
+};
