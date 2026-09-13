@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@source "../../packages/ui/src";
+@source "../../../packages/ui/src";
 
 :root {
   --mm-canvas: #f5f2ea;
