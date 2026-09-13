@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AuthForm } from "../../../components/auth-form";
+import { getServerSession } from "../../../lib/session";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -11,6 +13,11 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ from?: string }>;
 }) {
+  const session = await getServerSession();
+  if (session) {
+    redirect("/home");
+  }
+
   const { from } = await searchParams;
   const nextPath = from?.startsWith("/") ? from : "/home";
 

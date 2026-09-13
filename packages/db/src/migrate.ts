@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { migrate as migratePglite } from "drizzle-orm/pglite/migrator";
 import { migrate as migratePostgres } from "drizzle-orm/postgres-js/migrator";
+import postgres from "postgres";
 import {
   createPgliteDb,
   createPostgresDb,
@@ -24,6 +25,32 @@ if (!url) {
 
 const migrationsFolder = join(root, "packages/db/drizzle");
 
+function sleep(ms: number) {
+  return new Promise((resolveSleep) => {
+    setTimeout(resolveSleep, ms);
+  });
+}
+
+async function waitForPostgres(target: string) {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    const client = postgres(target, { max: 1, connect_timeout: 2 });
+    try {
+      await client`select 1`;
+      await client.end();
+      return;
+    } catch (cause) {
+      lastError = cause;
+      await client.end({ timeout: 1 }).catch(() => undefined);
+      await sleep(1000);
+    }
+  }
+  const detail = lastError instanceof Error ? lastError.message : "";
+  throw new Error(
+    `PostgreSQL is not reachable at DATABASE_URL. Start it with \`corepack pnpm db:up\` (Docker) or point DATABASE_URL at a running Postgres 16 instance.${detail ? ` ${detail}` : ""}`,
+  );
+}
+
 async function migrateUrl(target: string, seed: boolean) {
   if (isPgliteUrl(target)) {
     const db = createPgliteDb(target);
@@ -35,6 +62,7 @@ async function migrateUrl(target: string, seed: boolean) {
     return;
   }
 
+  await waitForPostgres(target);
   const db = createPostgresDb(target);
   await migratePostgres(db, { migrationsFolder });
   if (seed) {

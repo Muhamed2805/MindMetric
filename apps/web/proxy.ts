@@ -2,7 +2,6 @@ import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
 const protectedPaths = ["/home", "/tests", "/results", "/account", "/run"];
-const authPaths = ["/login", "/register"];
 
 function matches(pathname: string, prefixes: string[]) {
   return prefixes.some(
@@ -20,10 +19,6 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(login);
   }
 
-  if (matches(pathname, authPaths) && sessionCookie) {
-    return NextResponse.redirect(new URL("/home", request.url));
-  }
-
   return NextResponse.next();
 }
 
@@ -39,7 +34,5 @@ export const config = {
     "/account/:path*",
     "/run",
     "/run/:path*",
-    "/login",
-    "/register",
   ],
 };

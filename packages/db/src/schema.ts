@@ -87,7 +87,9 @@ export const instrumentVersion = pgTable("instrument_version", {
 
 export const assessment = pgTable("assessment", {
   id: text("id").primaryKey(),
-  userId: text("user_id").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   instrumentVersionId: text("instrument_version_id")
     .notNull()
     .references(() => instrumentVersion.id),

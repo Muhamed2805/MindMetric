@@ -43,7 +43,11 @@ export function createPgliteDb(url: string) {
 }
 
 export function createPostgresDb(url: string) {
-  const client = postgres(url, { max: 10 });
+  const client = postgres(url, {
+    max: 10,
+    idle_timeout: 20,
+    connect_timeout: 10,
+  });
   return drizzlePostgres({ client, schema });
 }
 
