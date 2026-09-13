@@ -1,0 +1,35 @@
+{
+  "id": "form_rq_quant_pilot",
+  "slug": "rq-quant-pilot",
+  "title": "Quantitative reasoning (pilot form)",
+  "description": "Short authored number-series and quantity form used to exercise RQ. Not a normed subtest.",
+  "domain": "rq",
+  "engine": "power-form-v1",
+  "versions": [
+    {
+      "id": "form_rq_quant_pilot_v1",
+      "version": 1,
+      "status": "draft",
+      "definition": {
+        "engine": "power-form-v1",
+        "domain": "rq",
+        "scoringModel": "accuracy-power-v1",
+        "sectionTimeLimitMs": 540000,
+        "itemCeilingMs": 90000,
+        "sampleItemRevisionIds": ["rq-s-001-r1", "rq-s-002-r1"],
+        "itemRevisionIds": [
+          "rq-n-001-r1",
+          "rq-n-002-r1",
+          "rq-n-003-r1",
+          "rq-n-004-r1",
+          "rq-a-001-r1",
+          "rq-n-005-r1",
+          "rq-n-006-r1",
+          "rq-n-007-r1",
+          "rq-n-008-r1",
+          "rq-n-009-r1"
+        ]
+      }
+    }
+  ]
+}

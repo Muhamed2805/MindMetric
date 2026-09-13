@@ -2,14 +2,17 @@ import { ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
 import { StartBatteryButton } from "../../../components/start-battery-button";
 import { apiGet } from "../../../lib/api.server";
-import type { BatteryOverview } from "../../../lib/battery-types";
+import {
+  type BatteryOverview,
+  LISTED_BATTERY_SLUGS,
+} from "../../../lib/battery-types";
 import { domainLabel, minutesFromMs } from "../../../lib/format";
 
 export const metadata: Metadata = {
   title: "Cognitive battery",
 };
 
-const BATTERY_SLUGS = ["core-cognitive", "gs-same-different-pilot"] as const;
+const BATTERY_SLUGS = LISTED_BATTERY_SLUGS;
 
 function viewportNote(section: BatteryOverview["sections"][number]) {
   const parts: string[] = [];
@@ -136,8 +139,9 @@ export default async function BatteryPage() {
           Cognitive batteries
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-          Raw domain totals only. The core battery is still Gf; processing speed
-          is a separate practice form until it is pinned into the composition.
+          Raw domain totals only. The core battery is still Gf. Processing speed
+          and quantitative reasoning are separate practice forms until they are
+          pinned into the composition.
         </p>
       </div>
       {overviews.map((overview) => (

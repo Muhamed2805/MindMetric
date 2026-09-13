@@ -237,10 +237,14 @@ describe("loadBatteryCatalog", () => {
     const form = loaded.forms.find((entry) => entry.slug === "gf-matrix-pilot");
     const scored = form?.versions[0]?.definition.itemRevisionIds ?? [];
 
-    expect(loaded.batteries).toHaveLength(2);
+    expect(loaded.batteries).toHaveLength(3);
     expect(scored.length).toBeGreaterThan(0);
     expect(loaded.forms.map((entry) => entry.slug)).toEqual(
-      expect.arrayContaining(["gf-matrix-pilot", "gs-same-different-pilot"]),
+      expect.arrayContaining([
+        "gf-matrix-pilot",
+        "gs-same-different-pilot",
+        "rq-quant-pilot",
+      ]),
     );
   });
 
@@ -262,11 +266,28 @@ describe("loadBatteryCatalog", () => {
     expect(form?.engine).toBe("speed-form-v1");
     expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(2);
     expect(coreDomains).not.toContain("gs");
+    expect(coreDomains).not.toContain("rq");
     expect(
       gsBattery?.versions[0]?.definition.sections.map(
         (section) => section.domain,
       ),
     ).toEqual(["gs"]);
+  });
+
+  it("ships a draft RQ form that is not on the core battery", () => {
+    const loaded = loadBatteryCatalog();
+    const form = loaded.forms.find((entry) => entry.slug === "rq-quant-pilot");
+    const rqBattery = loaded.batteries.find(
+      (entry) => entry.slug === "rq-quant-pilot",
+    );
+
+    expect(form?.engine).toBe("power-form-v1");
+    expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(10);
+    expect(
+      rqBattery?.versions[0]?.definition.sections.map(
+        (section) => section.domain,
+      ),
+    ).toEqual(["rq"]);
   });
 
   it("ships a published quality rule set flagged as provisional", () => {

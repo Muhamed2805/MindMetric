@@ -4,7 +4,10 @@ import Link from "next/link";
 import { InstrumentCard } from "../../../components/instrument-card";
 import { apiGet } from "../../../lib/api.server";
 import type { CatalogInstrument } from "../../../lib/assessment-types";
-import type { BatteryOverview } from "../../../lib/battery-types";
+import {
+  type BatteryOverview,
+  LISTED_BATTERY_SLUGS,
+} from "../../../lib/battery-types";
 import { minutesFromMs } from "../../../lib/format";
 
 export const metadata: Metadata = {
@@ -23,17 +26,14 @@ export default async function TestsPage({
   let loadError: string | null = null;
 
   try {
-    const [catalog, core, gs] = await Promise.all([
+    const [catalog, ...listed] = await Promise.all([
       apiGet<CatalogInstrument[]>("/instruments"),
-      apiGet<BatteryOverview>("/battery/catalog/core-cognitive").catch(
-        () => null,
-      ),
-      apiGet<BatteryOverview>("/battery/catalog/gs-same-different-pilot").catch(
-        () => null,
+      ...LISTED_BATTERY_SLUGS.map((slug) =>
+        apiGet<BatteryOverview>(`/battery/catalog/${slug}`).catch(() => null),
       ),
     ]);
     instruments = catalog;
-    batteries = [core, gs].filter(
+    batteries = listed.filter(
       (entry): entry is BatteryOverview => entry !== null,
     );
   } catch (cause) {

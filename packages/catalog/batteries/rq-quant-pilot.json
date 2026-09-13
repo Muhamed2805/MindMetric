@@ -1,0 +1,23 @@
+{
+  "id": "bat_rq_quant_pilot",
+  "slug": "rq-quant-pilot",
+  "title": "Quantitative reasoning (pilot)",
+  "description": "Draft RQ form. Practice only. Not part of the core cognitive battery.",
+  "versions": [
+    {
+      "id": "bat_rq_quant_pilot_v1",
+      "version": 1,
+      "status": "draft",
+      "definition": {
+        "engine": "battery-v1",
+        "sections": [
+          {
+            "position": 1,
+            "domain": "rq",
+            "formVersionId": "form_rq_quant_pilot_v1"
+          }
+        ]
+      }
+    }
+  ]
+}

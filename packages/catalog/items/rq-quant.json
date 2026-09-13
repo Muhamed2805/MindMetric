@@ -1,0 +1,303 @@
+{
+  "id": "bank_rq_quant",
+  "slug": "rq-quant",
+  "domain": "rq",
+  "engine": "power-mcq-v1",
+  "items": [
+    {
+      "id": "rq-s-001",
+      "revisions": [
+        {
+          "id": "rq-s-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "easy",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "2, 4, 6, 8, ?" },
+            "correctChoiceId": "a",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "10" } },
+              { "id": "b", "content": { "type": "text", "text": "9" } },
+              { "id": "c", "content": { "type": "text", "text": "12" } },
+              { "id": "d", "content": { "type": "text", "text": "16" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-s-002",
+      "revisions": [
+        {
+          "id": "rq-s-002-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "easy",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "5, 10, 15, 20, ?" },
+            "correctChoiceId": "b",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "24" } },
+              { "id": "b", "content": { "type": "text", "text": "25" } },
+              { "id": "c", "content": { "type": "text", "text": "30" } },
+              { "id": "d", "content": { "type": "text", "text": "21" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-001",
+      "revisions": [
+        {
+          "id": "rq-n-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "easy",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "7, 10, 13, 16, ?" },
+            "correctChoiceId": "b",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "18" } },
+              { "id": "b", "content": { "type": "text", "text": "19" } },
+              { "id": "c", "content": { "type": "text", "text": "20" } },
+              { "id": "d", "content": { "type": "text", "text": "22" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-002",
+      "revisions": [
+        {
+          "id": "rq-n-002-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "easy",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "81, 27, 9, 3, ?" },
+            "correctChoiceId": "a",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "1" } },
+              { "id": "b", "content": { "type": "text", "text": "0" } },
+              { "id": "c", "content": { "type": "text", "text": "2" } },
+              { "id": "d", "content": { "type": "text", "text": "3" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-003",
+      "revisions": [
+        {
+          "id": "rq-n-003-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "moderate",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "4, 9, 16, 25, ?" },
+            "correctChoiceId": "c",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "30" } },
+              { "id": "b", "content": { "type": "text", "text": "32" } },
+              { "id": "c", "content": { "type": "text", "text": "36" } },
+              { "id": "d", "content": { "type": "text", "text": "49" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-004",
+      "revisions": [
+        {
+          "id": "rq-n-004-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "moderate",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "2, 6, 18, 54, ?" },
+            "correctChoiceId": "b",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "108" } },
+              { "id": "b", "content": { "type": "text", "text": "162" } },
+              { "id": "c", "content": { "type": "text", "text": "216" } },
+              { "id": "d", "content": { "type": "text", "text": "72" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-a-001",
+      "revisions": [
+        {
+          "id": "rq-a-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "easy",
+            "anchor": true,
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "1, 2, 3, 4, ?" },
+            "correctChoiceId": "a",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "5" } },
+              { "id": "b", "content": { "type": "text", "text": "6" } },
+              { "id": "c", "content": { "type": "text", "text": "4" } },
+              { "id": "d", "content": { "type": "text", "text": "0" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-005",
+      "revisions": [
+        {
+          "id": "rq-n-005-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "moderate",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "5, 6, 8, 11, 15, ?" },
+            "correctChoiceId": "c",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "19" } },
+              { "id": "b", "content": { "type": "text", "text": "20" } },
+              { "id": "c", "content": { "type": "text", "text": "21" } },
+              { "id": "d", "content": { "type": "text", "text": "22" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-006",
+      "revisions": [
+        {
+          "id": "rq-n-006-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "moderate",
+            "prompt": "How many lamps?",
+            "stimulus": {
+              "type": "text",
+              "text": "4 crates hold 28 lamps. How many lamps do 7 crates hold?"
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "42" } },
+              { "id": "b", "content": { "type": "text", "text": "49" } },
+              { "id": "c", "content": { "type": "text", "text": "56" } },
+              { "id": "d", "content": { "type": "text", "text": "35" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-007",
+      "revisions": [
+        {
+          "id": "rq-n-007-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "hard",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "3, 5, 9, 17, ?" },
+            "correctChoiceId": "c",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "25" } },
+              { "id": "b", "content": { "type": "text", "text": "29" } },
+              { "id": "c", "content": { "type": "text", "text": "33" } },
+              { "id": "d", "content": { "type": "text", "text": "35" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-008",
+      "revisions": [
+        {
+          "id": "rq-n-008-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "hard",
+            "prompt": "Which number comes next?",
+            "stimulus": { "type": "text", "text": "10, 8, 11, 9, 12, 10, ?" },
+            "correctChoiceId": "b",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "11" } },
+              { "id": "b", "content": { "type": "text", "text": "13" } },
+              { "id": "c", "content": { "type": "text", "text": "14" } },
+              { "id": "d", "content": { "type": "text", "text": "8" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "rq-n-009",
+      "revisions": [
+        {
+          "id": "rq-n-009-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "rq",
+            "difficulty": "hard",
+            "prompt": "What is the number?",
+            "stimulus": {
+              "type": "text",
+              "text": "A number plus twice that number is 27. What is the number?"
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              { "id": "a", "content": { "type": "text", "text": "7" } },
+              { "id": "b", "content": { "type": "text", "text": "8" } },
+              { "id": "c", "content": { "type": "text", "text": "9" } },
+              { "id": "d", "content": { "type": "text", "text": "12" } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

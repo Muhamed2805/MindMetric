@@ -1,5 +1,12 @@
 import type { FigureSpec, PowerStimulus } from "@mindmetric/shared";
 
+/** Draft and core batteries shown on /battery and Assessments. */
+export const LISTED_BATTERY_SLUGS = [
+  "core-cognitive",
+  "gs-same-different-pilot",
+  "rq-quant-pilot",
+] as const;
+
 export type BatteryViewportMinimum = {
   widthPx: number;
   heightPx: number;
