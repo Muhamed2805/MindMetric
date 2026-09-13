@@ -1,5 +1,5 @@
 import { isPowerDomain, type PowerDomain } from "./battery";
-import { type FigureSpec, parseFigureSpec } from "./figure";
+import { type FigureSpec, figureSignature, parseFigureSpec } from "./figure";
 
 export const POWER_MCQ_ENGINE = "power-mcq-v1" as const;
 export const POWER_FORM_ENGINE = "power-form-v1" as const;
@@ -79,6 +79,48 @@ function parseStimulus(value: unknown, source: string): PowerStimulus {
   return { type: "figure", figure: parseFigureSpec(value.figure, source) };
 }
 
+function stimulusSignature(
+  stimulus: PowerStimulus,
+  options: { ignoreSize?: boolean } = {},
+): string {
+  return stimulus.type === "text"
+    ? `text:${stimulus.text}`
+    : `figure:${figureSignature(stimulus.figure, options)}`;
+}
+
+/**
+ * Two choices must be tellable apart, and size alone is not enough: the
+ * renderer's size steps are close together, so an option that differs from the
+ * key only in size leaves the item with two defensible answers. An item type
+ * built on size would need a wider size scale first.
+ */
+function assertChoicesAreDistinguishable(
+  choices: PowerChoice[],
+  source: string,
+): void {
+  const exact = new Map<string, string>();
+  const ignoringSize = new Map<string, string>();
+  for (const choice of choices) {
+    const signature = stimulusSignature(choice.content);
+    const previous = exact.get(signature);
+    if (previous) {
+      throw new Error(
+        `${source} choices ${previous} and ${choice.id} render identically.`,
+      );
+    }
+    exact.set(signature, choice.id);
+
+    const sizeless = stimulusSignature(choice.content, { ignoreSize: true });
+    const sibling = ignoringSize.get(sizeless);
+    if (sibling) {
+      throw new Error(
+        `${source} choices ${sibling} and ${choice.id} differ only in size.`,
+      );
+    }
+    ignoringSize.set(sizeless, choice.id);
+  }
+}
+
 export function parsePowerMcqItemContent(
   value: unknown,
   source: string,
@@ -127,6 +169,8 @@ export function parsePowerMcqItemContent(
     seen.add(entry.id);
     return { id: entry.id, content: parseStimulus(entry.content, label) };
   });
+
+  assertChoicesAreDistinguishable(choices, source);
 
   if (
     typeof value.correctChoiceId !== "string" ||

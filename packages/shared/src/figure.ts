@@ -210,3 +210,34 @@ export function parseFigureSpec(value: unknown, source: string): FigureSpec {
 export function figureBlankCell(spec: FigureSpec): FigureCell | null {
   return spec.cells.find((cell) => cell.blank) ?? null;
 }
+
+/**
+ * Stable serialization of what a spec draws: two specs with the same signature
+ * render identically. Element order inside a cell is preserved because the
+ * renderer lays marks out in that order.
+ */
+export function figureSignature(
+  spec: FigureSpec,
+  options: { ignoreSize?: boolean } = {},
+): string {
+  const cells = spec.cells
+    .slice()
+    .sort((left, right) => left.row - right.row || left.col - right.col)
+    .map((cell) => {
+      const drawn = cell.blank
+        ? "_"
+        : cell.elements
+            .map((element) =>
+              [
+                element.shape,
+                element.fill,
+                element.rotation,
+                options.ignoreSize ? "" : element.size,
+                element.count,
+              ].join("/"),
+            )
+            .join("+");
+      return `${cell.row},${cell.col}:${drawn}`;
+    });
+  return `${spec.rows}x${spec.cols};${cells.join(";")}`;
+}

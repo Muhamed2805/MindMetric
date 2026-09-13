@@ -77,6 +77,71 @@ describe("parsePowerMcqItemContent", () => {
       parsePowerMcqItemContent({ ...item, difficulty: undefined }, "item"),
     ).toThrow(/intended difficulty/);
   });
+
+  it("rejects two choices that render identically", () => {
+    expect(() =>
+      parsePowerMcqItemContent(
+        {
+          ...item,
+          choices: [
+            item.choices[0],
+            item.choices[1],
+            { id: "c", content: item.choices[1]?.content },
+          ],
+        },
+        "item",
+      ),
+    ).toThrow(/choices b and c render identically/);
+  });
+
+  it("rejects a choice that differs from another only in size", () => {
+    expect(() =>
+      parsePowerMcqItemContent(
+        {
+          ...item,
+          choices: [
+            item.choices[0],
+            item.choices[1],
+            {
+              id: "c",
+              content: {
+                type: "figure",
+                figure: {
+                  kind: "single",
+                  elements: [{ shape: "circle", size: 3 }],
+                },
+              },
+            },
+          ],
+        },
+        "item",
+      ),
+    ).toThrow(/choices b and c differ only in size/);
+  });
+
+  it("accepts choices that share a shape but differ in fill", () => {
+    const parsed = parsePowerMcqItemContent(
+      {
+        ...item,
+        choices: [
+          item.choices[0],
+          item.choices[1],
+          {
+            id: "c",
+            content: {
+              type: "figure",
+              figure: {
+                kind: "single",
+                elements: [{ shape: "circle", fill: "hatch" }],
+              },
+            },
+          },
+        ],
+      },
+      "item",
+    );
+    expect(parsed.choices).toHaveLength(3);
+  });
 });
 
 describe("parsePowerFormDefinition", () => {

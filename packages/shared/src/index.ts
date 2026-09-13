@@ -58,6 +58,7 @@ export {
   type FigureSize,
   type FigureSpec,
   figureBlankCell,
+  figureSignature,
   parseFigureSpec,
 } from "./figure";
 export {
