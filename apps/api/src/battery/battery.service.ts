@@ -1,0 +1,814 @@
+import { randomUUID } from "node:crypto";
+import {
+  battery,
+  batteryResponse,
+  batterySession,
+  batteryVersion,
+  type Database,
+  itemInstance,
+  itemRevision,
+  qualityEvent,
+  qualityRuleVersion,
+  sectionInstance,
+  subtestFormVersion,
+} from "@mindmetric/db";
+import {
+  type AdministrationContext,
+  type BatteryDomain,
+  buildItemPresentation,
+  classifyResponse,
+  DEVICE_CLASSES,
+  type DeviceClass,
+  INPUT_MODES,
+  type InputMode,
+  type ItemRole,
+  isClientQualityEventKind,
+  type PowerFormDefinition,
+  type PowerMcqItemContent,
+  parseBatteryDefinition,
+  parseItemPresentation,
+  parsePowerFormDefinition,
+  parsePowerMcqItemContent,
+  parseQualityRuleSetDefinition,
+  type ResponseCode,
+  resolveSectionEligibility,
+  SUBMISSION_GRACE_MS,
+  toClientPowerItem,
+} from "@mindmetric/shared";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
+import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { DATABASE } from "../database/database.module";
+
+export type StartBatteryInput = {
+  batterySlug: string;
+  deviceClass: string;
+  inputMode: string;
+  viewportWidth: number | null;
+  viewportHeight: number | null;
+  locale: string;
+};
+
+export type SubmitResponseInput = {
+  itemInstanceId: string;
+  choiceId: string | null;
+  clientShownAt: Date | null;
+  clientFirstInteractionAt: Date | null;
+  clientAnsweredAt: Date | null;
+};
+
+export type QualityEventInput = {
+  kind: string;
+  occurredAt: Date | null;
+  payload: unknown;
+};
+
+/** The item bank is authored in English; UI locale is independent (ADR 0014). */
+const ITEM_LANGUAGE = "en";
+
+function isDeviceClass(value: unknown): value is DeviceClass {
+  return (DEVICE_CLASSES as readonly unknown[]).includes(value);
+}
+
+function isInputMode(value: unknown): value is InputMode {
+  return (INPUT_MODES as readonly unknown[]).includes(value);
+}
+
+function optionalDimension(value: number | null) {
+  return typeof value === "number" && Number.isInteger(value) && value > 0
+    ? value
+    : null;
+}
+
+@Injectable()
+export class BatteryService {
+  constructor(@Inject(DATABASE) private readonly db: Database) {}
+
+  async start(userId: string, input: StartBatteryInput) {
+    if (!isDeviceClass(input.deviceClass) || !isInputMode(input.inputMode)) {
+      throw new BadRequestException("Unsupported device or input mode.");
+    }
+
+    const target = await this.loadBatteryVersion(input.batterySlug);
+
+    const open = await this.db
+      .select({ id: batterySession.id })
+      .from(batterySession)
+      .where(
+        and(
+          eq(batterySession.userId, userId),
+          eq(batterySession.batteryVersionId, target.version.id),
+          eq(batterySession.status, "in_progress"),
+        ),
+      )
+      .limit(1);
+
+    const existing = open[0];
+    if (existing) {
+      return this.getForUser(userId, existing.id);
+    }
+
+    const prior = await this.db
+      .select({ id: batterySession.id })
+      .from(batterySession)
+      .innerJoin(
+        batteryVersion,
+        eq(batteryVersion.id, batterySession.batteryVersionId),
+      )
+      .where(
+        and(
+          eq(batterySession.userId, userId),
+          eq(batteryVersion.batteryId, target.battery.id),
+        ),
+      );
+
+    const now = new Date();
+    const sessionId = randomUUID();
+
+    await this.db.insert(batterySession).values({
+      id: sessionId,
+      userId,
+      batteryVersionId: target.version.id,
+      status: "in_progress",
+      attemptNumber: prior.length + 1,
+      isPracticeMode: target.practiceOnly,
+      administrationContext: target.practiceOnly ? "practice" : "battery",
+      ageYears: null,
+      deviceClass: input.deviceClass,
+      inputMode: input.inputMode,
+      viewportWidth: optionalDimension(input.viewportWidth),
+      viewportHeight: optionalDimension(input.viewportHeight),
+      locale: input.locale,
+      itemLanguage: ITEM_LANGUAGE,
+      startedAt: now,
+      completedAt: null,
+    });
+
+    // Every section is laid out up front so order is fixed by the composition
+    // and forward-only navigation is a matter of position, not bookkeeping.
+    await this.db.insert(sectionInstance).values(
+      target.definition.sections.map((section) => ({
+        id: randomUUID(),
+        sessionId,
+        formVersionId: section.formVersionId,
+        domain: section.domain,
+        position: section.position,
+        status: "pending" as const,
+        startedAt: null,
+        deadlineAt: null,
+        submittedAt: null,
+        deviceNormEligible: true,
+        ruleVersionId: null,
+        eligibilityObservations: null,
+        createdAt: now,
+      })),
+    );
+
+    return this.getForUser(userId, sessionId);
+  }
+
+  async getForUser(userId: string, sessionId: string) {
+    await this.loadOwnedSession(userId, sessionId);
+    await this.closeSectionsPastDeadline(sessionId);
+    return this.readState(userId, sessionId);
+  }
+
+  async startSection(userId: string, sessionId: string, position: number) {
+    const session = await this.loadOwnedSession(userId, sessionId);
+    if (session.session.status !== "in_progress") {
+      throw new BadRequestException("This session is already closed.");
+    }
+    await this.closeSectionsPastDeadline(sessionId);
+
+    const sections = await this.loadSections(sessionId);
+    const next = sections.find(
+      (section) =>
+        section.status === "pending" || section.status === "in_progress",
+    );
+    if (!next || next.position !== position) {
+      throw new BadRequestException("Sections must be taken in order.");
+    }
+    if (next.status === "in_progress") {
+      return this.readState(userId, sessionId);
+    }
+
+    const form = await this.loadFormDefinition(next.formVersionId);
+    const now = new Date();
+
+    await this.materializeItems(next.id, form);
+
+    const eligibility = await this.resolveEligibility(
+      next.domain as BatteryDomain,
+      session.session,
+    );
+
+    await this.db
+      .update(sectionInstance)
+      .set({
+        status: "in_progress",
+        startedAt: now,
+        // The clock starts when the first scored item is served, so sample
+        // items do not spend measuring time (ADR 0014).
+        deadlineAt: null,
+        deviceNormEligible: eligibility.normEligible,
+        ruleVersionId: eligibility.ruleVersionId,
+        eligibilityObservations: eligibility.observations,
+      })
+      .where(eq(sectionInstance.id, next.id));
+
+    return this.readState(userId, sessionId);
+  }
+
+  /** Stamps `shown_at`, which is what the item ceiling is measured from. */
+  async serveNextItem(userId: string, sessionId: string) {
+    await this.loadOwnedSession(userId, sessionId);
+    await this.closeSectionsPastDeadline(sessionId);
+
+    const section = await this.activeSection(sessionId);
+    if (!section) {
+      throw new BadRequestException("No section is running.");
+    }
+
+    const pending = await this.db
+      .select()
+      .from(itemInstance)
+      .where(
+        and(
+          eq(itemInstance.sectionInstanceId, section.id),
+          eq(itemInstance.status, "pending"),
+        ),
+      )
+      .orderBy(asc(itemInstance.position));
+
+    const inFlight = pending.find((row) => row.shownAt !== null);
+    if (inFlight) {
+      // Resume returns the in-flight item with its original shown_at.
+      return this.readState(userId, sessionId);
+    }
+
+    const upcoming = pending[0];
+    if (!upcoming) {
+      await this.closeSection(section.id, "submitted", new Date());
+      await this.completeSessionIfDone(sessionId);
+      return this.readState(userId, sessionId);
+    }
+
+    const now = new Date();
+    if (upcoming.role === "scored" && section.deadlineAt === null) {
+      const form = await this.loadFormDefinition(section.formVersionId);
+      await this.db
+        .update(sectionInstance)
+        .set({
+          deadlineAt: new Date(now.getTime() + form.sectionTimeLimitMs),
+        })
+        .where(eq(sectionInstance.id, section.id));
+    }
+
+    await this.db
+      .update(itemInstance)
+      .set({ shownAt: now })
+      .where(eq(itemInstance.id, upcoming.id));
+
+    return this.readState(userId, sessionId);
+  }
+
+  async submitResponse(
+    userId: string,
+    sessionId: string,
+    input: SubmitResponseInput,
+  ) {
+    await this.loadOwnedSession(userId, sessionId);
+    const receivedAt = new Date();
+
+    const section = await this.activeSection(sessionId);
+    if (!section) {
+      throw new BadRequestException("No section is running.");
+    }
+
+    const rows = await this.db
+      .select()
+      .from(itemInstance)
+      .where(
+        and(
+          eq(itemInstance.sectionInstanceId, section.id),
+          eq(itemInstance.status, "pending"),
+        ),
+      )
+      .orderBy(asc(itemInstance.position));
+
+    const inFlight = rows.find((row) => row.shownAt !== null);
+    if (!inFlight) {
+      throw new BadRequestException("No item is waiting for an answer.");
+    }
+    // Forward-only: an item is locked once submitted, so the only answerable
+    // item is the one on screen (ADR 0014).
+    if (inFlight.id !== input.itemInstanceId) {
+      throw new BadRequestException("That item is no longer open.");
+    }
+
+    const presentation = parseItemPresentation(
+      inFlight.presentation,
+      "presentation",
+    );
+    if (
+      input.choiceId !== null &&
+      !presentation.choiceOrder.includes(input.choiceId)
+    ) {
+      throw new BadRequestException("That option was not offered.");
+    }
+
+    const shownAt = inFlight.shownAt;
+    if (!shownAt) {
+      throw new BadRequestException("No item is waiting for an answer.");
+    }
+
+    const form = await this.loadFormDefinition(section.formVersionId);
+    const classification =
+      inFlight.role === "sample"
+        ? {
+            // Samples are untimed: they teach the format and are never scored.
+            code: (input.choiceId === null
+              ? "omitted"
+              : "answered") as ResponseCode,
+            responseTimeMs: receivedAt.getTime() - shownAt.getTime(),
+          }
+        : classifyResponse({
+            choiceId: input.choiceId,
+            shownAt,
+            deadlineAt:
+              section.deadlineAt ??
+              new Date(receivedAt.getTime() + SUBMISSION_GRACE_MS),
+            itemCeilingMs: form.itemCeilingMs,
+            receivedAt,
+          });
+
+    await this.db.insert(batteryResponse).values({
+      id: randomUUID(),
+      itemInstanceId: inFlight.id,
+      code: classification.code,
+      choiceId: input.choiceId,
+      responseTimeMs: classification.responseTimeMs,
+      clientShownAt: input.clientShownAt,
+      clientFirstInteractionAt: input.clientFirstInteractionAt,
+      clientAnsweredAt: input.clientAnsweredAt,
+      serverReceivedAt: receivedAt,
+      submittedAt: receivedAt,
+      payload: null,
+    });
+
+    await this.db
+      .update(itemInstance)
+      .set({ status: instanceStatusFor(classification.code) })
+      .where(eq(itemInstance.id, inFlight.id));
+
+    const remaining = rows.filter((row) => row.id !== inFlight.id);
+    if (remaining.length === 0) {
+      await this.closeSection(section.id, "submitted", receivedAt);
+      await this.completeSessionIfDone(sessionId);
+    }
+
+    return this.readState(userId, sessionId);
+  }
+
+  async logQualityEvent(
+    userId: string,
+    sessionId: string,
+    input: QualityEventInput,
+  ) {
+    const session = await this.loadOwnedSession(userId, sessionId);
+    if (!isClientQualityEventKind(input.kind)) {
+      throw new BadRequestException("Unknown quality event.");
+    }
+
+    const now = new Date();
+    const reported = input.occurredAt?.getTime();
+    // A client clock cannot move the event outside the session's own window.
+    const occurredAt =
+      reported !== undefined &&
+      Number.isFinite(reported) &&
+      reported >= session.session.startedAt.getTime() &&
+      reported <= now.getTime()
+        ? new Date(reported)
+        : now;
+
+    const section = await this.activeSection(sessionId);
+
+    await this.db.insert(qualityEvent).values({
+      id: randomUUID(),
+      sessionId,
+      sectionInstanceId: section?.id ?? null,
+      kind: input.kind,
+      payload: input.payload === undefined ? null : input.payload,
+      occurredAt,
+      recordedAt: now,
+    });
+
+    return { recorded: true as const };
+  }
+
+  private async loadBatteryVersion(slug: string) {
+    const rows = await this.db
+      .select({ battery, version: batteryVersion })
+      .from(battery)
+      .innerJoin(batteryVersion, eq(batteryVersion.batteryId, battery.id))
+      .where(eq(battery.slug, slug))
+      .orderBy(desc(batteryVersion.version));
+
+    if (rows.length === 0) {
+      throw new NotFoundException("Battery not found.");
+    }
+
+    const published = rows.find((row) => row.version.status === "published");
+    const chosen = published ?? rows[0];
+    if (!chosen) {
+      throw new NotFoundException("Battery not found.");
+    }
+
+    return {
+      battery: chosen.battery,
+      version: chosen.version,
+      definition: parseBatteryDefinition(
+        chosen.version.definition,
+        `battery ${slug}`,
+      ),
+      // A draft composition can still be taken, but only as practice, so
+      // pre-release trials never reach the norming sample.
+      practiceOnly: published === undefined,
+    };
+  }
+
+  private async loadOwnedSession(userId: string, sessionId: string) {
+    const rows = await this.db
+      .select({
+        session: batterySession,
+        version: batteryVersion,
+        batteryRow: battery,
+      })
+      .from(batterySession)
+      .innerJoin(
+        batteryVersion,
+        eq(batteryVersion.id, batterySession.batteryVersionId),
+      )
+      .innerJoin(battery, eq(battery.id, batteryVersion.batteryId))
+      .where(
+        and(
+          eq(batterySession.id, sessionId),
+          eq(batterySession.userId, userId),
+        ),
+      )
+      .limit(1);
+
+    const row = rows[0];
+    if (!row) {
+      throw new NotFoundException("Session not found.");
+    }
+    return row;
+  }
+
+  private async loadSections(sessionId: string) {
+    return this.db
+      .select()
+      .from(sectionInstance)
+      .where(eq(sectionInstance.sessionId, sessionId))
+      .orderBy(asc(sectionInstance.position));
+  }
+
+  private async activeSection(sessionId: string) {
+    const rows = await this.db
+      .select()
+      .from(sectionInstance)
+      .where(
+        and(
+          eq(sectionInstance.sessionId, sessionId),
+          eq(sectionInstance.status, "in_progress"),
+        ),
+      )
+      .orderBy(asc(sectionInstance.position))
+      .limit(1);
+    return rows[0] ?? null;
+  }
+
+  private async loadFormDefinition(
+    formVersionId: string,
+  ): Promise<PowerFormDefinition> {
+    const rows = await this.db
+      .select({ definition: subtestFormVersion.definition })
+      .from(subtestFormVersion)
+      .where(eq(subtestFormVersion.id, formVersionId))
+      .limit(1);
+
+    const row = rows[0];
+    if (!row) {
+      throw new NotFoundException("Subtest form not found.");
+    }
+    return parsePowerFormDefinition(row.definition, formVersionId);
+  }
+
+  private async materializeItems(
+    sectionInstanceId: string,
+    form: PowerFormDefinition,
+  ) {
+    const ordered: Array<{ revisionId: string; role: ItemRole }> = [
+      ...form.sampleItemRevisionIds.map((revisionId) => ({
+        revisionId,
+        role: "sample" as const,
+      })),
+      ...form.itemRevisionIds.map((revisionId) => ({
+        revisionId,
+        role: "scored" as const,
+      })),
+    ];
+
+    const contents = await this.loadItemContents(
+      ordered.map((entry) => entry.revisionId),
+    );
+
+    await this.db.insert(itemInstance).values(
+      ordered.map((entry, index) => {
+        const content = contents.get(entry.revisionId);
+        if (!content) {
+          throw new NotFoundException(
+            `Item revision ${entry.revisionId} is missing.`,
+          );
+        }
+        return {
+          id: randomUUID(),
+          sectionInstanceId,
+          itemRevisionId: entry.revisionId,
+          position: index + 1,
+          role: entry.role,
+          // Stored because a choice id means nothing without the order the
+          // examinee saw, and positional bias is measured over it (ADR 0017).
+          presentation: buildItemPresentation(content, Math.random),
+          itemFamilyId: null,
+          generatorVersion: null,
+          seed: null,
+          parameters: null,
+          shownAt: null,
+          status: "pending" as const,
+        };
+      }),
+    );
+  }
+
+  private async loadItemContents(revisionIds: string[]) {
+    if (revisionIds.length === 0) {
+      return new Map<string, PowerMcqItemContent>();
+    }
+    const rows = await this.db
+      .select({ id: itemRevision.id, content: itemRevision.content })
+      .from(itemRevision)
+      .where(inArray(itemRevision.id, revisionIds));
+
+    return new Map(
+      rows.map((row) => [
+        row.id,
+        parsePowerMcqItemContent(row.content, row.id),
+      ]),
+    );
+  }
+
+  private async resolveEligibility(
+    domain: BatteryDomain,
+    session: typeof batterySession.$inferSelect,
+  ) {
+    const rows = await this.db
+      .select()
+      .from(qualityRuleVersion)
+      .where(eq(qualityRuleVersion.status, "published"))
+      .orderBy(desc(qualityRuleVersion.version))
+      .limit(1);
+
+    const row = rows[0];
+    if (!row) {
+      // Without published rules nothing can be judged, and guessing would put
+      // unjudged sections into the norming sample.
+      throw new InternalServerErrorException(
+        "No published quality rule set is available.",
+      );
+    }
+
+    const definition = parseQualityRuleSetDefinition(row.definition, row.id);
+    const resolved = resolveSectionEligibility(definition, domain, {
+      deviceClass: session.deviceClass as DeviceClass,
+      viewportWidth: session.viewportWidth,
+      viewportHeight: session.viewportHeight,
+    });
+
+    return {
+      ruleVersionId: row.id,
+      observations: resolved.observations,
+      // Practice never feeds norms, whatever the device says.
+      normEligible: session.isPracticeMode ? false : resolved.normEligible,
+    };
+  }
+
+  private async closeSectionsPastDeadline(sessionId: string) {
+    const section = await this.activeSection(sessionId);
+    if (!section?.deadlineAt) {
+      return;
+    }
+    const now = new Date();
+    if (now.getTime() <= section.deadlineAt.getTime() + SUBMISSION_GRACE_MS) {
+      return;
+    }
+
+    const pending = await this.db
+      .select()
+      .from(itemInstance)
+      .where(
+        and(
+          eq(itemInstance.sectionInstanceId, section.id),
+          eq(itemInstance.status, "pending"),
+        ),
+      );
+
+    for (const row of pending) {
+      if (row.shownAt) {
+        // Shown but unanswered when the clock ran out: the item was reached.
+        await this.db.insert(batteryResponse).values({
+          id: randomUUID(),
+          itemInstanceId: row.id,
+          code: "timed_out",
+          choiceId: null,
+          responseTimeMs:
+            section.deadlineAt.getTime() - row.shownAt.getTime() || null,
+          clientShownAt: null,
+          clientFirstInteractionAt: null,
+          clientAnsweredAt: null,
+          serverReceivedAt: now,
+          submittedAt: now,
+          payload: null,
+        });
+        await this.db
+          .update(itemInstance)
+          .set({ status: "timed_out" })
+          .where(eq(itemInstance.id, row.id));
+        continue;
+      }
+      // Never presented, so it cannot count as an attempt (ADR 0016).
+      await this.db
+        .update(itemInstance)
+        .set({ status: "not_reached" })
+        .where(eq(itemInstance.id, row.id));
+    }
+
+    await this.db.insert(qualityEvent).values({
+      id: randomUUID(),
+      sessionId,
+      sectionInstanceId: section.id,
+      kind: "section_expired",
+      payload: { notReached: pending.filter((row) => !row.shownAt).length },
+      occurredAt: section.deadlineAt,
+      recordedAt: now,
+    });
+
+    await this.closeSection(section.id, "expired", now);
+    await this.completeSessionIfDone(sessionId);
+  }
+
+  private async closeSection(
+    sectionInstanceId: string,
+    status: "submitted" | "expired",
+    at: Date,
+  ) {
+    await this.db
+      .update(sectionInstance)
+      .set({ status, submittedAt: at })
+      .where(eq(sectionInstance.id, sectionInstanceId));
+  }
+
+  private async completeSessionIfDone(sessionId: string) {
+    const sections = await this.loadSections(sessionId);
+    const open = sections.some(
+      (section) =>
+        section.status === "pending" || section.status === "in_progress",
+    );
+    if (open) {
+      return;
+    }
+    await this.db
+      .update(batterySession)
+      .set({ status: "completed", completedAt: new Date() })
+      .where(eq(batterySession.id, sessionId));
+  }
+
+  private async readState(userId: string, sessionId: string) {
+    const owned = await this.loadOwnedSession(userId, sessionId);
+    const sections = await this.loadSections(sessionId);
+    const session = owned.session;
+
+    const sectionStates = [];
+    for (const section of sections) {
+      const counts = await this.db
+        .select({ role: itemInstance.role, status: itemInstance.status })
+        .from(itemInstance)
+        .where(eq(itemInstance.sectionInstanceId, section.id));
+      const scored = counts.filter((row) => row.role === "scored");
+
+      sectionStates.push({
+        position: section.position,
+        domain: section.domain,
+        status: section.status,
+        normEligible: section.deviceNormEligible,
+        ruleVersionId: section.ruleVersionId,
+        observations: section.eligibilityObservations,
+        deadlineAt: section.deadlineAt,
+        scoredItemCount: scored.length,
+        completedItemCount: scored.filter((row) => row.status !== "pending")
+          .length,
+      });
+    }
+
+    return {
+      id: session.id,
+      status: session.status,
+      batterySlug: owned.batteryRow.slug,
+      batteryTitle: owned.batteryRow.title,
+      batteryVersion: owned.version.version,
+      isPracticeMode: session.isPracticeMode,
+      administrationContext:
+        session.administrationContext as AdministrationContext,
+      attemptNumber: session.attemptNumber,
+      startedAt: session.startedAt,
+      completedAt: session.completedAt,
+      sections: sectionStates,
+      current: await this.readCurrentItem(sessionId),
+    };
+  }
+
+  private async readCurrentItem(sessionId: string) {
+    const section = await this.activeSection(sessionId);
+    if (!section) {
+      return null;
+    }
+
+    const form = await this.loadFormDefinition(section.formVersionId);
+    const rows = await this.db
+      .select()
+      .from(itemInstance)
+      .where(
+        and(
+          eq(itemInstance.sectionInstanceId, section.id),
+          eq(itemInstance.status, "pending"),
+        ),
+      )
+      .orderBy(asc(itemInstance.position));
+
+    const inFlight = rows.find((row) => row.shownAt !== null) ?? null;
+    const base = {
+      sectionPosition: section.position,
+      domain: section.domain,
+      deadlineAt: section.deadlineAt,
+      itemCeilingMs: form.itemCeilingMs,
+      sectionTimeLimitMs: form.sectionTimeLimitMs,
+      remainingItemCount: rows.length,
+    };
+
+    if (!inFlight) {
+      return { ...base, item: null };
+    }
+
+    const contents = await this.loadItemContents([inFlight.itemRevisionId]);
+    const content = contents.get(inFlight.itemRevisionId);
+    if (!content) {
+      throw new NotFoundException("Item content is missing.");
+    }
+    const presentation = parseItemPresentation(
+      inFlight.presentation,
+      "presentation",
+    );
+
+    return {
+      ...base,
+      item: {
+        itemInstanceId: inFlight.id,
+        position: inFlight.position,
+        role: inFlight.role as ItemRole,
+        shownAt: inFlight.shownAt,
+        // The key stays on the server (ADR 0015).
+        ...toClientPowerItem(content, presentation.choiceOrder),
+      },
+    };
+  }
+}
+
+/**
+ * `post_deadline` has no lifecycle state of its own: the section clock is why
+ * the item closed. The exact code stays on the response row, which is what
+ * scoring reads (ADR 0016).
+ */
+function instanceStatusFor(code: ResponseCode) {
+  if (code === "answered") {
+    return "answered" as const;
+  }
+  if (code === "omitted") {
+    return "omitted" as const;
+  }
+  return "timed_out" as const;
+}

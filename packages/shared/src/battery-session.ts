@@ -2,6 +2,42 @@ import type { ResponseCode } from "./battery";
 import type { PowerMcqItemContent } from "./power-mcq";
 
 /**
+ * Append-only evidence. Visibility, focus and resume are logged, never used as
+ * gates: fullscreen is recommended and not enforced (ADR 0017).
+ */
+export const CLIENT_QUALITY_EVENT_KINDS = [
+  "visibility_hidden",
+  "visibility_visible",
+  "focus_lost",
+  "focus_regained",
+  "fullscreen_entered",
+  "fullscreen_exited",
+  "viewport_resized",
+  "session_resumed",
+] as const;
+
+/** Kinds the server writes itself, which a client may not claim. */
+export const SERVER_QUALITY_EVENT_KINDS = [
+  "section_expired",
+  "item_ceiling_reached",
+] as const;
+
+export const QUALITY_EVENT_KINDS = [
+  ...CLIENT_QUALITY_EVENT_KINDS,
+  ...SERVER_QUALITY_EVENT_KINDS,
+] as const;
+
+export type ClientQualityEventKind =
+  (typeof CLIENT_QUALITY_EVENT_KINDS)[number];
+export type QualityEventKind = (typeof QUALITY_EVENT_KINDS)[number];
+
+export function isClientQualityEventKind(
+  value: unknown,
+): value is ClientQualityEventKind {
+  return (CLIENT_QUALITY_EVENT_KINDS as readonly unknown[]).includes(value);
+}
+
+/**
  * Allowance for network transit on a submission, not for thinking time. The
  * section clock is an absolute server deadline (ADR 0014), so without it an
  * answer chosen in time can still arrive late and be discarded.

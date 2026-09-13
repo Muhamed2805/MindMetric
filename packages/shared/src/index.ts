@@ -35,11 +35,17 @@ export {
 } from "./battery";
 export {
   buildItemPresentation,
+  CLIENT_QUALITY_EVENT_KINDS,
+  type ClientQualityEventKind,
   classifyResponse,
   type ItemPresentation,
+  isClientQualityEventKind,
   parseItemPresentation,
+  QUALITY_EVENT_KINDS,
+  type QualityEventKind,
   type ResponseClassification,
   type ResponseClassificationInput,
+  SERVER_QUALITY_EVENT_KINDS,
   SUBMISSION_GRACE_MS,
   shuffleForPresentation,
 } from "./battery-session";
