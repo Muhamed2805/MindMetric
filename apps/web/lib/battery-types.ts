@@ -27,6 +27,11 @@ export type BatteryOverviewSection = {
   normIneligibleDeviceClasses: string[];
 };
 
+export type BatteryRetestPolicy = {
+  cooldownMs: number;
+  requiresAlternateForm: boolean;
+};
+
 export type BatteryOverview = {
   slug: string;
   title: string;
@@ -37,7 +42,17 @@ export type BatteryOverview = {
   timedMs: number;
   normReferenceDeviceClass: string;
   rulesProvisional: boolean;
+  maturity: "S0";
+  retestPolicy: BatteryRetestPolicy | null;
   sections: BatteryOverviewSection[];
+};
+
+export type BatteryAccess = {
+  slug: string;
+  canStart: boolean;
+  resumeSessionId: string | null;
+  completedSessionId: string | null;
+  reason: string | null;
 };
 
 export type BatteryObservation = {

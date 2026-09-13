@@ -2,7 +2,7 @@
   "id": "bat_core_cognitive",
   "slug": "core-cognitive",
   "title": "Core cognitive battery",
-  "description": "Draft five-domain practice composition in the locked order. Reports raw domain performance only; there is no IQ score, percentile, or confidence interval until norms exist.",
+  "description": "Calibration battery in the locked five-domain order. You get raw section totals and quality notes, not an IQ, percentile, or confidence interval. This session can be scored again when a reference sample exists. A second counting attempt is locked until an alternate form exists.",
   "versions": [
     {
       "id": "bat_core_cognitive_v1",
@@ -10,6 +10,10 @@
       "status": "draft",
       "definition": {
         "engine": "battery-v1",
+        "retestPolicy": {
+          "cooldownMs": 2592000000,
+          "requiresAlternateForm": true
+        },
         "sections": [
           {
             "position": 1,

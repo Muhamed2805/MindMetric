@@ -4,6 +4,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { BatteryReportPanel } from "../../../../../components/battery-report";
 import { apiGet } from "../../../../../lib/api.server";
+import {
+  batteryPhaseLabel,
+  batteryScoreDisclaimer,
+} from "../../../../../lib/battery-copy";
 import type { BatterySessionState } from "../../../../../lib/battery-types";
 import { minutesFromMs } from "../../../../../lib/format";
 
@@ -42,14 +46,13 @@ export default async function BatteryResultPage({ params }: PageProps) {
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
       <div>
         <p className="text-[11px] font-medium uppercase tracking-widest text-mark">
-          {session.isPracticeMode ? "Practice report" : "Report"}
+          {batteryPhaseLabel(session.isPracticeMode)}
         </p>
         <h1 className="mt-1 font-serif text-4xl font-medium tracking-tight">
           {session.batteryTitle}
         </h1>
         <p className="mt-3 max-w-xl text-sm leading-6 text-muted">
-          Finished in {minutesFromMs(elapsedMs)}. These are raw section totals,
-          not an IQ: there is no reference sample yet.
+          Finished in {minutesFromMs(elapsedMs)}. {batteryScoreDisclaimer()}
         </p>
       </div>
 

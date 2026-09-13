@@ -26,6 +26,11 @@ export class BatterySessionsController {
     return this.battery.listForUser(user.id);
   }
 
+  @Get("access/:slug")
+  access(@CurrentUser() user: SessionUser, @Param("slug") slug: string) {
+    return this.battery.readAccess(user.id, slug);
+  }
+
   @Post()
   start(
     @CurrentUser() user: SessionUser,

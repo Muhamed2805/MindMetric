@@ -5,6 +5,7 @@ import { Button, cn } from "@mindmetric/ui";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiSend } from "../lib/api";
+import { batteryPhaseLabel, batteryScoreDisclaimer } from "../lib/battery-copy";
 import {
   type BatterySection,
   type BatterySessionState,
@@ -637,16 +638,13 @@ function Completed({ session }: { session: BatterySessionState }) {
     <Shell>
       <div className="flex flex-col gap-2">
         <span className="text-[11px] font-medium uppercase tracking-widest text-mark">
-          {session.isPracticeMode ? "Practice complete" : "Complete"}
+          {batteryPhaseLabel(session.isPracticeMode)}
         </span>
         <h1 className="font-serif text-4xl font-medium tracking-tight">
           Raw section totals
         </h1>
         <p className="max-w-xl text-sm leading-6 text-muted">
-          You finished in {minutesFromMs(elapsedMs)}. These are the number of
-          items you got right, not an IQ: there is no reference sample yet, so a
-          percentile or confidence interval would be invented rather than
-          measured.
+          You finished in {minutesFromMs(elapsedMs)}. {batteryScoreDisclaimer()}
         </p>
       </div>
 

@@ -70,6 +70,8 @@ import {
   parseSpeedDecisionSubmissions,
   type QualityObservation,
   type ResponseCode,
+  type RetestPolicy,
+  resolveRetestAccess,
   resolveSectionEligibility,
   type SectionQuality,
   type SectionQualityEvidence,
@@ -164,6 +166,13 @@ export class BatteryService {
     const existing = open[0];
     if (existing) {
       return this.getForUser(userId, existing.id);
+    }
+
+    const access = await this.resolveStartAccess(userId, target);
+    if (!access.canStart) {
+      throw new BadRequestException(
+        access.reason ?? "This battery cannot be started again.",
+      );
     }
 
     const prior = await this.db
@@ -336,7 +345,41 @@ export class BatteryService {
       timedMs,
       normReferenceDeviceClass: rules.definition.normReferenceDeviceClass,
       rulesProvisional: rules.definition.provisional,
+      maturity: "S0" as const,
+      retestPolicy: target.definition.retestPolicy,
       sections,
+    };
+  }
+
+  async readAccess(userId: string, slug: string) {
+    const target = await this.loadBatteryVersion(slug);
+    const open = await this.db
+      .select({ id: batterySession.id })
+      .from(batterySession)
+      .where(
+        and(
+          eq(batterySession.userId, userId),
+          eq(batterySession.batteryVersionId, target.version.id),
+          eq(batterySession.status, "in_progress"),
+        ),
+      )
+      .limit(1);
+    if (open[0]) {
+      return {
+        slug,
+        canStart: true,
+        resumeSessionId: open[0].id,
+        completedSessionId: null,
+        reason: null,
+      };
+    }
+    const access = await this.resolveStartAccess(userId, target);
+    return {
+      slug,
+      canStart: access.canStart,
+      resumeSessionId: null,
+      completedSessionId: access.completedSessionId,
+      reason: access.reason,
     };
   }
 
@@ -639,6 +682,52 @@ export class BatteryService {
       // A draft composition can still be taken, but only as practice, so
       // pre-release trials never reach the norming sample.
       practiceOnly: published === undefined,
+    };
+  }
+
+  private async lastCountingCompletion(userId: string, batteryId: string) {
+    const rows = await this.db
+      .select({
+        id: batterySession.id,
+        completedAt: batterySession.completedAt,
+      })
+      .from(batterySession)
+      .innerJoin(
+        batteryVersion,
+        eq(batteryVersion.id, batterySession.batteryVersionId),
+      )
+      .where(
+        and(
+          eq(batterySession.userId, userId),
+          eq(batteryVersion.batteryId, batteryId),
+          eq(batterySession.status, "completed"),
+          eq(batterySession.isPracticeMode, false),
+        ),
+      )
+      .orderBy(desc(batterySession.completedAt))
+      .limit(1);
+    return rows[0] ?? null;
+  }
+
+  private async resolveStartAccess(
+    userId: string,
+    target: {
+      battery: { id: string };
+      practiceOnly: boolean;
+      definition: { retestPolicy: RetestPolicy | null };
+    },
+  ) {
+    const last = await this.lastCountingCompletion(userId, target.battery.id);
+    const access = resolveRetestAccess({
+      practiceOnly: target.practiceOnly,
+      policy: target.definition.retestPolicy,
+      lastCompletedAt: last?.completedAt ?? null,
+      now: new Date(),
+    });
+    return {
+      canStart: access.allowed,
+      reason: access.reason,
+      completedSessionId: last?.id ?? null,
     };
   }
 

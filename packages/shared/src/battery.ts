@@ -85,10 +85,24 @@ export type BatterySection = {
   breakMaxMs: number | null;
 };
 
+export type RetestPolicy = {
+  /** Elapsed time after a completed attempt. Zero means no time gate. */
+  cooldownMs: number;
+  /**
+   * Without a different published form, a second counting attempt stays
+   * locked even after the cooldown (ADR 0017).
+   */
+  requiresAlternateForm: boolean;
+};
+
 export type BatteryDefinition = {
   engine: typeof BATTERY_ENGINE;
   sections: BatterySection[];
+  retestPolicy: RetestPolicy | null;
 };
+
+/** Public retest cooldown for the core battery. */
+export const RETEST_COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const BREAK_MIN_MS = 15_000;
 
@@ -187,5 +201,68 @@ export function parseBatteryDefinition(
     throw new Error(`${source} allows a break after the final section.`);
   }
 
-  return { engine: BATTERY_ENGINE, sections };
+  return {
+    engine: BATTERY_ENGINE,
+    sections,
+    retestPolicy: parseRetestPolicy(
+      value.retestPolicy,
+      `${source} retestPolicy`,
+    ),
+  };
+}
+
+function parseRetestPolicy(
+  value: unknown,
+  source: string,
+): RetestPolicy | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+  if (!isRecord(value)) {
+    throw new Error(`${source} is not an object.`);
+  }
+  const { cooldownMs, requiresAlternateForm } = value;
+  if (
+    typeof cooldownMs !== "number" ||
+    !Number.isInteger(cooldownMs) ||
+    cooldownMs < 0
+  ) {
+    throw new Error(`${source} has an invalid cooldownMs.`);
+  }
+  if (typeof requiresAlternateForm !== "boolean") {
+    throw new Error(
+      `${source} must state whether an alternate form is required.`,
+    );
+  }
+  return { cooldownMs, requiresAlternateForm };
+}
+
+/**
+ * Practice may be repeated. A counting attempt needs both the cooldown and,
+ * when the policy says so, an alternate form that does not exist yet.
+ */
+export function resolveRetestAccess(input: {
+  practiceOnly: boolean;
+  policy: RetestPolicy | null;
+  lastCompletedAt: Date | null;
+  now: Date;
+}): { allowed: boolean; reason: string | null } {
+  if (input.practiceOnly || !input.policy || !input.lastCompletedAt) {
+    return { allowed: true, reason: null };
+  }
+  if (input.policy.requiresAlternateForm) {
+    return {
+      allowed: false,
+      reason:
+        "A second attempt needs an alternate form, which is not available yet.",
+    };
+  }
+  const unlocksAt = input.lastCompletedAt.getTime() + input.policy.cooldownMs;
+  if (input.now.getTime() < unlocksAt) {
+    return {
+      allowed: false,
+      reason: "This battery can be taken again after the retest cooldown.",
+    };
+  }
+  return { allowed: true, reason: null };
 }

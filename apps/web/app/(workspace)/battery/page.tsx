@@ -3,6 +3,11 @@ import type { Metadata } from "next";
 import { StartBatteryButton } from "../../../components/start-battery-button";
 import { apiGet } from "../../../lib/api.server";
 import {
+  batteryRetestNote,
+  batteryScoreDisclaimer,
+} from "../../../lib/battery-copy";
+import {
+  type BatteryAccess,
   type BatteryOverview,
   LISTED_BATTERY_SLUGS,
 } from "../../../lib/battery-types";
@@ -29,7 +34,13 @@ function viewportNote(section: BatteryOverview["sections"][number]) {
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
-function BatteryCard({ overview }: { overview: BatteryOverview }) {
+function BatteryCard({
+  overview,
+  access,
+}: {
+  overview: BatteryOverview;
+  access: BatteryAccess | null;
+}) {
   const totalItems = overview.sections.reduce(
     (sum, section) => sum + section.scoredItemCount,
     0,
@@ -39,6 +50,10 @@ function BatteryCard({ overview }: { overview: BatteryOverview }) {
   )
     ? "scored trials"
     : "scored items";
+  const retest = batteryRetestNote(
+    overview.practiceOnly,
+    overview.retestPolicy,
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -96,18 +111,8 @@ function BatteryCard({ overview }: { overview: BatteryOverview }) {
         <h3 className="font-serif text-xl text-ink">
           What you will and will not get
         </h3>
-        <p>
-          This battery has no reference sample yet, so it reports how you did on
-          each section and nothing more. There is no IQ score, no percentile and
-          no confidence interval, because with nobody to compare you against
-          those numbers would be invented rather than measured.
-        </p>
-        {overview.practiceOnly ? (
-          <p className="text-ink">
-            This version is still in preparation, so this run is practice only
-            and will not count as an attempt.
-          </p>
-        ) : null}
+        <p>{batteryScoreDisclaimer()}</p>
+        {retest ? <p className="text-ink">{retest}</p> : null}
         <p>
           Sections run under their own clock and cannot be paused or revisited.
           Set aside {minutesFromMs(overview.timedMs)} of undisturbed time plus a
@@ -116,7 +121,7 @@ function BatteryCard({ overview }: { overview: BatteryOverview }) {
         </p>
       </div>
 
-      <StartBatteryButton slug={overview.slug} />
+      <StartBatteryButton slug={overview.slug} access={access} />
     </div>
   );
 }
@@ -129,6 +134,18 @@ export default async function BatteryPage() {
       ),
     )
   ).filter((entry): entry is BatteryOverview => entry !== null);
+  const accessRows = await Promise.all(
+    overviews.map((overview) =>
+      apiGet<BatteryAccess>(`/battery/sessions/access/${overview.slug}`).catch(
+        () => null,
+      ),
+    ),
+  );
+  const accessBySlug = new Map(
+    accessRows
+      .filter((entry): entry is BatteryAccess => entry !== null)
+      .map((entry) => [entry.slug, entry]),
+  );
 
   if (overviews.length === 0) {
     return (
@@ -146,13 +163,17 @@ export default async function BatteryPage() {
           Cognitive batteries
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-          Raw domain totals only. The core battery now runs all five domains in
-          the locked order, still as practice. Separate single-domain forms
-          remain available if you want to take one section on its own.
+          Calibration phase: raw domain totals and quality notes only. The core
+          battery runs all five domains in the locked order. Separate
+          single-domain forms stay available as practice.
         </p>
       </div>
       {overviews.map((overview) => (
-        <BatteryCard key={overview.slug} overview={overview} />
+        <BatteryCard
+          key={overview.slug}
+          overview={overview}
+          access={accessBySlug.get(overview.slug) ?? null}
+        />
       ))}
     </div>
   );

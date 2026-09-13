@@ -176,6 +176,14 @@ async function seedBatteries(now: Date) {
       createdAt: now,
       updatedAt: now,
     },
+    {
+      id: "bat_locked",
+      slug: "locked-battery",
+      title: "Locked battery",
+      description: "Fixture",
+      createdAt: now,
+      updatedAt: now,
+    },
   ]);
 
   await db.insert(batteryVersion).values([
@@ -206,6 +214,24 @@ async function seedBatteries(now: Date) {
         ],
       },
       publishedAt: null,
+      createdAt: now,
+    },
+    {
+      id: "bat_locked_v1",
+      batteryId: "bat_locked",
+      version: 1,
+      status: "published",
+      definition: {
+        engine: "battery-v1",
+        retestPolicy: {
+          cooldownMs: 2_592_000_000,
+          requiresAlternateForm: true,
+        },
+        sections: [
+          { position: 1, domain: "gf", formVersionId: "form_gf_test_v1" },
+        ],
+      },
+      publishedAt: now,
       createdAt: now,
     },
   ]);
@@ -688,6 +714,8 @@ describe("battery overview", () => {
 
     expect(overview.title).toBe("Live battery");
     expect(overview.practiceOnly).toBe(false);
+    expect(overview.maturity).toBe("S0");
+    expect(overview.retestPolicy).toBeNull();
     expect(overview.rulesProvisional).toBe(true);
     expect(overview.normReferenceDeviceClass).toBe("desktop");
     // Timed total is the sum of the section clocks, not wall-clock duration:
@@ -801,6 +829,42 @@ describe("section administration", () => {
 
     const second = await startSession(userId);
     expect(second.id).not.toBe(first.id);
+    expect(second.attemptNumber).toBe(2);
+  });
+});
+
+describe("retest access", () => {
+  it("resumes an open session and locks a second counting attempt", async () => {
+    const userId = await freshUser();
+    const first = await startSession(userId, "locked-battery");
+    const again = await startSession(userId, "locked-battery");
+    expect(again.id).toBe(first.id);
+
+    const accessOpen = await service.readAccess(userId, "locked-battery");
+    expect(accessOpen).toMatchObject({
+      canStart: true,
+      resumeSessionId: first.id,
+    });
+
+    await finishSectionKeyed(userId, first.id, 1);
+    await expect(startSession(userId, "locked-battery")).rejects.toThrow(
+      /alternate form/,
+    );
+
+    const accessDone = await service.readAccess(userId, "locked-battery");
+    expect(accessDone.canStart).toBe(false);
+    expect(accessDone.completedSessionId).toBe(first.id);
+    expect(accessDone.reason).toMatch(/alternate form/);
+  });
+
+  it("still lets a draft composition be repeated as practice", async () => {
+    const userId = await freshUser();
+    const first = await startSession(userId, "draft-battery");
+    await finishSectionKeyed(userId, first.id, 1);
+    const second = await startSession(userId, "draft-battery");
+
+    expect(second.id).not.toBe(first.id);
+    expect(second.isPracticeMode).toBe(true);
     expect(second.attemptNumber).toBe(2);
   });
 });

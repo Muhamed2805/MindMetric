@@ -93,8 +93,8 @@ export default async function TestsPage({
                 </p>
                 <p className="mt-4 text-sm font-medium text-accent">
                   {entry.practiceOnly
-                    ? "Open practice battery →"
-                    : "Open cognitive battery →"}
+                    ? "Open calibration practice →"
+                    : "Open calibration battery →"}
                 </p>
               </Link>
             </li>

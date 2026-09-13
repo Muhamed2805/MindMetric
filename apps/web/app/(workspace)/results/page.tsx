@@ -58,7 +58,9 @@ export default async function ResultsPage() {
         href: `/results/battery/${row.id}`,
         title: row.batteryTitle,
         total: batteryRawLabel(row.report),
-        note: row.isPracticeMode ? "Raw · practice" : "Raw totals",
+        note: row.isPracticeMode
+          ? "Calibration practice"
+          : "Calibration · raw totals",
         completedAt: row.completedAt,
       })),
   ].sort((left, right) => {
@@ -77,7 +79,7 @@ export default async function ResultsPage() {
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
           Review keyed totals from finished sessions. Battery figures are raw
-          section counts, not clinical ranks.
+          section counts from the calibration phase, not IQ or ranks.
         </p>
       </div>
       {loadError ? (

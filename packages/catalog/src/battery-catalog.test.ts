@@ -254,6 +254,10 @@ describe("loadBatteryCatalog", () => {
       breakAfter: true,
       breakMaxMs: 120_000,
     });
+    expect(core?.versions[0]?.definition.retestPolicy).toEqual({
+      cooldownMs: 2_592_000_000,
+      requiresAlternateForm: true,
+    });
     expect(scored.length).toBeGreaterThan(0);
     expect(loaded.forms.map((entry) => entry.slug)).toEqual(
       expect.arrayContaining([

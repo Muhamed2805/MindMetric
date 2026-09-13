@@ -4,7 +4,7 @@ import { Button } from "@mindmetric/ui";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { apiSend } from "../lib/api";
-import type { BatterySessionState } from "../lib/battery-types";
+import type { BatteryAccess, BatterySessionState } from "../lib/battery-types";
 
 /**
  * Device and viewport are covariates, not settings: they are measured here and
@@ -25,12 +25,23 @@ function covariates() {
   };
 }
 
-export function StartBatteryButton({ slug }: { slug: string }) {
+export function StartBatteryButton({
+  slug,
+  access,
+}: {
+  slug: string;
+  access?: BatteryAccess | null;
+}) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const locked = access != null && !access.canStart && !access.resumeSessionId;
 
   async function onClick() {
+    if (access?.resumeSessionId) {
+      router.push(`/run/battery/${access.resumeSessionId}`);
+      return;
+    }
     setPending(true);
     setError(null);
     try {
@@ -53,9 +64,16 @@ export function StartBatteryButton({ slug }: { slug: string }) {
 
   return (
     <div className="flex flex-col items-start gap-3">
-      <Button type="button" disabled={pending} onClick={onClick}>
-        {pending ? "Starting" : "Begin the battery"}
+      <Button type="button" disabled={pending || locked} onClick={onClick}>
+        {pending
+          ? "Starting"
+          : access?.resumeSessionId
+            ? "Continue the battery"
+            : "Begin the battery"}
       </Button>
+      {locked && access?.reason ? (
+        <p className="text-sm text-muted">{access.reason}</p>
+      ) : null}
       {error ? (
         <p className="text-sm text-danger" role="alert">
           {error}
