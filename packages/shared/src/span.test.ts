@@ -5,6 +5,7 @@ import {
   parseSpanTrialContent,
   spanCellId,
   spanRecallTarget,
+  spanTrialCeilingMs,
 } from "./span";
 
 describe("parseSpanTrialContent", () => {
@@ -109,5 +110,16 @@ describe("spanRecallTarget", () => {
       "r2c2",
       "r1c1",
     ]);
+  });
+});
+
+describe("spanTrialCeilingMs", () => {
+  it("adds presentation time to the recall window", () => {
+    expect(
+      spanTrialCeilingMs(
+        { stimulusMs: 1_000, isiMs: 250, recallCeilingMs: 20_000 },
+        3,
+      ),
+    ).toBe(3_000 + 500 + 20_000);
   });
 });

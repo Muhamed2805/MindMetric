@@ -20,12 +20,16 @@ import {
   batteryProfileInputCanon,
   type PowerItemRecord,
   powerSectionInputCanon,
+  type SpanTrialRecord,
   type SpeedTrialRecord,
   scoreAccuracyPower,
   scoreBatteryProfile,
+  scoreSpanPartial,
   scoreSpeedCorrected,
+  spanSectionInputCanon,
   speedSectionInputCanon,
   toBatterySectionReport,
+  toSpanSectionReport,
   toSpeedSectionReport,
 } from "@mindmetric/scoring-core";
 import {
@@ -35,6 +39,7 @@ import {
   BATTERY_PROFILE_MODEL,
   type BatteryDomain,
   buildItemPresentation,
+  buildSpanPresentation,
   buildSpeedPresentation,
   classifyResponse,
   classifySpeedTrial,
@@ -42,12 +47,14 @@ import {
   type DeviceClass,
   formItemCeilingMs,
   formSectionTimeLimitMs,
+  generateSpatialSequence,
   INPUT_MODES,
   type InputMode,
   type ItemOutcome,
   type ItemRole,
   isClientQualityEventKind,
   isPowerDomain,
+  isSpanFormDefinition,
   isSpanTrialContent,
   isSpeedFormDefinition,
   isSpeedTrialContent,
@@ -57,12 +64,20 @@ import {
   parseBatteryDefinition,
   parseItemPresentation,
   parseQualityRuleSetDefinition,
+  parseSpanRecall,
+  parseSpanSequence,
   parseSpeedDecisionSubmissions,
   type ResponseCode,
   resolveSectionEligibility,
+  SPAN_FAMILY_ID,
+  SPAN_GENERATOR_VERSION,
+  SPAN_SPATIAL_REVERSE,
   SPEED_CHOICES,
   SUBMISSION_GRACE_MS,
+  spanPositionCredits,
+  spanTrialCeilingMs,
   toClientPowerItem,
+  toClientSpanTrial,
   toClientSpeedTrial,
   VERSION_PIN_NONE,
 } from "@mindmetric/shared";
@@ -88,6 +103,7 @@ export type StartBatteryInput = {
 export type SubmitResponseInput = {
   itemInstanceId: string;
   choiceId: string | null;
+  recalled?: unknown;
   /** Speed trials send every decision in one request so RTT is not scored. */
   decisions?: unknown;
   clientShownAt: Date | null;
@@ -222,6 +238,7 @@ export class BatteryService {
   async getForUser(userId: string, sessionId: string) {
     await this.loadOwnedSession(userId, sessionId);
     await this.closeExpiredSpeedTrials(sessionId);
+    await this.closeExpiredSpanTrials(sessionId);
     await this.closeSectionsPastDeadline(sessionId);
     return this.readState(userId, sessionId);
   }
@@ -323,6 +340,7 @@ export class BatteryService {
       throw new BadRequestException("This session is already closed.");
     }
     await this.closeExpiredSpeedTrials(sessionId);
+    await this.closeExpiredSpanTrials(sessionId);
     await this.closeSectionsPastDeadline(sessionId);
 
     const sections = await this.loadSections(sessionId);
@@ -373,6 +391,7 @@ export class BatteryService {
   async serveNextItem(userId: string, sessionId: string) {
     await this.loadOwnedSession(userId, sessionId);
     await this.closeExpiredSpeedTrials(sessionId);
+    await this.closeExpiredSpanTrials(sessionId);
     await this.closeSectionsPastDeadline(sessionId);
 
     const section = await this.activeSection(sessionId);
@@ -473,6 +492,15 @@ export class BatteryService {
         input,
         receivedAt,
       });
+    } else if (isSpanFormDefinition(form)) {
+      await this.recordSpanSubmission({
+        inFlight,
+        form,
+        sectionDeadlineAt: section.deadlineAt,
+        input,
+        receivedAt,
+      });
+      await this.discontinueRemainingSpanTrials(section.id);
     } else {
       const presentation = parseItemPresentation(
         inFlight.presentation,
@@ -524,7 +552,15 @@ export class BatteryService {
         .where(eq(itemInstance.id, inFlight.id));
     }
 
-    const remaining = rows.filter((row) => row.id !== inFlight.id);
+    const remaining = await this.db
+      .select({ id: itemInstance.id })
+      .from(itemInstance)
+      .where(
+        and(
+          eq(itemInstance.sectionInstanceId, section.id),
+          eq(itemInstance.status, "pending"),
+        ),
+      );
     if (remaining.length === 0) {
       await this.closeSection(section.id, "submitted", receivedAt);
       await this.completeSessionIfDone(sessionId);
@@ -695,9 +731,27 @@ export class BatteryService {
           );
         }
         if (isSpanTrialContent(content)) {
-          throw new BadRequestException(
-            "Working-memory span trials are defined but not administered yet.",
-          );
+          const seed = randomUUID();
+          const sequence = generateSpatialSequence({
+            length: content.length,
+            rows: content.grid.rows,
+            cols: content.grid.cols,
+            seed,
+          });
+          return {
+            id: randomUUID(),
+            sectionInstanceId,
+            itemRevisionId: entry.revisionId,
+            position: index + 1,
+            role: entry.role,
+            presentation: buildSpanPresentation(content.grid),
+            itemFamilyId: SPAN_FAMILY_ID,
+            generatorVersion: SPAN_GENERATOR_VERSION,
+            seed,
+            parameters: { sequence },
+            shownAt: null,
+            status: "pending" as const,
+          };
         }
         return {
           id: randomUUID(),
@@ -957,6 +1011,10 @@ export class BatteryService {
       await this.persistSpeedSectionScore(section);
       return;
     }
+    if (section.domain === "gwm") {
+      await this.persistSpanSectionScore(section);
+      return;
+    }
     if (!isPowerDomain(section.domain)) {
       return;
     }
@@ -1173,9 +1231,21 @@ export class BatteryService {
       throw new NotFoundException("Item content is missing.");
     }
     if (isSpanTrialContent(content)) {
-      throw new BadRequestException(
-        "Working-memory span trials are defined but not administered yet.",
-      );
+      if (!isSpanFormDefinition(form)) {
+        throw new BadRequestException("That trial is not open.");
+      }
+      const sequence = parseSpanSequence(inFlight.parameters, "parameters");
+      return {
+        ...base,
+        itemCeilingMs: spanTrialCeilingMs(form, content.length),
+        item: {
+          itemInstanceId: inFlight.id,
+          position: inFlight.position,
+          role: inFlight.role as ItemRole,
+          shownAt: inFlight.shownAt,
+          ...toClientSpanTrial(content, sequence, form),
+        },
+      };
     }
     const presentation = parseItemPresentation(
       inFlight.presentation,
@@ -1198,6 +1268,359 @@ export class BatteryService {
             }),
       },
     };
+  }
+
+  private async recordSpanSubmission(input: {
+    inFlight: typeof itemInstance.$inferSelect;
+    form: AdministeredForm;
+    sectionDeadlineAt: Date | null;
+    input: SubmitResponseInput;
+    receivedAt: Date;
+  }) {
+    if (!isSpanFormDefinition(input.form) || !input.inFlight.shownAt) {
+      throw new BadRequestException("That trial is not open.");
+    }
+    const contents = await this.loadItemContents([
+      input.inFlight.itemRevisionId,
+    ]);
+    const content = contents.get(input.inFlight.itemRevisionId);
+    if (!isSpanTrialContent(content)) {
+      throw new NotFoundException("Item content is missing.");
+    }
+
+    const presentation = parseItemPresentation(
+      input.inFlight.presentation,
+      "presentation",
+    );
+    let recalled: string[];
+    try {
+      recalled = parseSpanRecall(input.input.recalled, "recalled");
+    } catch (cause) {
+      throw new BadRequestException(
+        cause instanceof Error ? cause.message : "Invalid recall.",
+      );
+    }
+    const unknown = recalled.some(
+      (cellId) => !presentation.choiceOrder.includes(cellId),
+    );
+
+    const classification =
+      input.inFlight.role === "sample"
+        ? {
+            code: (unknown
+              ? "invalid"
+              : recalled.length === 0
+                ? "omitted"
+                : "answered") as ResponseCode,
+            responseTimeMs:
+              input.receivedAt.getTime() - input.inFlight.shownAt.getTime(),
+          }
+        : unknown
+          ? {
+              code: "invalid" as ResponseCode,
+              responseTimeMs:
+                input.receivedAt.getTime() - input.inFlight.shownAt.getTime(),
+            }
+          : classifyResponse({
+              choiceId: recalled[0] ?? null,
+              shownAt: input.inFlight.shownAt,
+              deadlineAt:
+                input.sectionDeadlineAt ??
+                new Date(input.receivedAt.getTime() + SUBMISSION_GRACE_MS),
+              itemCeilingMs: spanTrialCeilingMs(input.form, content.length),
+              receivedAt: input.receivedAt,
+            });
+
+    await this.writeSpanResponse(
+      input.inFlight.id,
+      classification.code,
+      classification.responseTimeMs,
+      recalled,
+      input.receivedAt,
+      input.input,
+    );
+  }
+
+  private async writeSpanResponse(
+    itemInstanceId: string,
+    code: ResponseCode,
+    responseTimeMs: number | null,
+    recalled: string[],
+    at: Date,
+    client: Pick<
+      SubmitResponseInput,
+      "clientShownAt" | "clientFirstInteractionAt" | "clientAnsweredAt"
+    > | null,
+  ) {
+    await this.db.insert(batteryResponse).values({
+      id: randomUUID(),
+      itemInstanceId,
+      code,
+      choiceId: null,
+      responseTimeMs,
+      clientShownAt: client?.clientShownAt ?? null,
+      clientFirstInteractionAt: client?.clientFirstInteractionAt ?? null,
+      clientAnsweredAt: client?.clientAnsweredAt ?? null,
+      serverReceivedAt: at,
+      submittedAt: at,
+      payload: { recalled },
+    });
+    await this.db
+      .update(itemInstance)
+      .set({ status: instanceStatusFor(code) })
+      .where(eq(itemInstance.id, itemInstanceId));
+  }
+
+  /**
+   * After two consecutive scored trials with zero position credits, remaining
+   * scored trials are skipped. The scale stays the same (ADR 0016).
+   */
+  private async discontinueRemainingSpanTrials(sectionInstanceId: string) {
+    const instances = await this.db
+      .select()
+      .from(itemInstance)
+      .where(eq(itemInstance.sectionInstanceId, sectionInstanceId))
+      .orderBy(asc(itemInstance.position));
+    const scored = instances.filter((row) => row.role === "scored");
+    if (scored.length === 0) {
+      return;
+    }
+    const contents = await this.loadItemContents(
+      scored.map((row) => row.itemRevisionId),
+    );
+    const responses = await this.db
+      .select()
+      .from(batteryResponse)
+      .where(
+        inArray(
+          batteryResponse.itemInstanceId,
+          scored.map((row) => row.id),
+        ),
+      );
+    const byItem = new Map(responses.map((row) => [row.itemInstanceId, row]));
+
+    let consecutiveZero = 0;
+    let skipFrom = -1;
+    for (const [index, row] of scored.entries()) {
+      const content = contents.get(row.itemRevisionId);
+      const response = byItem.get(row.id);
+      if (!response || !isSpanTrialContent(content)) {
+        break;
+      }
+      if (response.code === "invalid") {
+        continue;
+      }
+      const sequence = parseSpanSequence(row.parameters, "parameters");
+      const credits = spanPositionCredits(
+        sequence,
+        content.recall,
+        spanRecalledFromPayload(response.payload),
+      );
+      if (credits === 0) {
+        consecutiveZero += 1;
+        if (consecutiveZero >= 2) {
+          skipFrom = index + 1;
+          break;
+        }
+      } else {
+        consecutiveZero = 0;
+      }
+    }
+    if (skipFrom < 0) {
+      return;
+    }
+
+    const rest = scored
+      .slice(skipFrom)
+      .filter((row) => row.status === "pending");
+    if (rest.length === 0) {
+      return;
+    }
+    await this.db
+      .update(itemInstance)
+      .set({ status: "not_reached" })
+      .where(
+        inArray(
+          itemInstance.id,
+          rest.map((row) => row.id),
+        ),
+      );
+  }
+
+  private async closeExpiredSpanTrials(sessionId: string) {
+    const section = await this.activeSection(sessionId);
+    if (!section) {
+      return;
+    }
+    const form = await this.loadFormDefinition(section.formVersionId);
+    if (!isSpanFormDefinition(form)) {
+      return;
+    }
+
+    const pending = await this.db
+      .select()
+      .from(itemInstance)
+      .where(
+        and(
+          eq(itemInstance.sectionInstanceId, section.id),
+          eq(itemInstance.status, "pending"),
+        ),
+      )
+      .orderBy(asc(itemInstance.position));
+    const inFlight = pending.find((row) => row.shownAt !== null);
+    if (!inFlight?.shownAt || inFlight.role === "sample") {
+      return;
+    }
+
+    const contents = await this.loadItemContents([inFlight.itemRevisionId]);
+    const content = contents.get(inFlight.itemRevisionId);
+    if (!isSpanTrialContent(content)) {
+      return;
+    }
+
+    const now = new Date();
+    if (
+      now.getTime() <=
+      inFlight.shownAt.getTime() +
+        spanTrialCeilingMs(form, content.length) +
+        SUBMISSION_GRACE_MS
+    ) {
+      return;
+    }
+
+    const classification = classifyResponse({
+      choiceId: null,
+      shownAt: inFlight.shownAt,
+      deadlineAt:
+        section.deadlineAt ?? new Date(now.getTime() + SUBMISSION_GRACE_MS),
+      itemCeilingMs: spanTrialCeilingMs(form, content.length),
+      receivedAt: now,
+    });
+    await this.writeSpanResponse(
+      inFlight.id,
+      classification.code,
+      classification.responseTimeMs,
+      [],
+      now,
+      null,
+    );
+    await this.discontinueRemainingSpanTrials(section.id);
+
+    const leftover = await this.db
+      .select({ id: itemInstance.id })
+      .from(itemInstance)
+      .where(
+        and(
+          eq(itemInstance.sectionInstanceId, section.id),
+          eq(itemInstance.status, "pending"),
+        ),
+      );
+    if (leftover.length === 0) {
+      await this.closeSection(section.id, "submitted", now);
+      await this.completeSessionIfDone(sessionId);
+    }
+  }
+
+  private async persistSpanSectionScore(section: {
+    id: string;
+    domain: string;
+    position: number;
+    status: "submitted" | "expired" | string;
+    formVersionId: string;
+    deviceNormEligible: boolean;
+    ruleVersionId: string | null;
+    eligibilityObservations: unknown;
+  }) {
+    if (section.status !== "submitted" && section.status !== "expired") {
+      return;
+    }
+    const form = await this.loadFormDefinition(section.formVersionId);
+    const instances = await this.db
+      .select()
+      .from(itemInstance)
+      .where(eq(itemInstance.sectionInstanceId, section.id))
+      .orderBy(asc(itemInstance.position));
+    const scored = instances.filter((row) => row.role === "scored");
+    const contents = await this.loadItemContents(
+      scored.map((row) => row.itemRevisionId),
+    );
+    const responses =
+      scored.length === 0
+        ? []
+        : await this.db
+            .select()
+            .from(batteryResponse)
+            .where(
+              inArray(
+                batteryResponse.itemInstanceId,
+                scored.map((row) => row.id),
+              ),
+            );
+    const byItem = new Map(responses.map((row) => [row.itemInstanceId, row]));
+
+    const trials: SpanTrialRecord[] = scored.map((row) => {
+      const content = contents.get(row.itemRevisionId);
+      if (!isSpanTrialContent(content)) {
+        throw new NotFoundException(
+          `Item revision ${row.itemRevisionId} is missing.`,
+        );
+      }
+      const response = byItem.get(row.id);
+      return {
+        itemRevisionId: row.itemRevisionId,
+        length: content.length,
+        recall: content.recall,
+        sequence: parseSpanSequence(row.parameters, "parameters"),
+        recalled: response ? spanRecalledFromPayload(response.payload) : null,
+        code: (response?.code ?? "not_reached") as ItemOutcome,
+      };
+    });
+
+    const procedures = [{ id: SPAN_SPATIAL_REVERSE, trials }];
+    const score = scoreSpanPartial(procedures);
+    const digest = hashCanon(spanSectionInputCanon(procedures));
+    const qualityRulesVersion = section.ruleVersionId ?? VERSION_PIN_NONE;
+    const existing = await this.db
+      .select({ id: sectionScore.id })
+      .from(sectionScore)
+      .where(
+        and(
+          eq(sectionScore.sectionInstanceId, section.id),
+          eq(sectionScore.scoringModel, form.scoringModel),
+          eq(sectionScore.qualityRulesVersion, qualityRulesVersion),
+          eq(sectionScore.normsVersionId, VERSION_PIN_NONE),
+        ),
+      )
+      .limit(1);
+    if (existing[0]) {
+      return;
+    }
+
+    await this.db.insert(sectionScore).values({
+      id: randomUUID(),
+      sectionInstanceId: section.id,
+      scoringModel: form.scoringModel,
+      qualityRulesVersion,
+      normsVersionId: VERSION_PIN_NONE,
+      inputDigest: digest,
+      payload: {
+        ...toSpanSectionReport(
+          {
+            domain: "gwm",
+            position: section.position,
+            status: section.status === "expired" ? "expired" : "submitted",
+            normEligible: section.deviceNormEligible,
+            observations: Array.isArray(section.eligibilityObservations)
+              ? section.eligibilityObservations
+              : [],
+          },
+          score,
+        ),
+        procedures: score.procedures,
+      },
+      supersededAt: null,
+      createdAt: new Date(),
+    });
   }
 
   private async recordSpeedSubmission(input: {
@@ -1461,6 +1884,20 @@ export class BatteryService {
       supersededAt: null,
       createdAt: new Date(),
     });
+  }
+}
+
+function spanRecalledFromPayload(payload: unknown): string[] {
+  if (!payload || typeof payload !== "object" || !("recalled" in payload)) {
+    return [];
+  }
+  try {
+    return parseSpanRecall(
+      (payload as { recalled: unknown }).recalled,
+      "recalled",
+    );
+  } catch {
+    return [];
   }
 }
 

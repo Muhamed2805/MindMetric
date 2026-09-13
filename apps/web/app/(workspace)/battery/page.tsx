@@ -34,7 +34,9 @@ function BatteryCard({ overview }: { overview: BatteryOverview }) {
     (sum, section) => sum + section.scoredItemCount,
     0,
   );
-  const unit = overview.sections.every((section) => section.domain === "gs")
+  const unit = overview.sections.every(
+    (section) => section.domain === "gs" || section.domain === "gwm",
+  )
     ? "scored trials"
     : "scored items";
 
@@ -75,8 +77,10 @@ function BatteryCard({ overview }: { overview: BatteryOverview }) {
                 <span className="text-ink">{domainLabel(section.domain)}</span>
                 <span className="text-muted">
                   {section.scoredItemCount}{" "}
-                  {section.domain === "gs" ? "trials" : "items"} ·{" "}
-                  {minutesFromMs(section.sectionTimeLimitMs)}
+                  {section.domain === "gs" || section.domain === "gwm"
+                    ? "trials"
+                    : "items"}{" "}
+                  · {minutesFromMs(section.sectionTimeLimitMs)}
                   {note ? ` · ${note}` : ""}
                 </span>
               </div>
@@ -140,8 +144,9 @@ export default async function BatteryPage() {
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
           Raw domain totals only. The core battery is still Gf. Processing
-          speed, quantitative reasoning, and spatial reasoning are separate
-          practice forms until they are pinned into the composition.
+          speed, quantitative reasoning, spatial reasoning, and working memory
+          are separate practice forms until they are pinned into the
+          composition.
         </p>
       </div>
       {overviews.map((overview) => (

@@ -64,7 +64,7 @@ export default async function TestsPage({
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
           Focused measures for a more complete picture of how you think.
-          Personality and memory batteries are still ahead of the live catalog.
+          Personality batteries are still ahead of the live catalog.
         </p>
       </div>
       {loadError ? (

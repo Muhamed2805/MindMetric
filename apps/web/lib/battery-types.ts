@@ -6,6 +6,7 @@ export const LISTED_BATTERY_SLUGS = [
   "gs-same-different-pilot",
   "rq-quant-pilot",
   "gv-rotation-pilot",
+  "wm-spatial-reverse-pilot",
 ] as const;
 
 export type BatteryViewportMinimum = {
@@ -86,12 +87,32 @@ export type BatterySpeedItem = {
   decisions: Array<{ id: string; left: FigureSpec; right: FigureSpec }>;
 };
 
-export type BatteryItem = BatteryPowerItem | BatterySpeedItem;
+export type BatterySpanItem = {
+  engine: "span-trial-v1";
+  itemInstanceId: string;
+  position: number;
+  role: "scored" | "sample";
+  shownAt: string | null;
+  prompt: string;
+  procedure: "spatial-reverse-v1";
+  length: number;
+  recall: "forward" | "reverse";
+  grid: { rows: number; cols: number };
+  sequence: string[];
+  stimulusMs: number;
+  isiMs: number;
+};
+
+export type BatteryItem = BatteryPowerItem | BatterySpeedItem | BatterySpanItem;
 
 export function isSpeedBatteryItem(
   item: BatteryItem,
 ): item is BatterySpeedItem {
   return item.engine === "speed-trial-v1";
+}
+
+export function isSpanBatteryItem(item: BatteryItem): item is BatterySpanItem {
+  return item.engine === "span-trial-v1";
 }
 
 export type BatteryCurrent = {

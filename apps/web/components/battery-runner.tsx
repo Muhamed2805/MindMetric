@@ -8,10 +8,12 @@ import { apiSend } from "../lib/api";
 import {
   type BatterySection,
   type BatterySessionState,
+  isSpanBatteryItem,
   isSpeedBatteryItem,
 } from "../lib/battery-types";
 import { clockLabel, domainLabel, minutesFromMs } from "../lib/format";
 import { BatteryReportPanel } from "./battery-report";
+import { SpanTrialPlay } from "./span-trial-play";
 import { SpeedTrialPlay } from "./speed-trial-play";
 import { StimulusView } from "./stimulus-view";
 
@@ -124,7 +126,10 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
   const submit = useCallback(
     (
       choiceId: string | null,
-      decisions?: Array<{ decisionId: string; choiceId: string | null }>,
+      extra?: {
+        decisions?: Array<{ decisionId: string; choiceId: string | null }>;
+        recalled?: string[];
+      },
     ) => {
       if (!item) {
         return;
@@ -138,7 +143,8 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
             body: JSON.stringify({
               itemInstanceId: target.itemInstanceId,
               choiceId,
-              decisions,
+              decisions: extra?.decisions,
+              recalled: extra?.recalled,
               clientShownAt: target.shownAt,
               clientFirstInteractionAt: firstInteraction.current,
               clientAnsweredAt: new Date().toISOString(),
@@ -196,7 +202,7 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
     if (itemRemainingMs === null || itemRemainingMs > 0 || !item) {
       return;
     }
-    if (isSpeedBatteryItem(item)) {
+    if (isSpeedBatteryItem(item) || isSpanBatteryItem(item)) {
       return;
     }
     void submit(selected);
@@ -257,7 +263,7 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
   }, []);
 
   useEffect(() => {
-    if (!item || isSpeedBatteryItem(item)) {
+    if (!item || isSpeedBatteryItem(item) || isSpanBatteryItem(item)) {
       return;
     }
     const onKeyDown = (event: KeyboardEvent) => {
@@ -309,12 +315,14 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
     (entry) => entry.position === current.sectionPosition,
   );
   const speed = isSpeedBatteryItem(item);
+  const span = isSpanBatteryItem(item);
+  const trial = speed || span;
   const counter =
     item.role === "sample"
-      ? speed
+      ? trial
         ? "Sample trial"
         : "Sample"
-      : `${speed ? "Trial" : "Item"} ${(section?.completedItemCount ?? 0) + 1} of ${section?.scoredItemCount ?? 0}`;
+      : `${trial ? "Trial" : "Item"} ${(section?.completedItemCount ?? 0) + 1} of ${section?.scoredItemCount ?? 0}`;
   const mainRemainingMs = speed ? itemRemainingMs : sectionRemainingMs;
 
   return (
@@ -368,7 +376,18 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
           item={item}
           pending={pending}
           remainingMs={itemRemainingMs}
-          onSubmit={(decisions) => void submit(null, decisions)}
+          onSubmit={(decisions) => void submit(null, { decisions })}
+        />
+      ) : span ? (
+        <SpanTrialPlay
+          key={item.itemInstanceId}
+          item={item}
+          pending={pending}
+          remainingMs={itemRemainingMs}
+          onSubmit={(recalled) => {
+            firstInteraction.current ??= new Date().toISOString();
+            void submit(null, { recalled });
+          }}
         />
       ) : (
         <>
@@ -433,7 +452,7 @@ export function BatteryRunner({ initial }: { initial: BatterySessionState }) {
         </>
       )}
 
-      {speed && error ? <Problem message={error} /> : null}
+      {(speed || span) && error ? <Problem message={error} /> : null}
     </Shell>
   );
 }
@@ -446,11 +465,15 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function isTrialSection(domain: string) {
+  return domain === "gs" || domain === "gwm";
+}
+
 function sectionBrief(section: BatterySection) {
   const clock = minutesFromMs(section.sectionTimeLimitMs);
-  const unit = section.domain === "gs" ? "trials" : "items";
+  const unit = isTrialSection(section.domain) ? "trials" : "items";
   if (section.sampleItemCount === 0) {
-    return `${section.scoredItemCount} ${unit} under a ${clock} clock. The clock starts on the first ${section.domain === "gs" ? "trial" : "item"}.`;
+    return `${section.scoredItemCount} ${unit} under a ${clock} clock. The clock starts on the first ${isTrialSection(section.domain) ? "trial" : "item"}.`;
   }
   const samples =
     section.sampleItemCount === 1
@@ -499,7 +522,9 @@ function SectionIntro({
         <p>
           {section.domain === "gs"
             ? "Each trial presents many pairs on this device. Work quickly and accurately; random clicking scores near zero, and you cannot pause a running trial."
-            : "Work in order. Once you move on you cannot return, so answer with your best guess rather than leaving an item blank."}
+            : section.domain === "gwm"
+              ? "Each trial highlights a sequence of cells. After it finishes, tap the cells in reverse order. Two empty or fully wrong trials in a row end the remaining ladder."
+              : "Work in order. Once you move on you cannot return, so answer with your best guess rather than leaving an item blank."}
         </p>
         {section.normEligible ? null : (
           <p className="text-ink">

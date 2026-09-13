@@ -5,6 +5,7 @@ export const SPAN_FORM_ENGINE = "span-form-v1" as const;
 export const SPAN_PARTIAL_MODEL = "span-partial-v1" as const;
 export const SPAN_SPATIAL_REVERSE = "spatial-reverse-v1" as const;
 export const SPAN_GENERATOR_VERSION = "spatial-reverse-v1" as const;
+export const SPAN_FAMILY_ID = "fam_wm_spatial_reverse" as const;
 
 export const SPAN_RECALLS = ["forward", "reverse"] as const;
 export const SPAN_MIN_LENGTH = 2;
@@ -245,4 +246,120 @@ export function spanRecallTarget(
   recall: SpanRecall,
 ) {
   return recall === "reverse" ? [...sequence].reverse() : [...sequence];
+}
+
+export function spanGridCells(grid: SpanGrid) {
+  const cells: string[] = [];
+  for (let row = 1; row <= grid.rows; row += 1) {
+    for (let col = 1; col <= grid.cols; col += 1) {
+      cells.push(spanCellId(row, col));
+    }
+  }
+  return cells;
+}
+
+export function buildSpanPresentation(grid: SpanGrid) {
+  return { choiceOrder: spanGridCells(grid) };
+}
+
+export function spanPresentationMs(
+  form: Pick<SpanFormDefinition, "stimulusMs" | "isiMs">,
+  length: number,
+) {
+  return length * form.stimulusMs + Math.max(0, length - 1) * form.isiMs;
+}
+
+export function spanTrialCeilingMs(
+  form: Pick<SpanFormDefinition, "stimulusMs" | "isiMs" | "recallCeilingMs">,
+  length: number,
+) {
+  return spanPresentationMs(form, length) + form.recallCeilingMs;
+}
+
+export function parseSpanSequence(value: unknown, source: string): string[] {
+  if (!isRecord(value) || !Array.isArray(value.sequence)) {
+    throw new Error(`${source} is missing the generated sequence.`);
+  }
+  const sequence: string[] = [];
+  const seen = new Set<string>();
+  for (const [index, entry] of value.sequence.entries()) {
+    if (typeof entry !== "string" || entry.length === 0) {
+      throw new Error(`${source} sequence[${index}] is not a cell id.`);
+    }
+    if (seen.has(entry)) {
+      throw new Error(`${source} sequence repeats ${entry}.`);
+    }
+    seen.add(entry);
+    sequence.push(entry);
+  }
+  if (sequence.length === 0) {
+    throw new Error(`${source} sequence is empty.`);
+  }
+  return sequence;
+}
+
+export function parseSpanRecall(value: unknown, source: string): string[] {
+  if (value === undefined || value === null) {
+    return [];
+  }
+  if (!Array.isArray(value)) {
+    throw new Error(`${source} must be an array.`);
+  }
+  return value.map((entry, index) => {
+    if (typeof entry !== "string" || entry.length === 0) {
+      throw new Error(`${source}[${index}] is not a cell id.`);
+    }
+    return entry;
+  });
+}
+
+export function spanPositionCredits(
+  sequence: readonly string[],
+  recall: SpanRecall,
+  recalled: readonly string[] | null,
+) {
+  const target = spanRecallTarget(sequence, recall);
+  if (recalled === null) {
+    return 0;
+  }
+  let credits = 0;
+  for (let index = 0; index < target.length; index += 1) {
+    if (recalled[index] === target[index]) {
+      credits += 1;
+    }
+  }
+  return credits;
+}
+
+export type ClientSpanTrial = {
+  engine: typeof SPAN_TRIAL_ENGINE;
+  prompt: string;
+  procedure: typeof SPAN_SPATIAL_REVERSE;
+  length: number;
+  recall: SpanRecall;
+  grid: SpanGrid;
+  sequence: string[];
+  stimulusMs: number;
+  isiMs: number;
+};
+
+export function toClientSpanTrial(
+  content: SpanTrialContent,
+  sequence: readonly string[],
+  form: Pick<SpanFormDefinition, "stimulusMs" | "isiMs">,
+): ClientSpanTrial {
+  return {
+    engine: SPAN_TRIAL_ENGINE,
+    prompt:
+      content.recall === "reverse"
+        ? "Watch the highlighted cells, then tap them in reverse order."
+        : "Watch the highlighted cells, then tap them in the same order.",
+    procedure: content.procedure,
+    length: content.length,
+    recall: content.recall,
+    grid: content.grid,
+    sequence: [...sequence],
+    stimulusMs: form.stimulusMs,
+    isiMs: form.isiMs,
+  };
 }

@@ -153,11 +153,16 @@ export {
   type ViewportMinimum,
 } from "./quality-rules";
 export {
+  buildSpanPresentation,
+  type ClientSpanTrial,
   generateSpatialSequence,
   isSpanFormDefinition,
   isSpanTrialContent,
   parseSpanFormDefinition,
+  parseSpanRecall,
+  parseSpanSequence,
   parseSpanTrialContent,
+  SPAN_FAMILY_ID,
   SPAN_FORM_ENGINE,
   SPAN_GENERATOR_VERSION,
   SPAN_MAX_GRID,
@@ -177,7 +182,12 @@ export {
   type SpanRecall,
   type SpanTrialContent,
   spanCellId,
+  spanGridCells,
+  spanPositionCredits,
+  spanPresentationMs,
   spanRecallTarget,
+  spanTrialCeilingMs,
+  toClientSpanTrial,
 } from "./span";
 export {
   type ClientSpeedDecision,

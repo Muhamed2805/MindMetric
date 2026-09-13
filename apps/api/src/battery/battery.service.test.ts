@@ -14,6 +14,7 @@ import {
   qualityRuleSet,
   qualityRuleVersion,
   schema,
+  sectionInstance,
   sectionScore,
   subtestForm,
   subtestFormVersion,
@@ -39,6 +40,9 @@ const SECTION_LIMIT_MS = 300_000;
 const GS_SAMPLE = "gs_s1_r1";
 const GS_SCORED = "gs_t1_r1";
 const GS_TRIAL_MS = 90_000;
+const WM_SAMPLE = "wm_s1_r1";
+const WM_SCORED = ["wm_t1_r1", "wm_t2_r1", "wm_t3_r1"] as const;
+const WM_SCORED_LENGTHS = [3, 3, 4] as const;
 
 let db: Database;
 let service: BatteryService;
@@ -315,6 +319,100 @@ async function seedGs(now: Date) {
   });
 }
 
+function spanTrial(length: number) {
+  return {
+    engine: "span-trial-v1",
+    domain: "gwm",
+    procedure: "spatial-reverse-v1",
+    length,
+    recall: "reverse",
+    grid: { rows: 3, cols: 3 },
+  };
+}
+
+async function seedWm(now: Date) {
+  const revisions = [
+    { id: WM_SAMPLE, length: 2 },
+    ...WM_SCORED.map((id, index) => ({
+      id,
+      length: WM_SCORED_LENGTHS[index] ?? 3,
+    })),
+  ];
+
+  await db.insert(item).values(
+    revisions.map((entry) => ({
+      id: `${entry.id}_item`,
+      bankId: "bank_wm_test",
+      domain: "gwm",
+      engine: "span-trial-v1",
+      createdAt: now,
+      updatedAt: now,
+    })),
+  );
+  await db.insert(itemRevision).values(
+    revisions.map((entry) => ({
+      id: entry.id,
+      itemId: `${entry.id}_item`,
+      revision: 1,
+      status: "published",
+      content: spanTrial(entry.length),
+      publishedAt: now,
+      createdAt: now,
+    })),
+  );
+  await db.insert(subtestForm).values({
+    id: "form_wm_test",
+    slug: "wm-test",
+    title: "WM test form",
+    description: "Fixture",
+    domain: "gwm",
+    engine: "span-form-v1",
+    createdAt: now,
+    updatedAt: now,
+  });
+  await db.insert(subtestFormVersion).values({
+    id: "form_wm_test_v1",
+    formId: "form_wm_test",
+    version: 1,
+    status: "published",
+    definition: {
+      engine: "span-form-v1",
+      domain: "gwm",
+      scoringModel: "span-partial-v1",
+      sectionTimeLimitMs: SECTION_LIMIT_MS,
+      stimulusMs: 200,
+      isiMs: 0,
+      recallCeilingMs: 20_000,
+      sampleItemRevisionIds: [WM_SAMPLE],
+      itemRevisionIds: [...WM_SCORED],
+    },
+    publishedAt: now,
+    createdAt: now,
+  });
+  await db.insert(battery).values({
+    id: "bat_wm",
+    slug: "wm-test-battery",
+    title: "WM battery",
+    description: "Fixture",
+    createdAt: now,
+    updatedAt: now,
+  });
+  await db.insert(batteryVersion).values({
+    id: "bat_wm_v1",
+    batteryId: "bat_wm",
+    version: 1,
+    status: "published",
+    definition: {
+      engine: "battery-v1",
+      sections: [
+        { position: 1, domain: "gwm", formVersionId: "form_wm_test_v1" },
+      ],
+    },
+    publishedAt: now,
+    createdAt: now,
+  });
+}
+
 async function seedRules(now: Date) {
   const open = { minViewport: null, normIneligibleDeviceClasses: [] };
   await db.insert(qualityRuleSet).values({
@@ -401,11 +499,11 @@ function startSession(
 
 type ServedItem = {
   itemInstanceId: string;
-  choices: Array<{ id: string } | string>;
+  choices?: Array<{ id: string } | string>;
 };
 
 function firstChoiceId(item: ServedItem) {
-  const choice = item.choices[0];
+  const choice = item.choices?.[0];
   return typeof choice === "string" ? choice : (choice?.id ?? null);
 }
 
@@ -462,6 +560,7 @@ beforeAll(async () => {
   await seedForms(now);
   await seedBatteries(now);
   await seedGs(now);
+  await seedWm(now);
   await seedRules(now);
   service = new BatteryService(db);
 }, 120_000);
@@ -743,7 +842,9 @@ describe("item presentation and responses", () => {
     const current = served.current?.item;
     expect(current).toBeTruthy();
     expect(JSON.stringify(current)).not.toContain("correctChoiceId");
-    expect(current?.choices).toHaveLength(4);
+    expect(current && "choices" in current ? current.choices : []).toHaveLength(
+      4,
+    );
   });
 
   it("returns the in-flight item on resume without restarting its clock", async () => {
@@ -1275,5 +1376,129 @@ describe("gs speed trials", () => {
     expect(done.status).toBe("completed");
     expect(done.report?.sections[0]?.raw).toBe(0);
     expect(done.report?.sections[0]?.timedOut).toBe(8);
+  });
+});
+
+describe("wm span trials", () => {
+  function reverseRecall(item: { sequence: string[] }) {
+    return [...item.sequence].reverse();
+  }
+
+  async function submitRecall(
+    userId: string,
+    sessionId: string,
+    item: { itemInstanceId: string },
+    recalled: string[],
+  ) {
+    return service.submitResponse(userId, sessionId, {
+      itemInstanceId: item.itemInstanceId,
+      choiceId: null,
+      recalled,
+      clientShownAt: null,
+      clientFirstInteractionAt: null,
+      clientAnsweredAt: null,
+    });
+  }
+
+  it("generates a sequence, keeps a labeled key off the trial, and scores reverse recall", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId, "wm-test-battery");
+    const overview = await service.getOverview("wm-test-battery");
+
+    expect(overview.sections[0]?.itemCeilingMs).toBe(20_000);
+
+    await service.startSection(userId, state.id, 1);
+    const sample = await service.serveNextItem(userId, state.id);
+    const sampleItem = sample.current?.item;
+    expect(
+      sampleItem && "engine" in sampleItem ? sampleItem.engine : null,
+    ).toBe("span-trial-v1");
+    expect(JSON.stringify(sampleItem)).not.toContain('"target"');
+    expect(JSON.stringify(sampleItem)).not.toContain('"key"');
+
+    if (!sampleItem || !("sequence" in sampleItem)) {
+      throw new Error("expected a sample span trial");
+    }
+    expect(sampleItem.sequence).toHaveLength(2);
+    expect(sample.current?.itemCeilingMs).toBe(20_400);
+
+    await submitRecall(userId, state.id, sampleItem, reverseRecall(sampleItem));
+
+    let raw = 0;
+    for (const length of WM_SCORED_LENGTHS) {
+      const served = await service.serveNextItem(userId, state.id);
+      const trial = served.current?.item;
+      if (!trial || !("sequence" in trial)) {
+        throw new Error("expected a scored span trial");
+      }
+      expect(trial.sequence).toHaveLength(length);
+      raw += length;
+      const done = await submitRecall(
+        userId,
+        state.id,
+        trial,
+        reverseRecall(trial),
+      );
+      if (length === WM_SCORED_LENGTHS[WM_SCORED_LENGTHS.length - 1]) {
+        expect(done.status).toBe("completed");
+        expect(done.report?.sections[0]).toMatchObject({
+          domain: "gwm",
+          scoringModel: "span-partial-v1",
+          raw,
+          max: 3 + 3 + 4,
+          attempted: 3,
+          notReached: 0,
+        });
+      }
+    }
+  });
+
+  it("discontinues after two consecutive zero-credit scored trials", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId, "wm-test-battery");
+    await service.startSection(userId, state.id, 1);
+
+    const sample = await service.serveNextItem(userId, state.id);
+    const sampleItem = sample.current?.item;
+    if (!sampleItem || !("sequence" in sampleItem)) {
+      throw new Error("expected a sample span trial");
+    }
+    await submitRecall(userId, state.id, sampleItem, []);
+
+    const first = await service.serveNextItem(userId, state.id);
+    const firstItem = first.current?.item;
+    if (!firstItem || !("sequence" in firstItem)) {
+      throw new Error("expected the first scored trial");
+    }
+    await submitRecall(userId, state.id, firstItem, []);
+
+    const second = await service.serveNextItem(userId, state.id);
+    const secondItem = second.current?.item;
+    if (!secondItem || !("sequence" in secondItem)) {
+      throw new Error("expected the second scored trial");
+    }
+    const done = await submitRecall(userId, state.id, secondItem, []);
+
+    expect(done.status).toBe("completed");
+    expect(done.report?.sections[0]).toMatchObject({
+      domain: "gwm",
+      raw: 0,
+      max: 10,
+      attempted: 2,
+      notReached: 1,
+    });
+
+    const sections = await db
+      .select({ id: sectionInstance.id })
+      .from(sectionInstance)
+      .where(eq(sectionInstance.sessionId, state.id));
+    const leftover = await db
+      .select({ status: itemInstance.status, role: itemInstance.role })
+      .from(itemInstance)
+      .where(eq(itemInstance.sectionInstanceId, sections[0]?.id ?? ""))
+      .orderBy(asc(itemInstance.position));
+    expect(
+      leftover.filter((row) => row.role === "scored").map((row) => row.status),
+    ).toEqual(["omitted", "omitted", "not_reached"]);
   });
 });
