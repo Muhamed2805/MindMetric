@@ -1,0 +1,179 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  assertUniqueBatteries,
+  type BatteryDocument,
+  parseBatteryDocument,
+} from "./battery-document";
+import {
+  assertUniqueItemBanks,
+  type ItemBankDocument,
+  parseItemBankDocument,
+} from "./item-bank";
+import {
+  assertUniqueSubtestForms,
+  parseSubtestFormDocument,
+  type SubtestFormDocument,
+} from "./subtest-form";
+
+export type BatteryCatalog = {
+  banks: ItemBankDocument[];
+  forms: SubtestFormDocument[];
+  batteries: BatteryDocument[];
+};
+
+export type BatteryCatalogDirs = {
+  items?: string;
+  forms?: string;
+  batteries?: string;
+};
+
+function packageDir() {
+  return join(dirname(fileURLToPath(import.meta.url)), "..");
+}
+
+export function catalogItemsDir() {
+  return join(packageDir(), "items");
+}
+
+export function catalogFormsDir() {
+  return join(packageDir(), "forms");
+}
+
+export function catalogBatteriesDir() {
+  return join(packageDir(), "batteries");
+}
+
+function readDocuments<T>(
+  directory: string,
+  parse: (value: unknown, source: string) => T,
+): T[] {
+  if (!existsSync(directory)) {
+    return [];
+  }
+  return readdirSync(directory)
+    .filter((name) => name.endsWith(".json"))
+    .sort()
+    .map((name) => {
+      const raw = JSON.parse(
+        readFileSync(join(directory, name), "utf8"),
+      ) as unknown;
+      return parse(raw, name);
+    });
+}
+
+/**
+ * Cross-layer integrity. A form may not reference a missing revision, two
+ * revisions of one item, or a draft revision once the form is published.
+ */
+export function assertBatteryCatalogReferences(catalog: BatteryCatalog) {
+  const revisions = new Map<
+    string,
+    { itemId: string; status: string; domain: string }
+  >();
+  for (const bank of catalog.banks) {
+    for (const item of bank.items) {
+      for (const revision of item.revisions) {
+        revisions.set(revision.id, {
+          itemId: item.id,
+          status: revision.status,
+          domain: revision.content.domain,
+        });
+      }
+    }
+  }
+
+  const formVersions = new Map<
+    string,
+    { slug: string; domain: string; status: string }
+  >();
+  for (const form of catalog.forms) {
+    for (const version of form.versions) {
+      formVersions.set(version.id, {
+        slug: form.slug,
+        domain: form.domain,
+        status: version.status,
+      });
+
+      const label = `Form ${form.slug} (${version.id})`;
+      const referenced = [
+        ...version.definition.itemRevisionIds,
+        ...version.definition.sampleItemRevisionIds,
+      ];
+      const itemIds = new Set<string>();
+      for (const revisionId of referenced) {
+        const revision = revisions.get(revisionId);
+        if (!revision) {
+          throw new Error(
+            `${label} references unknown item revision ${revisionId}.`,
+          );
+        }
+        if (revision.domain !== form.domain) {
+          throw new Error(
+            `${label} references ${revisionId} from domain ${revision.domain}.`,
+          );
+        }
+        if (version.status === "published" && revision.status !== "published") {
+          throw new Error(
+            `${label} is published but ${revisionId} is still a draft.`,
+          );
+        }
+        if (itemIds.has(revision.itemId)) {
+          throw new Error(
+            `${label} uses two revisions of item ${revision.itemId}.`,
+          );
+        }
+        itemIds.add(revision.itemId);
+      }
+    }
+  }
+
+  for (const battery of catalog.batteries) {
+    for (const version of battery.versions) {
+      const label = `Battery ${battery.slug} (${version.id})`;
+      for (const section of version.definition.sections) {
+        const form = formVersions.get(section.formVersionId);
+        if (!form) {
+          throw new Error(
+            `${label} references unknown form version ${section.formVersionId}.`,
+          );
+        }
+        if (form.domain !== section.domain) {
+          throw new Error(
+            `${label} maps ${section.domain} onto ${form.slug}, which measures ${form.domain}.`,
+          );
+        }
+        if (version.status === "published" && form.status !== "published") {
+          throw new Error(
+            `${label} is published but ${form.slug} (${section.formVersionId}) is still a draft.`,
+          );
+        }
+      }
+    }
+  }
+}
+
+export function loadBatteryCatalog(dirs: BatteryCatalogDirs = {}) {
+  const banks = readDocuments(
+    dirs.items ?? catalogItemsDir(),
+    parseItemBankDocument,
+  );
+  assertUniqueItemBanks(banks);
+
+  const forms = readDocuments(
+    dirs.forms ?? catalogFormsDir(),
+    parseSubtestFormDocument,
+  );
+  assertUniqueSubtestForms(forms);
+
+  const batteries = readDocuments(
+    dirs.batteries ?? catalogBatteriesDir(),
+    parseBatteryDocument,
+  );
+  assertUniqueBatteries(batteries);
+
+  const catalog: BatteryCatalog = { banks, forms, batteries };
+  assertBatteryCatalogReferences(catalog);
+  return catalog;
+}

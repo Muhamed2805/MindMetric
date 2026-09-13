@@ -1,0 +1,32 @@
+{
+  "id": "form_gf_matrix_pilot",
+  "slug": "gf-matrix-pilot",
+  "title": "Matrix reasoning (pilot form)",
+  "description": "Short authored matrix form used to exercise the battery runner. Not a normed subtest.",
+  "domain": "gf",
+  "engine": "power-form-v1",
+  "versions": [
+    {
+      "id": "form_gf_matrix_pilot_v1",
+      "version": 1,
+      "status": "draft",
+      "definition": {
+        "engine": "power-form-v1",
+        "domain": "gf",
+        "scoringModel": "accuracy-power-v1",
+        "sectionTimeLimitMs": 300000,
+        "itemCeilingMs": 90000,
+        "sampleItemRevisionIds": ["gf-s-001-r1", "gf-s-002-r1"],
+        "itemRevisionIds": [
+          "gf-m-001-r1",
+          "gf-m-002-r1",
+          "gf-m-003-r1",
+          "gf-m-004-r1",
+          "gf-a-001-r1",
+          "gf-m-005-r1",
+          "gf-m-006-r1"
+        ]
+      }
+    }
+  ]
+}

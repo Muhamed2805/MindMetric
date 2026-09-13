@@ -1,0 +1,23 @@
+{
+  "id": "bat_core_cognitive",
+  "slug": "core-cognitive",
+  "title": "Core cognitive battery",
+  "description": "Fixed non-verbal battery. Reports raw domain performance only; there is no IQ score, percentile, or confidence interval until norms exist.",
+  "versions": [
+    {
+      "id": "bat_core_cognitive_v1",
+      "version": 1,
+      "status": "draft",
+      "definition": {
+        "engine": "battery-v1",
+        "sections": [
+          {
+            "position": 1,
+            "domain": "gf",
+            "formVersionId": "form_gf_matrix_pilot_v1"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,4 +1,11 @@
 export {
+  type AccuracyPowerScore,
+  type PowerDifficultyBreakdown,
+  type PowerItemRecord,
+  type PowerItemScore,
+  scoreAccuracyPower,
+} from "./accuracy-power";
+export {
   type CttBand,
   type CttItemScore,
   type CttScore,

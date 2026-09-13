@@ -33,6 +33,10 @@ function isVersionStatus(value: unknown): value is VersionStatus {
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+export function isCatalogSlug(value: unknown): value is string {
+  return typeof value === "string" && slugPattern.test(value);
+}
+
 export function parseCatalogDocument(
   value: unknown,
   source = "instrument",

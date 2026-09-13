@@ -1,0 +1,1093 @@
+{
+  "id": "bank_gf_matrix",
+  "slug": "gf-matrix",
+  "domain": "gf",
+  "engine": "power-mcq-v1",
+  "items": [
+    {
+      "id": "gf-s-001",
+      "revisions": [
+        {
+          "id": "gf-s-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "easy",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  { "row": 1, "col": 1, "elements": [{ "shape": "circle" }] },
+                  { "row": 1, "col": 2, "elements": [{ "shape": "circle" }] },
+                  { "row": 1, "col": 3, "elements": [{ "shape": "circle" }] },
+                  { "row": 2, "col": 1, "elements": [{ "shape": "circle" }] },
+                  { "row": 2, "col": 2, "elements": [{ "shape": "circle" }] },
+                  { "row": 2, "col": 3, "elements": [{ "shape": "circle" }] },
+                  { "row": 3, "col": 1, "elements": [{ "shape": "circle" }] },
+                  { "row": 3, "col": 2, "elements": [{ "shape": "circle" }] },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle" }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square" }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle" }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-s-002",
+      "revisions": [
+        {
+          "id": "gf-s-002-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "easy",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [{ "shape": "square", "count": 1 }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [{ "shape": "square", "count": 2 }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [{ "shape": "square", "count": 3 }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [{ "shape": "square", "count": 1 }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [{ "shape": "square", "count": 2 }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [{ "shape": "square", "count": 3 }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [{ "shape": "square", "count": 1 }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [{ "shape": "square", "count": 2 }]
+                  },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "count": 2 }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "count": 4 }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "count": 3 }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle", "count": 3 }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-001",
+      "revisions": [
+        {
+          "id": "gf-m-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "easy",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [{ "shape": "circle", "fill": "none" }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [{ "shape": "circle", "fill": "hatch" }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [{ "shape": "square", "fill": "none" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [{ "shape": "square", "fill": "hatch" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [{ "shape": "square", "fill": "solid" }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [{ "shape": "triangle", "fill": "none" }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [{ "shape": "triangle", "fill": "hatch" }]
+                  },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "d",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle", "fill": "hatch" }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "fill": "solid" }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle", "fill": "none" }]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "triangle", "fill": "solid", "size": 3 }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-002",
+      "revisions": [
+        {
+          "id": "gf-m-002-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "easy",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [{ "shape": "circle", "count": 1 }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [{ "shape": "circle", "count": 2 }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [{ "shape": "circle", "count": 3 }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [{ "shape": "square", "count": 1 }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [{ "shape": "square", "count": 2 }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [{ "shape": "square", "count": 3 }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [{ "shape": "diamond", "count": 1 }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [{ "shape": "diamond", "count": 2 }]
+                  },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "diamond", "count": 2 }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "diamond", "count": 3 }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "diamond", "count": 4 }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "count": 3 }]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "diamond", "count": 3, "fill": "solid" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "diamond", "count": 1 }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-003",
+      "revisions": [
+        {
+          "id": "gf-m-003-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "moderate",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      { "shape": "arrow", "rotation": 0, "fill": "none" }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      { "shape": "arrow", "rotation": 90, "fill": "none" }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      { "shape": "arrow", "rotation": 180, "fill": "none" }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      { "shape": "arrow", "rotation": 0, "fill": "hatch" }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      { "shape": "arrow", "rotation": 90, "fill": "hatch" }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      { "shape": "arrow", "rotation": 180, "fill": "hatch" }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      { "shape": "arrow", "rotation": 0, "fill": "solid" }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      { "shape": "arrow", "rotation": 90, "fill": "solid" }
+                    ]
+                  },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "e",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "arrow", "rotation": 90, "fill": "solid" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "arrow", "rotation": 180, "fill": "hatch" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "arrow", "rotation": 270, "fill": "solid" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "arrow", "rotation": 0, "fill": "solid" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "arrow", "rotation": 180, "fill": "solid" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "arrow", "rotation": 180, "fill": "none" }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-004",
+      "revisions": [
+        {
+          "id": "gf-m-004-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "moderate",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [{ "shape": "hexagon", "fill": "none" }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [{ "shape": "hexagon", "fill": "hatch" }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [{ "shape": "hexagon", "fill": "solid" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [{ "shape": "cross", "fill": "hatch" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [{ "shape": "cross", "fill": "solid" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [{ "shape": "cross", "fill": "none" }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [{ "shape": "bar", "fill": "solid" }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [{ "shape": "bar", "fill": "none" }]
+                  },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "bar", "fill": "solid" }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "bar", "fill": "none" }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "bar", "fill": "hatch" }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "cross", "fill": "hatch" }]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "hexagon", "fill": "hatch" }]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "bar", "fill": "dots" }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-a-001",
+      "revisions": [
+        {
+          "id": "gf-a-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "easy",
+            "anchor": true,
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "fill": "solid" }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle", "fill": "none" }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-005",
+      "revisions": [
+        {
+          "id": "gf-m-005-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "hard",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [{ "shape": "circle", "fill": "none" }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [{ "shape": "square", "fill": "hatch" }]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [{ "shape": "square", "fill": "hatch" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [{ "shape": "circle", "fill": "none" }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [{ "shape": "circle", "fill": "none" }]
+                  },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "fill": "hatch" }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "fill": "solid" }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle", "fill": "hatch" }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle", "fill": "hatch" }]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square", "fill": "none" }]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-006",
+      "revisions": [
+        {
+          "id": "gf-m-006-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "hard",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  { "row": 1, "col": 1, "elements": [{ "shape": "circle" }] },
+                  { "row": 1, "col": 2, "elements": [{ "shape": "square" }] },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [{ "shape": "circle" }, { "shape": "square" }]
+                  },
+                  { "row": 2, "col": 1, "elements": [{ "shape": "triangle" }] },
+                  { "row": 2, "col": 2, "elements": [{ "shape": "circle" }] },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [{ "shape": "triangle" }, { "shape": "circle" }]
+                  },
+                  { "row": 3, "col": 1, "elements": [{ "shape": "square" }] },
+                  { "row": 3, "col": 2, "elements": [{ "shape": "diamond" }] },
+                  { "row": 3, "col": 3, "blank": true }
+                ]
+              }
+            },
+            "correctChoiceId": "f",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square" }, { "shape": "circle" }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "diamond" },
+                      { "shape": "triangle" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square" }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      { "shape": "square" },
+                      { "shape": "diamond" },
+                      { "shape": "circle" }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle" }, { "shape": "diamond" }]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square" }, { "shape": "diamond" }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

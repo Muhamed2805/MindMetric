@@ -1,5 +1,6 @@
 import { loadCatalogDocuments, planVersionWrite } from "@mindmetric/catalog";
 import { eq } from "drizzle-orm";
+import { seedBatteryCatalog } from "./battery-seed";
 import type { Database } from "./client";
 import { instrument, instrumentVersion } from "./schema";
 
@@ -74,4 +75,6 @@ export async function seedCatalog(db: Database) {
       }
     }
   }
+
+  await seedBatteryCatalog(db);
 }
