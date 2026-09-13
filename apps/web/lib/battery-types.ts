@@ -91,4 +91,30 @@ export type BatterySessionState = {
   current: BatteryCurrent | null;
   /** Read against the local clock to correct for skew before counting down. */
   serverTime: string;
+  /**
+   * Null while the session is open: a closed section may already be scored,
+   * but the examinee is not shown a total until the battery is finished.
+   */
+  report: BatteryReport | null;
+};
+
+export type BatteryReportSection = {
+  domain: string;
+  position: number;
+  status: string;
+  normEligible: boolean;
+  raw: number;
+  max: number;
+  attempted: number;
+  accuracyOnAttempted: number | null;
+};
+
+export type BatteryReport = {
+  maturity: "S0";
+  durationMs: number | null;
+  composite: null;
+  estimatedIq: null;
+  percentile: null;
+  interval: null;
+  sections: BatteryReportSection[];
 };

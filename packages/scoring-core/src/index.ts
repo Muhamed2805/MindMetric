@@ -6,6 +6,16 @@ export {
   scoreAccuracyPower,
 } from "./accuracy-power";
 export {
+  BATTERY_MATURITY_S0,
+  type BatteryProfileScore,
+  type BatterySectionReport,
+  batteryProfileInputCanon,
+  type PowerDigestRecord,
+  powerSectionInputCanon,
+  scoreBatteryProfile,
+  toBatterySectionReport,
+} from "./battery-profile";
+export {
   type CttBand,
   type CttItemScore,
   type CttScore,

@@ -487,10 +487,13 @@ function SectionIntro({
 }
 
 function Completed({ session }: { session: BatterySessionState }) {
-  const elapsedMs = session.completedAt
-    ? new Date(session.completedAt).getTime() -
-      new Date(session.startedAt).getTime()
-    : 0;
+  const report = session.report;
+  const elapsedMs =
+    report?.durationMs ??
+    (session.completedAt
+      ? new Date(session.completedAt).getTime() -
+        new Date(session.startedAt).getTime()
+      : 0);
 
   return (
     <Shell>
@@ -499,30 +502,51 @@ function Completed({ session }: { session: BatterySessionState }) {
           {session.isPracticeMode ? "Practice complete" : "Complete"}
         </span>
         <h1 className="font-serif text-4xl font-medium tracking-tight">
-          Your responses are recorded
+          Raw section totals
         </h1>
         <p className="max-w-xl text-sm leading-6 text-muted">
-          You finished in {minutesFromMs(elapsedMs)}. There is no score to show
-          yet: this battery has no reference sample, so any IQ figure or
-          percentile would be invented rather than measured.
+          You finished in {minutesFromMs(elapsedMs)}. These are the number of
+          items you got right, not an IQ: there is no reference sample yet, so a
+          percentile or confidence interval would be invented rather than
+          measured.
         </p>
       </div>
 
-      <div className="mm-panel flex flex-col gap-3 p-5">
-        {session.sections.map((section) => (
-          <div
-            key={section.position}
-            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm"
-          >
-            <span className="text-ink">{domainLabel(section.domain)}</span>
-            <span className="text-muted">
-              {section.completedItemCount} of {section.scoredItemCount}{" "}
-              completed
-              {section.status === "expired" ? " · ran out of time" : ""}
-              {section.normEligible ? "" : " · outside the reference sample"}
-            </span>
-          </div>
-        ))}
+      <div className="mm-panel flex flex-col gap-4 p-5">
+        {report
+          ? report.sections.map((section) => (
+              <div
+                key={section.position}
+                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"
+              >
+                <span className="text-ink">{domainLabel(section.domain)}</span>
+                <span className="text-right text-sm text-muted">
+                  <span className="font-serif text-2xl tabular-nums text-ink">
+                    {section.raw}
+                  </span>
+                  <span> / {section.max}</span>
+                  {section.accuracyOnAttempted !== null
+                    ? ` · ${section.accuracyOnAttempted}% of attempted`
+                    : ""}
+                  {section.status === "expired" ? " · ran out of time" : ""}
+                  {section.normEligible
+                    ? ""
+                    : " · outside the reference sample"}
+                </span>
+              </div>
+            ))
+          : session.sections.map((section) => (
+              <div
+                key={section.position}
+                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm"
+              >
+                <span className="text-ink">{domainLabel(section.domain)}</span>
+                <span className="text-muted">
+                  {section.completedItemCount} of {section.scoredItemCount}{" "}
+                  completed
+                </span>
+              </div>
+            ))}
       </div>
 
       <div>

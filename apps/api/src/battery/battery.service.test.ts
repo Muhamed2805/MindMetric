@@ -4,6 +4,7 @@ import { PGlite } from "@electric-sql/pglite";
 import {
   battery,
   batteryResponse,
+  batteryScore,
   batteryVersion,
   type Database,
   item,
@@ -13,6 +14,7 @@ import {
   qualityRuleSet,
   qualityRuleVersion,
   schema,
+  sectionScore,
   subtestForm,
   subtestFormVersion,
   user,
@@ -362,6 +364,7 @@ describe("battery session start", () => {
     ]);
     expect(state.sections.every((row) => row.status === "pending")).toBe(true);
     expect(state.current).toBeNull();
+    expect(state.report).toBeNull();
     expect(state.serverTime).toBeInstanceOf(Date);
     // Planned counts come from the form, not from item rows that do not
     // exist until the section starts.
@@ -890,5 +893,107 @@ describe("quality events", () => {
     expect(event?.occurredAt.getTime()).toBeGreaterThanOrEqual(
       state.startedAt.getTime(),
     );
+  });
+});
+
+/** The key is always `a` in the fixture bank; presentation still offers it. */
+async function answerKeyed(userId: string, sessionId: string) {
+  const served = await service.serveNextItem(userId, sessionId);
+  const current = served.current?.item;
+  if (!current) {
+    return served;
+  }
+  return service.submitResponse(userId, sessionId, {
+    itemInstanceId: current.itemInstanceId,
+    choiceId:
+      current.role === "sample" ? (current.choices[0]?.id ?? null) : "a",
+    clientShownAt: null,
+    clientFirstInteractionAt: null,
+    clientAnsweredAt: null,
+  });
+}
+
+async function finishSectionKeyed(
+  userId: string,
+  sessionId: string,
+  position: number,
+) {
+  await service.startSection(userId, sessionId, position);
+  let latest = await service.getForUser(userId, sessionId);
+  for (let index = 0; index < 20; index += 1) {
+    const section = latest.sections.find((row) => row.position === position);
+    if (section && section.status !== "in_progress") {
+      break;
+    }
+    latest = await answerKeyed(userId, sessionId);
+  }
+  return latest;
+}
+
+describe("raw scoring", () => {
+  it("does not serialize a section total while the session is still open", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId);
+    const afterFirst = await finishSection(userId, state.id, 1);
+
+    expect(afterFirst.status).toBe("in_progress");
+    expect(afterFirst.report).toBeNull();
+
+    const rows = await db
+      .select()
+      .from(sectionScore)
+      .where(
+        eq(sectionScore.sectionInstanceId, await sectionIdFor(state.id, 1)),
+      );
+    // The snapshot exists so a later report does not have to re-score.
+    expect(rows).toHaveLength(1);
+    expect(JSON.stringify(afterFirst)).not.toContain('"raw"');
+  });
+
+  it("reports raw / max after the battery closes, and never an IQ", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId);
+    await finishSectionKeyed(userId, state.id, 1);
+    const done = await finishSectionKeyed(userId, state.id, 2);
+
+    expect(done.status).toBe("completed");
+    expect(done.report?.maturity).toBe("S0");
+    expect(done.report?.estimatedIq).toBeNull();
+    expect(done.report?.percentile).toBeNull();
+    expect(done.report?.interval).toBeNull();
+    expect(done.report?.composite).toBeNull();
+    expect(done.report?.sections).toEqual([
+      expect.objectContaining({
+        domain: "gf",
+        raw: GF_SCORED.length,
+        max: GF_SCORED.length,
+        attempted: GF_SCORED.length,
+      }),
+      expect.objectContaining({
+        domain: "gv",
+        raw: GV_SCORED.length,
+        max: GV_SCORED.length,
+      }),
+    ]);
+    expect(JSON.stringify(done.report)).not.toContain("correctChoiceId");
+    expect(JSON.stringify(done.report)).not.toContain("items");
+
+    const snapshots = await db
+      .select()
+      .from(batteryScore)
+      .where(eq(batteryScore.sessionId, state.id));
+    expect(snapshots).toHaveLength(1);
+  });
+
+  it("counts samples out of the raw total", async () => {
+    const userId = await freshUser();
+    const state = await startSession(userId);
+    await finishSectionKeyed(userId, state.id, 1);
+    const done = await finishSectionKeyed(userId, state.id, 2);
+    const gf = done.report?.sections.find((section) => section.domain === "gf");
+
+    // Two samples plus three scored items were answered; only the three count.
+    expect(gf?.max).toBe(GF_SCORED.length);
+    expect(gf?.max).not.toBe(GF_SAMPLES.length + GF_SCORED.length);
   });
 });

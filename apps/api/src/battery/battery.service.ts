@@ -1,7 +1,8 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import {
   battery,
   batteryResponse,
+  batteryScore,
   batterySession,
   batteryVersion,
   type Database,
@@ -10,10 +11,22 @@ import {
   qualityEvent,
   qualityRuleVersion,
   sectionInstance,
+  sectionScore,
   subtestFormVersion,
 } from "@mindmetric/db";
 import {
+  type BatteryProfileScore,
+  type BatterySectionReport,
+  batteryProfileInputCanon,
+  type PowerItemRecord,
+  powerSectionInputCanon,
+  scoreAccuracyPower,
+  scoreBatteryProfile,
+  toBatterySectionReport,
+} from "@mindmetric/scoring-core";
+import {
   type AdministrationContext,
+  BATTERY_PROFILE_MODEL,
   type BatteryDomain,
   buildItemPresentation,
   classifyResponse,
@@ -21,8 +34,10 @@ import {
   type DeviceClass,
   INPUT_MODES,
   type InputMode,
+  type ItemOutcome,
   type ItemRole,
   isClientQualityEventKind,
+  isPowerDomain,
   type PowerFormDefinition,
   type PowerMcqItemContent,
   parseBatteryDefinition,
@@ -34,6 +49,7 @@ import {
   resolveSectionEligibility,
   SUBMISSION_GRACE_MS,
   toClientPowerItem,
+  VERSION_PIN_NONE,
 } from "@mindmetric/shared";
 import {
   BadRequestException,
@@ -754,6 +770,8 @@ export class BatteryService {
       .update(sectionInstance)
       .set({ status, submittedAt: at })
       .where(eq(sectionInstance.id, sectionInstanceId));
+    // Written now, serialized only after the session closes (ADR 0016).
+    await this.persistSectionScore(sectionInstanceId);
   }
 
   private async completeSessionIfDone(sessionId: string) {
@@ -769,6 +787,7 @@ export class BatteryService {
       .update(batterySession)
       .set({ status: "completed", completedAt: new Date() })
       .where(eq(batterySession.id, sessionId));
+    await this.persistBatteryScore(sessionId);
   }
 
   private async readState(userId: string, sessionId: string) {
@@ -820,6 +839,210 @@ export class BatteryService {
       // Deadlines are absolute server times, so a client with a skewed clock
       // needs this to render a countdown that matches the real one.
       serverTime: new Date(),
+      // A section may already have a snapshot; the examinee does not see it
+      // until every section is closed (ADR 0016).
+      report:
+        session.status === "completed"
+          ? await this.readCompletedReport(sessionId)
+          : null,
+    };
+  }
+
+  /**
+   * Number correct on scored items only. Samples teach the format and never
+   * enter the denominator.
+   */
+  private async persistSectionScore(sectionInstanceId: string) {
+    const rows = await this.db
+      .select()
+      .from(sectionInstance)
+      .where(eq(sectionInstance.id, sectionInstanceId))
+      .limit(1);
+    const section = rows[0];
+    if (!section || !isPowerDomain(section.domain)) {
+      return;
+    }
+    if (section.status !== "submitted" && section.status !== "expired") {
+      return;
+    }
+
+    const form = await this.loadFormDefinition(section.formVersionId);
+    const instances = await this.db
+      .select()
+      .from(itemInstance)
+      .where(eq(itemInstance.sectionInstanceId, section.id))
+      .orderBy(asc(itemInstance.position));
+    const scored = instances.filter((row) => row.role === "scored");
+    const contents = await this.loadItemContents(
+      scored.map((row) => row.itemRevisionId),
+    );
+    const responses =
+      scored.length === 0
+        ? []
+        : await this.db
+            .select()
+            .from(batteryResponse)
+            .where(
+              inArray(
+                batteryResponse.itemInstanceId,
+                scored.map((row) => row.id),
+              ),
+            );
+    const byItem = new Map(responses.map((row) => [row.itemInstanceId, row]));
+
+    const records: PowerItemRecord[] = scored.map((row) => {
+      const content = contents.get(row.itemRevisionId);
+      if (!content) {
+        throw new NotFoundException(
+          `Item revision ${row.itemRevisionId} is missing.`,
+        );
+      }
+      const response = byItem.get(row.id);
+      const code = (response?.code ?? "not_reached") as ItemOutcome;
+      return {
+        itemRevisionId: row.itemRevisionId,
+        content,
+        code,
+        choiceId: response?.choiceId ?? null,
+        responseTimeMs: response?.responseTimeMs ?? null,
+      };
+    });
+
+    const score = scoreAccuracyPower(section.domain, records);
+    const digest = hashCanon(powerSectionInputCanon(records));
+    const qualityRulesVersion = section.ruleVersionId ?? VERSION_PIN_NONE;
+
+    const existing = await this.db
+      .select({ id: sectionScore.id })
+      .from(sectionScore)
+      .where(
+        and(
+          eq(sectionScore.sectionInstanceId, section.id),
+          eq(sectionScore.scoringModel, form.scoringModel),
+          eq(sectionScore.qualityRulesVersion, qualityRulesVersion),
+          eq(sectionScore.normsVersionId, VERSION_PIN_NONE),
+        ),
+      )
+      .limit(1);
+    if (existing[0]) {
+      return;
+    }
+
+    await this.db.insert(sectionScore).values({
+      id: randomUUID(),
+      sectionInstanceId: section.id,
+      scoringModel: form.scoringModel,
+      qualityRulesVersion,
+      normsVersionId: VERSION_PIN_NONE,
+      inputDigest: digest,
+      payload: {
+        ...toBatterySectionReport(
+          {
+            domain: section.domain,
+            position: section.position,
+            status: section.status,
+            normEligible: section.deviceNormEligible,
+          },
+          score,
+        ),
+        // Item outcomes stay on the snapshot for re-scoring; they are not
+        // copied onto the session report the examinee sees.
+        items: score.items,
+      },
+      supersededAt: null,
+      createdAt: new Date(),
+    });
+  }
+
+  private async persistBatteryScore(sessionId: string) {
+    const sessions = await this.db
+      .select()
+      .from(batterySession)
+      .where(eq(batterySession.id, sessionId))
+      .limit(1);
+    const session = sessions[0];
+    if (!session) {
+      throw new NotFoundException("Session not found.");
+    }
+    const sections = await this.loadSections(sessionId);
+    const reports = [];
+    const digests = [];
+
+    for (const section of sections) {
+      const rows = await this.db
+        .select()
+        .from(sectionScore)
+        .where(eq(sectionScore.sectionInstanceId, section.id))
+        .orderBy(desc(sectionScore.createdAt))
+        .limit(1);
+      const row = rows[0];
+      if (!row) {
+        // A closed section without a snapshot is a defect; guessing a total
+        // would invent the number the report exists to avoid.
+        throw new InternalServerErrorException(
+          `Section ${section.position} closed without a score.`,
+        );
+      }
+      digests.push(row.inputDigest);
+      reports.push(storedSectionReport(section, row.scoringModel, row.payload));
+    }
+
+    const durationMs =
+      session.completedAt === null
+        ? null
+        : session.completedAt.getTime() - session.startedAt.getTime();
+    const profile = scoreBatteryProfile({ durationMs, sections: reports });
+    const rules = sections[0]?.ruleVersionId ?? VERSION_PIN_NONE;
+
+    const existing = await this.db
+      .select({ id: batteryScore.id })
+      .from(batteryScore)
+      .where(
+        and(
+          eq(batteryScore.sessionId, sessionId),
+          eq(batteryScore.aggregationModel, BATTERY_PROFILE_MODEL),
+          eq(batteryScore.qualityRulesVersion, rules),
+          eq(batteryScore.normsVersionId, VERSION_PIN_NONE),
+        ),
+      )
+      .limit(1);
+    if (existing[0]) {
+      return;
+    }
+
+    await this.db.insert(batteryScore).values({
+      id: randomUUID(),
+      sessionId,
+      aggregationModel: BATTERY_PROFILE_MODEL,
+      qualityRulesVersion: rules,
+      normsVersionId: VERSION_PIN_NONE,
+      inputDigest: hashCanon(batteryProfileInputCanon(digests)),
+      payload: profile,
+      supersededAt: null,
+      createdAt: new Date(),
+    });
+  }
+
+  private async readCompletedReport(sessionId: string) {
+    const rows = await this.db
+      .select({ payload: batteryScore.payload })
+      .from(batteryScore)
+      .where(eq(batteryScore.sessionId, sessionId))
+      .orderBy(desc(batteryScore.createdAt))
+      .limit(1);
+    const payload = rows[0]?.payload;
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+    const profile = payload as BatteryProfileScore;
+    return {
+      maturity: profile.maturity,
+      durationMs: profile.durationMs,
+      composite: profile.composite,
+      estimatedIq: profile.estimatedIq,
+      percentile: profile.percentile,
+      interval: profile.interval,
+      sections: profile.sections,
     };
   }
 
@@ -884,6 +1107,46 @@ export class BatteryService {
  * the item closed. The exact code stays on the response row, which is what
  * scoring reads (ADR 0016).
  */
+function storedSectionReport(
+  section: {
+    domain: string;
+    position: number;
+    status: string;
+    deviceNormEligible: boolean;
+  },
+  scoringModel: string,
+  payload: unknown,
+): BatterySectionReport {
+  const body = payload && typeof payload === "object" ? payload : {};
+  const raw = "raw" in body && typeof body.raw === "number" ? body.raw : 0;
+  const max = "max" in body && typeof body.max === "number" ? body.max : 0;
+  const attempted =
+    "attempted" in body && typeof body.attempted === "number"
+      ? body.attempted
+      : 0;
+  const accuracyOnAttempted =
+    "accuracyOnAttempted" in body &&
+    (typeof body.accuracyOnAttempted === "number" ||
+      body.accuracyOnAttempted === null)
+      ? body.accuracyOnAttempted
+      : null;
+  return {
+    domain: section.domain as BatteryDomain,
+    position: section.position,
+    scoringModel,
+    status: section.status === "expired" ? "expired" : "submitted",
+    normEligible: section.deviceNormEligible,
+    raw,
+    max,
+    attempted,
+    accuracyOnAttempted,
+  };
+}
+
+function hashCanon(canon: string) {
+  return createHash("sha256").update(canon).digest("hex");
+}
+
 function instanceStatusFor(code: ResponseCode) {
   if (code === "answered") {
     return "answered" as const;
