@@ -5,6 +5,7 @@ export const LISTED_BATTERY_SLUGS = [
   "core-cognitive",
   "gs-same-different-pilot",
   "rq-quant-pilot",
+  "gv-rotation-pilot",
 ] as const;
 
 export type BatteryViewportMinimum = {

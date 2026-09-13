@@ -1,0 +1,23 @@
+{
+  "id": "bat_gv_rotation_pilot",
+  "slug": "gv-rotation-pilot",
+  "title": "Spatial reasoning (pilot)",
+  "description": "Draft Gv form. Practice only. Not part of the core cognitive battery.",
+  "versions": [
+    {
+      "id": "bat_gv_rotation_pilot_v1",
+      "version": 1,
+      "status": "draft",
+      "definition": {
+        "engine": "battery-v1",
+        "sections": [
+          {
+            "position": 1,
+            "domain": "gv",
+            "formVersionId": "form_gv_rotation_pilot_v1"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "form_gv_rotation_pilot",
+  "slug": "gv-rotation-pilot",
+  "title": "Spatial rotation (pilot form)",
+  "description": "Short authored 2D rotation form used to exercise Gv. Not a normed subtest.",
+  "domain": "gv",
+  "engine": "power-form-v1",
+  "versions": [
+    {
+      "id": "form_gv_rotation_pilot_v1",
+      "version": 1,
+      "status": "draft",
+      "definition": {
+        "engine": "power-form-v1",
+        "domain": "gv",
+        "scoringModel": "accuracy-power-v1",
+        "sectionTimeLimitMs": 450000,
+        "itemCeilingMs": 90000,
+        "sampleItemRevisionIds": ["gv-s-001-r1", "gv-s-002-r1"],
+        "itemRevisionIds": [
+          "gv-r-001-r1",
+          "gv-r-002-r1",
+          "gv-r-003-r1",
+          "gv-a-001-r1",
+          "gv-r-004-r1",
+          "gv-r-005-r1",
+          "gv-r-006-r1",
+          "gv-r-007-r1"
+        ]
+      }
+    }
+  ]
+}

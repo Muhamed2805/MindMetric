@@ -1,0 +1,1195 @@
+{
+  "id": "bank_gv_rotation",
+  "slug": "gv-rotation",
+  "domain": "gv",
+  "engine": "power-mcq-v1",
+  "items": [
+    {
+      "id": "gv-s-001",
+      "revisions": [
+        {
+          "id": "gv-s-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "easy",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [{ "shape": "arrow" }]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "arrow", "rotation": 90 }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "arrow", "rotation": 270 }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "arrow", "rotation": 180 }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "arrow" }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-s-002",
+      "revisions": [
+        {
+          "id": "gv-s-002-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "easy",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 2,
+                "cols": 2,
+                "cells": [
+                  { "row": 1, "col": 1, "elements": [{ "shape": "arrow" }] },
+                  { "row": 1, "col": 2, "elements": [{ "shape": "circle" }] },
+                  { "row": 2, "col": 1, "elements": [{ "shape": "square" }] },
+                  { "row": 2, "col": 2, "elements": [{ "shape": "triangle" }] }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "triangle", "rotation": 90 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "circle" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle", "rotation": 270 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "square" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "triangle", "rotation": 180 }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-001",
+      "revisions": [
+        {
+          "id": "gv-r-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "easy",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [{ "shape": "triangle" }]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle" }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle", "rotation": 180 }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle", "rotation": 90 }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "triangle", "rotation": 270 }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-002",
+      "revisions": [
+        {
+          "id": "gv-r-002-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "easy",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [{ "shape": "bar" }]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "bar" }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "bar", "rotation": 90 }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "bar", "rotation": 45 }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "diamond" }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-003",
+      "revisions": [
+        {
+          "id": "gv-r-003-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "easy",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 2,
+                "cols": 2,
+                "cells": [
+                  { "row": 1, "col": 1, "elements": [{ "shape": "triangle" }] },
+                  { "row": 1, "col": 2, "elements": [{ "shape": "square" }] },
+                  { "row": 2, "col": 1, "elements": [{ "shape": "circle" }] },
+                  { "row": 2, "col": 2, "elements": [{ "shape": "arrow" }] }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle", "rotation": 90 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "square" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "triangle", "rotation": 270 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "circle" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle", "rotation": 180 }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "square" }]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-a-001",
+      "revisions": [
+        {
+          "id": "gv-a-001-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "easy",
+            "anchor": true,
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [{ "shape": "arrow" }]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "arrow", "rotation": 90 }]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "circle" }]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "square" }]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [{ "shape": "hexagon" }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-004",
+      "revisions": [
+        {
+          "id": "gv-r-004-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "moderate",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [{ "shape": "square", "fill": "solid" }]
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "d",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 3,
+                        "col": 1,
+                        "elements": [{ "shape": "square", "fill": "solid" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 3,
+                        "col": 3,
+                        "elements": [{ "shape": "square", "fill": "solid" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "square", "fill": "solid" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 3,
+                        "elements": [{ "shape": "square", "fill": "solid" }]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-005",
+      "revisions": [
+        {
+          "id": "gv-r-005-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "moderate",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 2,
+                "cols": 2,
+                "cells": [
+                  { "row": 1, "col": 1, "elements": [{ "shape": "arrow" }] },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [{ "shape": "arrow", "rotation": 90 }]
+                  },
+                  { "row": 2, "col": 1, "elements": [{ "shape": "circle" }] },
+                  { "row": 2, "col": 2, "elements": [{ "shape": "square" }] }
+                ]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "circle" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-006",
+      "revisions": [
+        {
+          "id": "gv-r-006-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "hard",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 2,
+                "cols": 2,
+                "cells": [
+                  { "row": 1, "col": 1, "elements": [{ "shape": "arrow" }] },
+                  { "row": 1, "col": 2, "elements": [{ "shape": "triangle" }] },
+                  { "row": 2, "col": 1, "elements": [{ "shape": "circle" }] },
+                  { "row": 2, "col": 2, "elements": [{ "shape": "square" }] }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "triangle" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "circle" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle", "rotation": 90 }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "circle" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle", "rotation": 180 }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "triangle", "rotation": 270 }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "square" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 2,
+                        "elements": [{ "shape": "circle" }]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-007",
+      "revisions": [
+        {
+          "id": "gv-r-007-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "hard",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  { "row": 1, "col": 1, "elements": [{ "shape": "arrow" }] },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [{ "shape": "triangle", "rotation": 90 }]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [{ "shape": "square", "fill": "solid" }]
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "square", "fill": "solid" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 3,
+                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                      },
+                      {
+                        "row": 3,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle", "rotation": 180 }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle" }]
+                      },
+                      {
+                        "row": 3,
+                        "col": 1,
+                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                      },
+                      {
+                        "row": 3,
+                        "col": 3,
+                        "elements": [{ "shape": "square", "fill": "solid" }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 3,
+                        "elements": [{ "shape": "square", "fill": "solid" }]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [{ "shape": "triangle", "rotation": 270 }]
+                      },
+                      {
+                        "row": 3,
+                        "col": 3,
+                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [{ "shape": "square", "fill": "solid" }]
+                      },
+                      {
+                        "row": 1,
+                        "col": 3,
+                        "elements": [{ "shape": "arrow" }]
+                      },
+                      {
+                        "row": 3,
+                        "col": 2,
+                        "elements": [{ "shape": "triangle", "rotation": 90 }]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

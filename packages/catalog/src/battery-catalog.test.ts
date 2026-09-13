@@ -237,13 +237,14 @@ describe("loadBatteryCatalog", () => {
     const form = loaded.forms.find((entry) => entry.slug === "gf-matrix-pilot");
     const scored = form?.versions[0]?.definition.itemRevisionIds ?? [];
 
-    expect(loaded.batteries).toHaveLength(3);
+    expect(loaded.batteries).toHaveLength(4);
     expect(scored.length).toBeGreaterThan(0);
     expect(loaded.forms.map((entry) => entry.slug)).toEqual(
       expect.arrayContaining([
         "gf-matrix-pilot",
         "gs-same-different-pilot",
         "rq-quant-pilot",
+        "gv-rotation-pilot",
       ]),
     );
   });
@@ -267,6 +268,7 @@ describe("loadBatteryCatalog", () => {
     expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(2);
     expect(coreDomains).not.toContain("gs");
     expect(coreDomains).not.toContain("rq");
+    expect(coreDomains).not.toContain("gv");
     expect(
       gsBattery?.versions[0]?.definition.sections.map(
         (section) => section.domain,
@@ -288,6 +290,24 @@ describe("loadBatteryCatalog", () => {
         (section) => section.domain,
       ),
     ).toEqual(["rq"]);
+  });
+
+  it("ships a draft Gv rotation form that is not on the core battery", () => {
+    const loaded = loadBatteryCatalog();
+    const form = loaded.forms.find(
+      (entry) => entry.slug === "gv-rotation-pilot",
+    );
+    const gvBattery = loaded.batteries.find(
+      (entry) => entry.slug === "gv-rotation-pilot",
+    );
+
+    expect(form?.engine).toBe("power-form-v1");
+    expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(8);
+    expect(
+      gvBattery?.versions[0]?.definition.sections.map(
+        (section) => section.domain,
+      ),
+    ).toEqual(["gv"]);
   });
 
   it("ships a published quality rule set flagged as provisional", () => {

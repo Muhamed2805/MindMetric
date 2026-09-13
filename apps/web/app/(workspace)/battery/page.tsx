@@ -139,9 +139,9 @@ export default async function BatteryPage() {
           Cognitive batteries
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-          Raw domain totals only. The core battery is still Gf. Processing speed
-          and quantitative reasoning are separate practice forms until they are
-          pinned into the composition.
+          Raw domain totals only. The core battery is still Gf. Processing
+          speed, quantitative reasoning, and spatial reasoning are separate
+          practice forms until they are pinned into the composition.
         </p>
       </div>
       {overviews.map((overview) => (
