@@ -11,10 +11,15 @@ function requiredEnv(name: string) {
   return value;
 }
 
+export function useSecureAuthCookies(authUrl: string) {
+  return authUrl.startsWith("https://");
+}
+
 export function createAuth() {
+  const authUrl = requiredEnv("BETTER_AUTH_URL");
   return betterAuth({
     secret: requiredEnv("BETTER_AUTH_SECRET"),
-    baseURL: requiredEnv("BETTER_AUTH_URL"),
+    baseURL: authUrl,
     trustedOrigins: [requiredEnv("WEB_ORIGIN")],
     database: drizzleAdapter(getDb(), {
       provider: "pg",
@@ -62,7 +67,7 @@ export function createAuth() {
       },
     },
     advanced: {
-      useSecureCookies: process.env.NODE_ENV === "production",
+      useSecureCookies: useSecureAuthCookies(authUrl),
       defaultCookieAttributes: {
         httpOnly: true,
         sameSite: "lax",

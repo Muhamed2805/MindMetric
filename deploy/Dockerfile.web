@@ -1,0 +1,33 @@
+FROM node:22.18-bookworm-slim
+
+RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY apps ./apps
+COPY packages ./packages
+
+RUN pnpm install --frozen-lockfile --filter @mindmetric/web...
+
+ARG API_ORIGIN=http://api:3001
+ARG WEB_ORIGIN=http://localhost:3000
+ARG DATABASE_URL=postgres://mindmetric:mindmetric@postgres:5432/mindmetric
+
+ENV API_ORIGIN=$API_ORIGIN
+ENV WEB_ORIGIN=$WEB_ORIGIN
+ENV DATABASE_URL=$DATABASE_URL
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
+
+RUN pnpm --filter @mindmetric/web build
+
+ENV NODE_ENV=production
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=5 \
+  CMD node -e "fetch('http://127.0.0.1:3000/').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
+CMD ["pnpm", "--filter", "@mindmetric/web", "start"]

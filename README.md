@@ -35,6 +35,27 @@ corepack pnpm dev
 
 PGlite (`pglite:` URLs) is an emergency fallback only. Next and Nest cannot share one PGlite file.
 
+## Production (Docker)
+
+One Compose file runs Postgres, migrations, API, and web. The browser only hits port 3000.
+
+```sh
+cp .env.production.example .env.production
+```
+
+Set `BETTER_AUTH_SECRET` (`openssl rand -base64 32`) and an alphanumeric `POSTGRES_PASSWORD`. Stop `pnpm dev` so port 3000 is free.
+
+```sh
+corepack pnpm prod:up
+```
+
+- App: http://localhost:3000
+- Stop: `corepack pnpm prod:down`
+
+On a public host, set `WEB_ORIGIN` and `BETTER_AUTH_URL` to the HTTPS origin. Auth cookies become `Secure` only when that URL is `https://`. Put Compose (or the two Dockerfiles) on a VM, Fly, or Railway; the CI job builds the images on every push to `main`.
+
+Do not commit `.env.production`.
+
 ## Scripts
 
 | Command | Purpose |
@@ -47,5 +68,7 @@ PGlite (`pglite:` URLs) is an emergency fallback only. Next and Nest cannot shar
 | `corepack pnpm typecheck` | TypeScript across workspaces |
 | `corepack pnpm test` | Unit tests |
 | `corepack pnpm build` | Production build |
+| `corepack pnpm prod:up` | Build and start production Compose (needs `.env.production`) |
+| `corepack pnpm prod:down` | Stop production Compose |
 
 Architecture decisions live in `docs/adr`.

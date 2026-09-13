@@ -49,3 +49,11 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+
+  images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f deploy/Dockerfile.api -t mindmetric-api:ci .
+      - run: docker build -f deploy/Dockerfile.web -t mindmetric-web:ci .
