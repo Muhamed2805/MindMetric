@@ -16,6 +16,7 @@ import type { BatterySessionSummary } from "../../../lib/battery-types";
 import { durationLabel } from "../../../lib/format";
 import {
   FIVE_FACTOR_SLUG,
+  hasPersonalityFacets,
   pickLatestPersonality,
 } from "../../../lib/personality";
 import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
@@ -65,7 +66,9 @@ export default async function WorkspaceHomePage() {
       title: row.title,
       detail:
         row.slug === FIVE_FACTOR_SLUG
-          ? "Five traits"
+          ? hasPersonalityFacets(row.score)
+            ? "Five traits"
+            : "Earlier total"
           : row.score
             ? `${row.score.raw} / ${row.score.max}`
             : "",

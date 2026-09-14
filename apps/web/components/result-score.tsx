@@ -5,7 +5,12 @@ import type {
   CttScore,
   SumCorrectScore,
 } from "../lib/assessment-types";
-import { personalityBandCopy, personalityPoles } from "../lib/personality";
+import {
+  FIVE_FACTOR_SLUG,
+  hasPersonalityFacets,
+  personalityBandCopy,
+  personalityPoles,
+} from "../lib/personality";
 
 function Meter({
   label,
@@ -37,17 +42,37 @@ function isSumCorrectScore(score: AssessmentScore): score is SumCorrectScore {
 export function ResultScore({
   score,
   items,
+  slug,
 }: {
   score: AssessmentScore;
   items: Array<ClientLikertItem | ClientMcqItem>;
+  slug?: string;
 }) {
   if (isSumCorrectScore(score)) {
     return <McqResult score={score} items={items} />;
   }
-  if (score.facets && score.facets.length > 0) {
+  if (hasPersonalityFacets(score)) {
     return <PersonalityResult score={score} />;
   }
+  if (slug === FIVE_FACTOR_SLUG) {
+    return <LegacyFiveFactorResult />;
+  }
   return <LikertResult score={score} items={items} />;
+}
+
+function LegacyFiveFactorResult() {
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="font-serif text-2xl font-medium text-ink">
+        This report has no trait bars
+      </p>
+      <p className="text-sm leading-6 text-muted">
+        It was scored before the five-factor profile was stored. The overall
+        keyed total is not a type, not an IQ, and not the profile we show now.
+        Take the test again for Openness through Emotional stability.
+      </p>
+    </div>
+  );
 }
 
 function PersonalityResult({ score }: { score: CttScore }) {

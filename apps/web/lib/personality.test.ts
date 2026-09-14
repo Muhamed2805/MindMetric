@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  hasPersonalityFacets,
+  PERSONALITY_TRAITS,
   personalityBandCopy,
   personalityFacetPercent,
   personalityPoles,
@@ -25,6 +27,32 @@ describe("personalityPoles", () => {
       high: "Outgoing",
     });
     expect(personalityPoles("missing")).toBeNull();
+  });
+
+  it("keeps intro cards on the same poles as the report", () => {
+    expect(PERSONALITY_TRAITS.map((trait) => trait.id)).toEqual([
+      "openness",
+      "conscientiousness",
+      "extraversion",
+      "agreeableness",
+      "stability",
+    ]);
+    expect(PERSONALITY_TRAITS[0]?.poles).toEqual(personalityPoles("openness"));
+  });
+});
+
+describe("hasPersonalityFacets", () => {
+  it("treats an empty facet list as a total-only score", () => {
+    expect(hasPersonalityFacets({ facets: [] })).toBe(false);
+    expect(
+      hasPersonalityFacets({
+        facets: [
+          {
+            id: "openness",
+          },
+        ],
+      }),
+    ).toBe(true);
   });
 });
 

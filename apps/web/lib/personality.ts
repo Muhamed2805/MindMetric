@@ -5,13 +5,42 @@ export type PersonalityPoles = {
   high: string;
 };
 
-const TRAIT_POLES: Record<string, PersonalityPoles> = {
-  openness: { low: "Concrete", high: "Curious" },
-  conscientiousness: { low: "Loose", high: "Orderly" },
-  extraversion: { low: "Quiet", high: "Outgoing" },
-  agreeableness: { low: "Candid", high: "Easygoing" },
-  stability: { low: "Reactive", high: "Steady" },
-};
+export const PERSONALITY_TRAITS = [
+  {
+    id: "openness",
+    label: "Openness",
+    poles: { low: "Concrete", high: "Curious" },
+    detail: "Curiosity, new methods, and interest in ideas.",
+  },
+  {
+    id: "conscientiousness",
+    label: "Conscientiousness",
+    poles: { low: "Loose", high: "Orderly" },
+    detail: "Follow-through, order, and how you finish work.",
+  },
+  {
+    id: "extraversion",
+    label: "Extraversion",
+    poles: { low: "Quiet", high: "Outgoing" },
+    detail: "Energy with people versus restoration in quiet.",
+  },
+  {
+    id: "agreeableness",
+    label: "Agreeableness",
+    poles: { low: "Candid", high: "Easygoing" },
+    detail: "Trust, patience, and how you handle disagreement.",
+  },
+  {
+    id: "stability",
+    label: "Emotional stability",
+    poles: { low: "Reactive", high: "Steady" },
+    detail: "How quickly you settle after stress or a mistake.",
+  },
+] as const;
+
+const TRAIT_POLES: Record<string, PersonalityPoles> = Object.fromEntries(
+  PERSONALITY_TRAITS.map((trait) => [trait.id, trait.poles]),
+);
 
 const TRAIT_BAND_COPY: Record<string, Record<string, string>> = {
   openness: {
@@ -60,6 +89,14 @@ export function personalityPoles(facetId: string): PersonalityPoles | null {
   return TRAIT_POLES[facetId] ?? null;
 }
 
+export function hasPersonalityFacets(score: unknown): boolean {
+  if (!score || typeof score !== "object" || !("facets" in score)) {
+    return false;
+  }
+  const facets = score.facets;
+  return Array.isArray(facets) && facets.length > 0;
+}
+
 export function personalityBandCopy(
   facetId: string,
   bandId: string | undefined,
@@ -105,7 +142,7 @@ export function pickLatestPersonality(
     )
     .sort((left, right) => completedAtMs(right) - completedAtMs(left));
   return (
-    completed.find((row) => (row.score?.facets?.length ?? 0) > 0) ??
+    completed.find((row) => hasPersonalityFacets(row.score)) ??
     completed[0] ??
     null
   );

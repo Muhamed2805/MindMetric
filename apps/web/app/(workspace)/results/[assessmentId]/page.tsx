@@ -6,7 +6,10 @@ import { PageIntro } from "../../../../components/page-intro";
 import { ResultScore } from "../../../../components/result-score";
 import { apiGet } from "../../../../lib/api.server";
 import type { AssessmentSession } from "../../../../lib/assessment-types";
-import { FIVE_FACTOR_SLUG } from "../../../../lib/personality";
+import {
+  FIVE_FACTOR_SLUG,
+  hasPersonalityFacets,
+} from "../../../../lib/personality";
 
 type PageProps = {
   params: Promise<{ assessmentId: string }>;
@@ -37,18 +40,21 @@ export default async function ResultDetailPage({ params }: PageProps) {
           completed
             ? session.kind === "mcq-timed-v1"
               ? `Instrument version ${session.version}. Correct answers inside the time limit count.`
-              : session.score &&
-                  "facets" in session.score &&
-                  session.score.facets &&
-                  session.score.facets.length > 0
+              : hasPersonalityFacets(session.score)
                 ? `Instrument version ${session.version}. Five self-report scales. Not a type code and not a diagnosis.`
-                : `Instrument version ${session.version}. Reverse-keyed items are recoded before the total.`
+                : session.slug === FIVE_FACTOR_SLUG
+                  ? `Instrument version ${session.version}. This session was scored before trait bars were stored.`
+                  : `Instrument version ${session.version}. Reverse-keyed items are recoded before the total.`
             : "This session is still in progress. Resume to finish and score it."
         }
       />
       {completed && session.score ? (
         <div className="mm-panel px-6 py-8">
-          <ResultScore score={session.score} items={session.items} />
+          <ResultScore
+            score={session.score}
+            items={session.items}
+            slug={session.slug}
+          />
         </div>
       ) : (
         <p className="text-sm text-muted">

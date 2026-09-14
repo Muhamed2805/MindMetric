@@ -11,40 +11,14 @@ import type {
 import { durationLabel } from "../../../lib/format";
 import {
   FIVE_FACTOR_SLUG,
+  hasPersonalityFacets,
+  PERSONALITY_TRAITS,
   pickLatestPersonality,
 } from "../../../lib/personality";
 
 export const metadata: Metadata = {
   title: "Personality test",
 };
-
-const traits = [
-  {
-    id: "openness",
-    label: "Openness",
-    detail: "Curiosity, new methods, and interest in ideas.",
-  },
-  {
-    id: "conscientiousness",
-    label: "Conscientiousness",
-    detail: "Follow-through, order, and how you finish work.",
-  },
-  {
-    id: "extraversion",
-    label: "Extraversion",
-    detail: "Energy with people versus restoration in quiet.",
-  },
-  {
-    id: "agreeableness",
-    label: "Agreeableness",
-    detail: "Trust, patience, and how you handle disagreement.",
-  },
-  {
-    id: "stability",
-    label: "Emotional stability",
-    detail: "How quickly you settle after stress or a mistake.",
-  },
-];
 
 export default async function PersonalityPage() {
   let detail: InstrumentDetail | null = null;
@@ -107,9 +81,12 @@ export default async function PersonalityPage() {
           not a clinical finding.
         </p>
         <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-          {traits.map((trait) => (
+          {PERSONALITY_TRAITS.map((trait) => (
             <li key={trait.id} className="mm-panel px-4 py-4">
               <p className="text-sm font-medium text-ink">{trait.label}</p>
+              <p className="mt-1 text-xs text-muted">
+                {trait.poles.low} — {trait.poles.high}
+              </p>
               <p className="mt-1 text-sm leading-6 text-muted">
                 {trait.detail}
               </p>
@@ -119,14 +96,13 @@ export default async function PersonalityPage() {
       </div>
 
       <div className="mm-panel flex flex-col gap-4 px-5 py-5">
-        {latestPersonality?.score?.facets &&
-        latestPersonality.score.facets.length > 0 ? (
+        {latestPersonality && hasPersonalityFacets(latestPersonality.score) ? (
           <>
             <h2 className="font-serif text-xl font-medium text-ink">
               Your latest profile
             </h2>
             <PersonalityTraitBars
-              facets={latestPersonality.score.facets}
+              facets={latestPersonality.score?.facets ?? []}
               variant="poles"
             />
             <p className="text-sm leading-6 text-muted">

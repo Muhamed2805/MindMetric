@@ -114,11 +114,11 @@ export default async function HomePage() {
             </li>
             <li>
               <CategoryCard
-                href="/tests"
-                badge="Cognitive"
+                href={session ? "/games" : "/login?from=/games"}
+                badge="Practice"
                 title="Memory"
-                detail="Interactive short-term and visual memory tests"
-                time="Coming later"
+                detail="Short drills. They never feed the cognitive battery or an IQ."
+                time="Brain Games"
               />
             </li>
           </ul>
