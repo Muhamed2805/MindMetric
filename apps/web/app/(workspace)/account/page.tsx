@@ -22,6 +22,7 @@ import {
   profileBucketStartHref,
   profileBuckets,
   profileCompletion,
+  unfinishedProfileBuckets,
 } from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
@@ -62,11 +63,11 @@ export default async function AccountPage() {
     hasPersonality: Boolean(personality),
     completedSlugs: completed.map((row) => row.slug),
   });
-  const unfinished = profileBuckets.filter(
-    (row) =>
-      (row.id === "cognitive" && !hasCoreBattery) ||
-      (row.id === "personality" && !personality),
-  );
+  const unfinished = unfinishedProfileBuckets({
+    hasBattery: hasCoreBattery,
+    hasPersonality: Boolean(personality),
+    completedSlugs: completed.map((row) => row.slug),
+  });
 
   return (
     <div className="flex flex-col gap-5">

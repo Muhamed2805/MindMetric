@@ -12,6 +12,7 @@ import {
   recommendedNextSlugs,
   scoredProfileBuckets,
   splitListedBatteries,
+  unfinishedProfileBuckets,
   workspaceNav,
 } from "./workspace-nav";
 
@@ -60,6 +61,26 @@ describe("profileCompletion", () => {
         completedSlugs: ["quick-pattern-reasoning"],
       }).filled,
     ).toBe(0);
+  });
+
+  it("lists attention and EQ when only the battery and personality are done", () => {
+    expect(
+      unfinishedProfileBuckets({
+        hasBattery: true,
+        hasPersonality: true,
+        completedSlugs: [FIVE_FACTOR_SLUG],
+      }).map((bucket) => bucket.id),
+    ).toEqual(["attention", "eq"]);
+  });
+
+  it("does not list Memory as an unfinished scored area", () => {
+    expect(
+      unfinishedProfileBuckets({
+        hasBattery: false,
+        hasPersonality: false,
+        completedSlugs: [],
+      }).map((bucket) => bucket.id),
+    ).toEqual(["cognitive", "attention", "personality", "eq"]);
   });
 });
 

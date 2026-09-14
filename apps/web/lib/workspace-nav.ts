@@ -121,6 +121,16 @@ export function profileCompletion(input: {
   };
 }
 
+export function unfinishedProfileBuckets(input: {
+  hasBattery: boolean;
+  hasPersonality: boolean;
+  completedSlugs: Iterable<string>;
+}) {
+  return scoredProfileBuckets().filter(
+    (bucket) => !profileBucketIsFilled(bucket, input),
+  );
+}
+
 export function profileBucketStartHref(id: string) {
   if (id === "cognitive") {
     return "/battery";
