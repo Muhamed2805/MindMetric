@@ -27,8 +27,9 @@ import {
 import {
   assessmentHref,
   CORE_BATTERY_SLUG,
+  isHomeRecentAssessment,
+  isHomeRecentBattery,
   isOpenScaleSession,
-  LEGACY_TIMED_MCQ_SLUG,
   profileBucketStartHref,
   profileBuckets,
   profileCompletion,
@@ -73,7 +74,7 @@ export default async function WorkspaceHomePage() {
   const recent = newestByKey(
     [
       ...completed
-        .filter((row) => row.slug !== LEGACY_TIMED_MCQ_SLUG)
+        .filter((row) => isHomeRecentAssessment(row.slug))
         .map((row) => ({
           id: row.id,
           href: `/results/${row.id}`,
@@ -89,7 +90,9 @@ export default async function WorkspaceHomePage() {
           at: row.completedAt,
           key: row.slug,
         })),
-      ...completedBatteries.map((row) => ({
+      ...completedBatteries
+        .filter((row) => isHomeRecentBattery(row.batterySlug))
+        .map((row) => ({
         id: row.id,
         href: `/results/battery/${row.id}`,
         title: row.batteryTitle,

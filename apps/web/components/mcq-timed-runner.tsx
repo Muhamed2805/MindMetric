@@ -150,7 +150,7 @@ export function McqTimedRunner({ initial }: { initial: AssessmentSession }) {
         <div className="flex items-center gap-4">
           <p className="text-sm tabular-nums text-muted">{progress}</p>
           <Link
-            href="/tests"
+            href="/home"
             className="text-sm font-medium text-ink underline decoration-line underline-offset-4"
           >
             Exit

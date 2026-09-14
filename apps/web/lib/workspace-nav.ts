@@ -158,6 +158,14 @@ export function isPrimaryScale(slug: string) {
   return (PRIMARY_SCALE_SLUGS as readonly string[]).includes(slug);
 }
 
+export function isHomeRecentAssessment(slug: string) {
+  return isPrimaryScale(slug);
+}
+
+export function isHomeRecentBattery(slug: string) {
+  return slug === CORE_BATTERY_SLUG;
+}
+
 export function instrumentHref(slug: string) {
   if (slug === FIVE_FACTOR_SLUG) {
     return "/personality";

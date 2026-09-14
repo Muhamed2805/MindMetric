@@ -4,6 +4,8 @@ import {
   assessmentHref,
   CORE_BATTERY_SLUG,
   instrumentHref,
+  isHomeRecentAssessment,
+  isHomeRecentBattery,
   isOpenScaleSession,
   isPrimaryScale,
   LEGACY_TIMED_MCQ_SLUG,
@@ -94,6 +96,10 @@ describe("primary catalog", () => {
     expect(instrumentHref(FIVE_FACTOR_SLUG)).toBe("/personality");
     expect(instrumentHref("work-attention")).toBe("/tests/work-attention");
     expect(instrumentHref(LEGACY_TIMED_MCQ_SLUG)).toBe("/battery");
+    expect(isHomeRecentAssessment("work-attention")).toBe(true);
+    expect(isHomeRecentAssessment(LEGACY_TIMED_MCQ_SLUG)).toBe(false);
+    expect(isHomeRecentBattery(CORE_BATTERY_SLUG)).toBe(true);
+    expect(isHomeRecentBattery("gs-same-different-pilot")).toBe(false);
     expect(
       isOpenScaleSession({
         slug: LEGACY_TIMED_MCQ_SLUG,
