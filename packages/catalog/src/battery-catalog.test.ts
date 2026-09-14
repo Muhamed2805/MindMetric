@@ -1,4 +1,4 @@
-import { figureSignature } from "@mindmetric/shared";
+import { figureSignature, formSectionTimeLimitMs } from "@mindmetric/shared";
 import { describe, expect, it } from "vitest";
 import {
   assertBatteryCatalogReferences,
@@ -387,8 +387,11 @@ describe("loadBatteryCatalog", () => {
     const rq = loaded.forms.find((entry) => entry.slug === "rq-quant-pilot");
     const gv = loaded.forms.find((entry) => entry.slug === "gv-rotation-pilot");
 
-    expect(gf?.versions[0]?.definition.itemRevisionIds).toHaveLength(18);
-    expect(gf?.versions[0]?.definition.sectionTimeLimitMs).toBe(660_000);
+    const gfDefinition = gf?.versions[0]?.definition;
+    expect(gfDefinition?.itemRevisionIds).toHaveLength(18);
+    expect(gfDefinition ? formSectionTimeLimitMs(gfDefinition) : undefined).toBe(
+      660_000,
+    );
     expect(rq?.versions[0]?.definition.itemRevisionIds).toHaveLength(14);
     expect(gv?.versions[0]?.definition.itemRevisionIds).toHaveLength(13);
 
