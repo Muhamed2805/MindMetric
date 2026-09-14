@@ -5,15 +5,12 @@ import { MarketingHeader } from "../components/marketing-header";
 import { SampleReportCard } from "../components/sample-report-card";
 import { apiGet } from "../lib/api.server";
 import type { CatalogInstrument } from "../lib/assessment-types";
+import { BRAIN_GAMES } from "../lib/brain-games";
 import { getServerSession } from "../lib/session";
 
-const games = [
-  { title: "Sequence Memory", detail: "Repeat a growing chain of tiles" },
-  { title: "Visual Memory", detail: "Hold a scattered pattern" },
-  { title: "Chimp Test", detail: "Touch numerals after they hide" },
-  { title: "Number Memory", detail: "Hold a growing integer" },
-  { title: "Verbal Memory", detail: "Track words you have already seen" },
-];
+function workspacePath(signedIn: boolean, path: string) {
+  return signedIn ? path : `/login?from=${path}`;
+}
 
 export default async function HomePage() {
   const session = await getServerSession();
@@ -41,8 +38,9 @@ export default async function HomePage() {
               Understand how your mind works.
             </h1>
             <p className="max-w-md text-[17px] leading-7 text-muted">
-              Measure reasoning, personality, memory and emotional intelligence
-              through carefully designed assessments.
+              A calibration cognitive battery, a five-factor personality
+              profile, and short work scales. Brain Games are practice. They
+              never feed an IQ.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild>
@@ -60,8 +58,10 @@ export default async function HomePage() {
                 <dd className="mt-1 text-xs text-muted">Published tests</dd>
               </div>
               <div>
-                <dt className="font-serif text-2xl font-medium text-ink">4</dt>
-                <dd className="mt-1 text-xs text-muted">Planned categories</dd>
+                <dt className="font-serif text-2xl font-medium text-ink">
+                  {BRAIN_GAMES.length}
+                </dt>
+                <dd className="mt-1 text-xs text-muted">Brain Games drills</dd>
               </div>
               <div>
                 <dt className="font-serif text-2xl font-medium text-ink">
@@ -87,16 +87,16 @@ export default async function HomePage() {
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <li>
               <CategoryCard
-                href={session ? "/battery" : "/login?from=/battery"}
+                href={workspacePath(Boolean(session), "/battery")}
                 badge="Core"
-                title="IQ & Cognitive"
-                detail="Reasoning, spatial ability and numerical thinking"
+                title="Cognitive battery"
+                detail="Reasoning, speed, spatial, quantitative, and working memory. Raw totals, not an IQ."
                 time="~40 min practice"
               />
             </li>
             <li>
               <CategoryCard
-                href={session ? "/personality" : "/login?from=/personality"}
+                href={workspacePath(Boolean(session), "/personality")}
                 badge="Profile"
                 title="Personality"
                 detail="Big Five self-report of everyday tendencies"
@@ -105,7 +105,10 @@ export default async function HomePage() {
             </li>
             <li>
               <CategoryCard
-                href="/tests/work-emotion-awareness"
+                href={workspacePath(
+                  Boolean(session),
+                  "/tests/work-emotion-awareness",
+                )}
                 badge="EQ"
                 title="Emotional Intelligence"
                 detail="Emotional awareness and regulation"
@@ -114,11 +117,11 @@ export default async function HomePage() {
             </li>
             <li>
               <CategoryCard
-                href={session ? "/games" : "/login?from=/games"}
-                badge="Practice"
-                title="Memory"
-                detail="Short drills. They never feed the cognitive battery or an IQ."
-                time="Brain Games"
+                href={workspacePath(Boolean(session), "/tests/work-attention")}
+                badge="Work"
+                title="Attention"
+                detail="A short self-report of staying with work despite interruptions"
+                time="~2 min live scale"
               />
             </li>
           </ul>
@@ -133,17 +136,17 @@ export default async function HomePage() {
             02 — Brain Games
           </p>
           <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight">
-            Train & measure
+            Practice drills
           </h2>
           <p className="mt-3 max-w-lg text-[15px] leading-6 text-muted">
-            Short drills you can repeat. They live in the workspace as practice,
-            and they never feed the cognitive battery or an IQ score.
+            Short memory drills you can repeat. They live in the workspace as
+            practice, and they never feed the cognitive battery or an IQ score.
           </p>
           <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {games.map((game) => (
-              <li key={game.title}>
+            {BRAIN_GAMES.map((game) => (
+              <li key={game.slug}>
                 <Link
-                  href={session ? "/games" : "/login?from=/games"}
+                  href={workspacePath(Boolean(session), "/games")}
                   className="mm-panel flex items-start gap-3 px-4 py-4"
                 >
                   <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-canvas text-accent">
@@ -151,7 +154,7 @@ export default async function HomePage() {
                   </span>
                   <div>
                     <p className="text-sm font-medium text-ink">{game.title}</p>
-                    <p className="mt-0.5 text-sm text-muted">{game.detail}</p>
+                    <p className="mt-0.5 text-sm text-muted">{game.tagline}</p>
                   </div>
                 </Link>
               </li>
