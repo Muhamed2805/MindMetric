@@ -2,7 +2,7 @@
   "id": "form_gv_rotation_pilot",
   "slug": "gv-rotation-pilot",
   "title": "Spatial rotation (pilot form)",
-  "description": "Short authored 2D rotation form used to exercise Gv. Not a normed subtest.",
+  "description": "Authored 2D rotation form for the core calibration battery. Thirteen scored items; not yet a normed subtest.",
   "domain": "gv",
   "engine": "power-form-v1",
   "versions": [
@@ -25,7 +25,12 @@
           "gv-r-004-r1",
           "gv-r-005-r1",
           "gv-r-006-r1",
-          "gv-r-007-r1"
+          "gv-r-007-r1",
+          "gv-r-008-r1",
+          "gv-r-009-r1",
+          "gv-r-010-r1",
+          "gv-r-011-r1",
+          "gv-r-012-r1"
         ]
       }
     }

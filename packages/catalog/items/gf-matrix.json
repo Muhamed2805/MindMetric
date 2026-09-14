@@ -22,15 +22,83 @@
                 "rows": 3,
                 "cols": 3,
                 "cells": [
-                  { "row": 1, "col": 1, "elements": [{ "shape": "circle" }] },
-                  { "row": 1, "col": 2, "elements": [{ "shape": "circle" }] },
-                  { "row": 1, "col": 3, "elements": [{ "shape": "circle" }] },
-                  { "row": 2, "col": 1, "elements": [{ "shape": "circle" }] },
-                  { "row": 2, "col": 2, "elements": [{ "shape": "circle" }] },
-                  { "row": 2, "col": 3, "elements": [{ "shape": "circle" }] },
-                  { "row": 3, "col": 1, "elements": [{ "shape": "circle" }] },
-                  { "row": 3, "col": 2, "elements": [{ "shape": "circle" }] },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -42,7 +110,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle" }]
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
                   }
                 }
               },
@@ -52,7 +124,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square" }]
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
                   }
                 }
               },
@@ -62,7 +138,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               },
@@ -72,7 +153,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle" }]
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
                   }
                 }
               }
@@ -102,44 +187,88 @@
                   {
                     "row": 1,
                     "col": 1,
-                    "elements": [{ "shape": "square", "count": 1 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 1
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 2,
-                    "elements": [{ "shape": "square", "count": 2 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 2
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 3,
-                    "elements": [{ "shape": "square", "count": 3 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 3
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 1,
-                    "elements": [{ "shape": "square", "count": 1 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 1
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 2,
-                    "elements": [{ "shape": "square", "count": 2 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 2
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 3,
-                    "elements": [{ "shape": "square", "count": 3 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 3
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 1,
-                    "elements": [{ "shape": "square", "count": 1 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 1
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 2,
-                    "elements": [{ "shape": "square", "count": 2 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 2
+                      }
+                    ]
                   },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -151,7 +280,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "count": 2 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 2
+                      }
+                    ]
                   }
                 }
               },
@@ -161,7 +295,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "count": 4 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 4
+                      }
+                    ]
                   }
                 }
               },
@@ -171,7 +310,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "count": 3 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 3
+                      }
+                    ]
                   }
                 }
               },
@@ -181,7 +325,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle", "count": 3 }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "count": 3
+                      }
+                    ]
                   }
                 }
               }
@@ -211,44 +360,88 @@
                   {
                     "row": 1,
                     "col": 1,
-                    "elements": [{ "shape": "circle", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 2,
-                    "elements": [{ "shape": "circle", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "hatch"
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 3,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 1,
-                    "elements": [{ "shape": "square", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "none"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 2,
-                    "elements": [{ "shape": "square", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "hatch"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 3,
-                    "elements": [{ "shape": "square", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 1,
-                    "elements": [{ "shape": "triangle", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "none"
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 2,
-                    "elements": [{ "shape": "triangle", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "hatch"
+                      }
+                    ]
                   },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -260,7 +453,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "hatch"
+                      }
+                    ]
                   }
                 }
               },
@@ -270,7 +468,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               },
@@ -280,7 +483,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               },
@@ -290,7 +498,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               },
@@ -300,7 +513,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "none"
+                      }
+                    ]
                   }
                 }
               },
@@ -310,7 +528,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "hatch"
+                      }
+                    ]
                   }
                 }
               }
@@ -340,44 +563,88 @@
                   {
                     "row": 1,
                     "col": 1,
-                    "elements": [{ "shape": "circle", "count": 1 }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "count": 1
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 2,
-                    "elements": [{ "shape": "circle", "count": 2 }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "count": 2
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 3,
-                    "elements": [{ "shape": "circle", "count": 3 }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "count": 3
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 1,
-                    "elements": [{ "shape": "square", "count": 1 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 1
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 2,
-                    "elements": [{ "shape": "square", "count": 2 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 2
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 3,
-                    "elements": [{ "shape": "square", "count": 3 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 3
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 1,
-                    "elements": [{ "shape": "diamond", "count": 1 }]
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 1
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 2,
-                    "elements": [{ "shape": "diamond", "count": 2 }]
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 2
+                      }
+                    ]
                   },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -389,7 +656,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "diamond", "count": 2 }]
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 2
+                      }
+                    ]
                   }
                 }
               },
@@ -399,7 +671,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "diamond", "count": 3 }]
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 3
+                      }
+                    ]
                   }
                 }
               },
@@ -409,7 +686,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "diamond", "count": 4 }]
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 4
+                      }
+                    ]
                   }
                 }
               },
@@ -419,7 +701,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "count": 3 }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 3
+                      }
+                    ]
                   }
                 }
               },
@@ -430,7 +717,11 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "diamond", "count": 3, "fill": "solid" }
+                      {
+                        "shape": "diamond",
+                        "count": 3,
+                        "fill": "solid"
+                      }
                     ]
                   }
                 }
@@ -441,7 +732,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "diamond", "count": 1 }]
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 1
+                      }
+                    ]
                   }
                 }
               }
@@ -472,59 +768,95 @@
                     "row": 1,
                     "col": 1,
                     "elements": [
-                      { "shape": "arrow", "rotation": 0, "fill": "none" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 0,
+                        "fill": "none"
+                      }
                     ]
                   },
                   {
                     "row": 1,
                     "col": 2,
                     "elements": [
-                      { "shape": "arrow", "rotation": 90, "fill": "none" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "none"
+                      }
                     ]
                   },
                   {
                     "row": 1,
                     "col": 3,
                     "elements": [
-                      { "shape": "arrow", "rotation": 180, "fill": "none" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 180,
+                        "fill": "none"
+                      }
                     ]
                   },
                   {
                     "row": 2,
                     "col": 1,
                     "elements": [
-                      { "shape": "arrow", "rotation": 0, "fill": "hatch" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 0,
+                        "fill": "hatch"
+                      }
                     ]
                   },
                   {
                     "row": 2,
                     "col": 2,
                     "elements": [
-                      { "shape": "arrow", "rotation": 90, "fill": "hatch" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "hatch"
+                      }
                     ]
                   },
                   {
                     "row": 2,
                     "col": 3,
                     "elements": [
-                      { "shape": "arrow", "rotation": 180, "fill": "hatch" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 180,
+                        "fill": "hatch"
+                      }
                     ]
                   },
                   {
                     "row": 3,
                     "col": 1,
                     "elements": [
-                      { "shape": "arrow", "rotation": 0, "fill": "solid" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 0,
+                        "fill": "solid"
+                      }
                     ]
                   },
                   {
                     "row": 3,
                     "col": 2,
                     "elements": [
-                      { "shape": "arrow", "rotation": 90, "fill": "solid" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "solid"
+                      }
                     ]
                   },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -537,7 +869,11 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "arrow", "rotation": 90, "fill": "solid" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "solid"
+                      }
                     ]
                   }
                 }
@@ -549,7 +885,11 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "arrow", "rotation": 180, "fill": "hatch" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 180,
+                        "fill": "hatch"
+                      }
                     ]
                   }
                 }
@@ -561,7 +901,11 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "arrow", "rotation": 270, "fill": "solid" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 270,
+                        "fill": "solid"
+                      }
                     ]
                   }
                 }
@@ -573,7 +917,11 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "arrow", "rotation": 0, "fill": "solid" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 0,
+                        "fill": "solid"
+                      }
                     ]
                   }
                 }
@@ -585,7 +933,11 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "arrow", "rotation": 180, "fill": "solid" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 180,
+                        "fill": "solid"
+                      }
                     ]
                   }
                 }
@@ -597,7 +949,11 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "arrow", "rotation": 180, "fill": "none" }
+                      {
+                        "shape": "arrow",
+                        "rotation": 180,
+                        "fill": "none"
+                      }
                     ]
                   }
                 }
@@ -628,44 +984,88 @@
                   {
                     "row": 1,
                     "col": 1,
-                    "elements": [{ "shape": "hexagon", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "fill": "none"
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 2,
-                    "elements": [{ "shape": "hexagon", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "fill": "hatch"
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 3,
-                    "elements": [{ "shape": "hexagon", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 1,
-                    "elements": [{ "shape": "cross", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "cross",
+                        "fill": "hatch"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 2,
-                    "elements": [{ "shape": "cross", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "cross",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 3,
-                    "elements": [{ "shape": "cross", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "cross",
+                        "fill": "none"
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 1,
-                    "elements": [{ "shape": "bar", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 2,
-                    "elements": [{ "shape": "bar", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "fill": "none"
+                      }
+                    ]
                   },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -677,7 +1077,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "bar", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               },
@@ -687,7 +1092,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "bar", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "fill": "none"
+                      }
+                    ]
                   }
                 }
               },
@@ -697,7 +1107,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "bar", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "fill": "hatch"
+                      }
+                    ]
                   }
                 }
               },
@@ -707,7 +1122,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "cross", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "cross",
+                        "fill": "hatch"
+                      }
+                    ]
                   }
                 }
               },
@@ -717,7 +1137,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "hexagon", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "fill": "hatch"
+                      }
+                    ]
                   }
                 }
               },
@@ -727,7 +1152,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "bar", "fill": "dots" }]
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "fill": "dots"
+                      }
+                    ]
                   }
                 }
               }
@@ -758,44 +1188,88 @@
                   {
                     "row": 1,
                     "col": 1,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 2,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 3,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 1,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 2,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 3,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 1,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 2,
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -807,7 +1281,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               },
@@ -817,7 +1296,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               },
@@ -827,7 +1311,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
                   }
                 }
               },
@@ -837,7 +1326,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               }
@@ -867,44 +1361,88 @@
                   {
                     "row": 1,
                     "col": 1,
-                    "elements": [{ "shape": "circle", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 2,
-                    "elements": [{ "shape": "square", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "hatch"
+                      }
+                    ]
                   },
                   {
                     "row": 1,
                     "col": 3,
-                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 1,
-                    "elements": [{ "shape": "square", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "hatch"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 2,
-                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 2,
                     "col": 3,
-                    "elements": [{ "shape": "circle", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 1,
-                    "elements": [{ "shape": "triangle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 2,
-                    "elements": [{ "shape": "circle", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
                   },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -916,7 +1454,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "hatch"
+                      }
+                    ]
                   }
                 }
               },
@@ -926,7 +1469,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               },
@@ -936,7 +1484,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "hatch"
+                      }
+                    ]
                   }
                 }
               },
@@ -946,7 +1499,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle", "fill": "hatch" }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "hatch"
+                      }
+                    ]
                   }
                 }
               },
@@ -956,7 +1514,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square", "fill": "none" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "none"
+                      }
+                    ]
                   }
                 }
               },
@@ -966,7 +1529,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               }
@@ -993,23 +1561,89 @@
                 "rows": 3,
                 "cols": 3,
                 "cells": [
-                  { "row": 1, "col": 1, "elements": [{ "shape": "circle" }] },
-                  { "row": 1, "col": 2, "elements": [{ "shape": "square" }] },
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  },
                   {
                     "row": 1,
                     "col": 3,
-                    "elements": [{ "shape": "circle" }, { "shape": "square" }]
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      },
+                      {
+                        "shape": "square"
+                      }
+                    ]
                   },
-                  { "row": 2, "col": 1, "elements": [{ "shape": "triangle" }] },
-                  { "row": 2, "col": 2, "elements": [{ "shape": "circle" }] },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
                   {
                     "row": 2,
                     "col": 3,
-                    "elements": [{ "shape": "triangle" }, { "shape": "circle" }]
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      },
+                      {
+                        "shape": "circle"
+                      }
+                    ]
                   },
-                  { "row": 3, "col": 1, "elements": [{ "shape": "square" }] },
-                  { "row": 3, "col": 2, "elements": [{ "shape": "diamond" }] },
-                  { "row": 3, "col": 3, "blank": true }
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "diamond"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
                 ]
               }
             },
@@ -1021,7 +1655,14 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square" }, { "shape": "circle" }]
+                    "elements": [
+                      {
+                        "shape": "square"
+                      },
+                      {
+                        "shape": "circle"
+                      }
+                    ]
                   }
                 }
               },
@@ -1032,8 +1673,12 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "diamond" },
-                      { "shape": "triangle" }
+                      {
+                        "shape": "diamond"
+                      },
+                      {
+                        "shape": "triangle"
+                      }
                     ]
                   }
                 }
@@ -1044,7 +1689,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square" }]
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
                   }
                 }
               },
@@ -1055,9 +1704,15 @@
                   "figure": {
                     "kind": "single",
                     "elements": [
-                      { "shape": "square" },
-                      { "shape": "diamond" },
-                      { "shape": "circle" }
+                      {
+                        "shape": "square"
+                      },
+                      {
+                        "shape": "diamond"
+                      },
+                      {
+                        "shape": "circle"
+                      }
                     ]
                   }
                 }
@@ -1068,7 +1723,14 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle" }, { "shape": "diamond" }]
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      },
+                      {
+                        "shape": "diamond"
+                      }
+                    ]
                   }
                 }
               },
@@ -1078,7 +1740,2288 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square" }, { "shape": "diamond" }]
+                    "elements": [
+                      {
+                        "shape": "square"
+                      },
+                      {
+                        "shape": "diamond"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-007",
+      "revisions": [
+        {
+          "id": "gf-m-007-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "easy",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "rotation": 0
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "rotation": 90
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "rotation": 180
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "rotation": 0
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "rotation": 90
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "rotation": 180
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 0
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 0
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 180
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "rotation": 180
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "rotation": 180
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 270
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-008",
+      "revisions": [
+        {
+          "id": "gf-m-008-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "easy",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "hatch"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "none"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "fill": "dots"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-009",
+      "revisions": [
+        {
+          "id": "gf-m-009-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "easy",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 3
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 3
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 2
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 1
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "count": 3,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-010",
+      "revisions": [
+        {
+          "id": "gf-m-010-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "moderate",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none",
+                        "count": 3
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "hatch",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "hatch",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "hatch",
+                        "count": 3
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "d",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "hatch",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid",
+                        "count": 2
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid",
+                        "count": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-011",
+      "revisions": [
+        {
+          "id": "gf-m-011-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "moderate",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-012",
+      "revisions": [
+        {
+          "id": "gf-m-012-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "moderate",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 0,
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 45,
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 0,
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 45,
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 0,
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 45,
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "e",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "hatch"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 45,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 180,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "none"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-013",
+      "revisions": [
+        {
+          "id": "gf-m-013-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "moderate",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "hexagon"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "cross"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "hexagon"
+                      },
+                      {
+                        "shape": "cross"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "diamond"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "bar"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "diamond"
+                      },
+                      {
+                        "shape": "bar"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      },
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      },
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon"
+                      },
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      },
+                      {
+                        "shape": "triangle"
+                      },
+                      {
+                        "shape": "bar"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond"
+                      },
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-014",
+      "revisions": [
+        {
+          "id": "gf-m-014-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "hard",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 3
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 2
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 1
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 2
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 4
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 1
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "count": 3
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "count": 3,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-015",
+      "revisions": [
+        {
+          "id": "gf-m-015-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "hard",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 3,
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 3,
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 3,
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 2,
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 2,
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 2,
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 1,
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 1,
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 1,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 2,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 1,
+                        "fill": "hatch"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 1,
+                        "fill": "none"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "count": 3,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "count": 1,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-016",
+      "revisions": [
+        {
+          "id": "gf-m-016-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "hard",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 0
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 180
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 270
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 0
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 180
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 270
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "f",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 180
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 270
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 45
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "rotation": 0
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gf-m-017",
+      "revisions": [
+        {
+          "id": "gf-m-017-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gf",
+            "difficulty": "hard",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "hatch"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 3,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 3,
+                    "col": 3,
+                    "blank": true
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "hatch"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "hatch"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "none"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "e",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "none"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "f",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 }
               }

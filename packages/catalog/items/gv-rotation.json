@@ -20,7 +20,11 @@
               "type": "figure",
               "figure": {
                 "kind": "single",
-                "elements": [{ "shape": "arrow" }]
+                "elements": [
+                  {
+                    "shape": "arrow"
+                  }
+                ]
               }
             },
             "correctChoiceId": "a",
@@ -31,7 +35,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "arrow", "rotation": 90 }]
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90
+                      }
+                    ]
                   }
                 }
               },
@@ -41,7 +50,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "arrow", "rotation": 270 }]
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 270
+                      }
+                    ]
                   }
                 }
               },
@@ -51,7 +65,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "arrow", "rotation": 180 }]
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 180
+                      }
+                    ]
                   }
                 }
               },
@@ -61,7 +80,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "arrow" }]
+                    "elements": [
+                      {
+                        "shape": "arrow"
+                      }
+                    ]
                   }
                 }
               }
@@ -89,10 +112,42 @@
                 "rows": 2,
                 "cols": 2,
                 "cells": [
-                  { "row": 1, "col": 1, "elements": [{ "shape": "arrow" }] },
-                  { "row": 1, "col": 2, "elements": [{ "shape": "circle" }] },
-                  { "row": 2, "col": 1, "elements": [{ "shape": "square" }] },
-                  { "row": 2, "col": 2, "elements": [{ "shape": "triangle" }] }
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "arrow"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  }
                 ]
               }
             },
@@ -110,22 +165,38 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "arrow" }]
+                        "elements": [
+                          {
+                            "shape": "arrow"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "triangle" }]
+                        "elements": [
+                          {
+                            "shape": "triangle"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -143,22 +214,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 90
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "triangle", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 90
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -176,22 +265,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "triangle", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -209,22 +316,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "triangle", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 180
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }
@@ -251,7 +376,11 @@
               "type": "figure",
               "figure": {
                 "kind": "single",
-                "elements": [{ "shape": "triangle" }]
+                "elements": [
+                  {
+                    "shape": "triangle"
+                  }
+                ]
               }
             },
             "correctChoiceId": "c",
@@ -262,7 +391,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle" }]
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
                   }
                 }
               },
@@ -272,7 +405,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle", "rotation": 180 }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 180
+                      }
+                    ]
                   }
                 }
               },
@@ -282,7 +420,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle", "rotation": 90 }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90
+                      }
+                    ]
                   }
                 }
               },
@@ -292,7 +435,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "triangle", "rotation": 270 }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 270
+                      }
+                    ]
                   }
                 }
               }
@@ -317,7 +465,11 @@
               "type": "figure",
               "figure": {
                 "kind": "single",
-                "elements": [{ "shape": "bar" }]
+                "elements": [
+                  {
+                    "shape": "bar"
+                  }
+                ]
               }
             },
             "correctChoiceId": "b",
@@ -328,7 +480,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "bar" }]
+                    "elements": [
+                      {
+                        "shape": "bar"
+                      }
+                    ]
                   }
                 }
               },
@@ -338,7 +494,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "bar", "rotation": 90 }]
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "rotation": 90
+                      }
+                    ]
                   }
                 }
               },
@@ -348,7 +509,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "bar", "rotation": 45 }]
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "rotation": 45
+                      }
+                    ]
                   }
                 }
               },
@@ -358,7 +524,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "diamond" }]
+                    "elements": [
+                      {
+                        "shape": "diamond"
+                      }
+                    ]
                   }
                 }
               }
@@ -386,10 +556,42 @@
                 "rows": 2,
                 "cols": 2,
                 "cells": [
-                  { "row": 1, "col": 1, "elements": [{ "shape": "triangle" }] },
-                  { "row": 1, "col": 2, "elements": [{ "shape": "square" }] },
-                  { "row": 2, "col": 1, "elements": [{ "shape": "circle" }] },
-                  { "row": 2, "col": 2, "elements": [{ "shape": "arrow" }] }
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "arrow"
+                      }
+                    ]
+                  }
                 ]
               }
             },
@@ -407,22 +609,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "triangle", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 90
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 90
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -440,22 +660,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "triangle", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -473,22 +711,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 180
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "triangle", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }
@@ -506,22 +762,38 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "triangle" }]
+                        "elements": [
+                          {
+                            "shape": "triangle"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "arrow" }]
+                        "elements": [
+                          {
+                            "shape": "arrow"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -549,7 +821,11 @@
               "type": "figure",
               "figure": {
                 "kind": "single",
-                "elements": [{ "shape": "arrow" }]
+                "elements": [
+                  {
+                    "shape": "arrow"
+                  }
+                ]
               }
             },
             "correctChoiceId": "a",
@@ -560,7 +836,12 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "arrow", "rotation": 90 }]
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90
+                      }
+                    ]
                   }
                 }
               },
@@ -570,7 +851,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "circle" }]
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
                   }
                 }
               },
@@ -580,7 +865,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "square" }]
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
                   }
                 }
               },
@@ -590,7 +879,11 @@
                   "type": "figure",
                   "figure": {
                     "kind": "single",
-                    "elements": [{ "shape": "hexagon" }]
+                    "elements": [
+                      {
+                        "shape": "hexagon"
+                      }
+                    ]
                   }
                 }
               }
@@ -621,7 +914,12 @@
                   {
                     "row": 1,
                     "col": 1,
-                    "elements": [{ "shape": "square", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 ]
               }
@@ -640,7 +938,12 @@
                       {
                         "row": 3,
                         "col": 1,
-                        "elements": [{ "shape": "square", "fill": "solid" }]
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -658,7 +961,12 @@
                       {
                         "row": 3,
                         "col": 3,
-                        "elements": [{ "shape": "square", "fill": "solid" }]
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -676,7 +984,12 @@
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "square", "fill": "solid" }]
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -694,7 +1007,12 @@
                       {
                         "row": 1,
                         "col": 3,
-                        "elements": [{ "shape": "square", "fill": "solid" }]
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -724,14 +1042,43 @@
                 "rows": 2,
                 "cols": 2,
                 "cells": [
-                  { "row": 1, "col": 1, "elements": [{ "shape": "arrow" }] },
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "arrow"
+                      }
+                    ]
+                  },
                   {
                     "row": 1,
                     "col": 2,
-                    "elements": [{ "shape": "arrow", "rotation": 90 }]
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90
+                      }
+                    ]
                   },
-                  { "row": 2, "col": 1, "elements": [{ "shape": "circle" }] },
-                  { "row": 2, "col": 2, "elements": [{ "shape": "square" }] }
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  }
                 ]
               }
             },
@@ -749,22 +1096,39 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "arrow" }]
+                        "elements": [
+                          {
+                            "shape": "arrow"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 90
+                          }
+                        ]
                       }
                     ]
                   }
@@ -782,22 +1146,39 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "arrow" }]
+                        "elements": [
+                          {
+                            "shape": "arrow"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -815,22 +1196,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 90
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }
@@ -848,22 +1247,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }
@@ -893,10 +1310,42 @@
                 "rows": 2,
                 "cols": 2,
                 "cells": [
-                  { "row": 1, "col": 1, "elements": [{ "shape": "arrow" }] },
-                  { "row": 1, "col": 2, "elements": [{ "shape": "triangle" }] },
-                  { "row": 2, "col": 1, "elements": [{ "shape": "circle" }] },
-                  { "row": 2, "col": 2, "elements": [{ "shape": "square" }] }
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "arrow"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "triangle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 2,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  }
                 ]
               }
             },
@@ -914,22 +1363,38 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "triangle" }]
+                        "elements": [
+                          {
+                            "shape": "triangle"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "arrow" }]
+                        "elements": [
+                          {
+                            "shape": "arrow"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -947,22 +1412,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 90
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "triangle", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 90
+                          }
+                        ]
                       }
                     ]
                   }
@@ -980,22 +1463,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 180
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "triangle", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }
@@ -1013,22 +1514,40 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "triangle", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "square" }]
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 2,
-                        "elements": [{ "shape": "circle" }]
+                        "elements": [
+                          {
+                            "shape": "circle"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -1058,16 +1577,34 @@
                 "rows": 3,
                 "cols": 3,
                 "cells": [
-                  { "row": 1, "col": 1, "elements": [{ "shape": "arrow" }] },
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "arrow"
+                      }
+                    ]
+                  },
                   {
                     "row": 2,
                     "col": 3,
-                    "elements": [{ "shape": "triangle", "rotation": 90 }]
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90
+                      }
+                    ]
                   },
                   {
                     "row": 3,
                     "col": 1,
-                    "elements": [{ "shape": "square", "fill": "solid" }]
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
                   }
                 ]
               }
@@ -1086,17 +1623,32 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "square", "fill": "solid" }]
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 3,
-                        "elements": [{ "shape": "arrow", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 90
+                          }
+                        ]
                       },
                       {
                         "row": 3,
                         "col": 2,
-                        "elements": [{ "shape": "triangle", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }
@@ -1114,17 +1666,31 @@
                       {
                         "row": 1,
                         "col": 2,
-                        "elements": [{ "shape": "triangle" }]
+                        "elements": [
+                          {
+                            "shape": "triangle"
+                          }
+                        ]
                       },
                       {
                         "row": 3,
                         "col": 1,
-                        "elements": [{ "shape": "arrow", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 3,
                         "col": 3,
-                        "elements": [{ "shape": "square", "fill": "solid" }]
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -1142,17 +1708,32 @@
                       {
                         "row": 1,
                         "col": 3,
-                        "elements": [{ "shape": "square", "fill": "solid" }]
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
                       },
                       {
                         "row": 2,
                         "col": 1,
-                        "elements": [{ "shape": "triangle", "rotation": 270 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
                         "row": 3,
                         "col": 3,
-                        "elements": [{ "shape": "arrow", "rotation": 180 }]
+                        "elements": [
+                          {
+                            "shape": "arrow",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }
@@ -1170,17 +1751,909 @@
                       {
                         "row": 1,
                         "col": 1,
-                        "elements": [{ "shape": "square", "fill": "solid" }]
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
                       },
                       {
                         "row": 1,
                         "col": 3,
-                        "elements": [{ "shape": "arrow" }]
+                        "elements": [
+                          {
+                            "shape": "arrow"
+                          }
+                        ]
                       },
                       {
                         "row": 3,
                         "col": 2,
-                        "elements": [{ "shape": "triangle", "rotation": 90 }]
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 90
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-008",
+      "revisions": [
+        {
+          "id": "gv-r-008-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "easy",
+            "prompt": "Which figure is this one turned 180 degrees?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [
+                  {
+                    "shape": "arrow",
+                    "rotation": 0
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 180
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 270
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-009",
+      "revisions": [
+        {
+          "id": "gv-r-009-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "easy",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [
+                  {
+                    "shape": "diamond",
+                    "rotation": 45
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "rotation": 45
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "rotation": 90
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "rotation": 135
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "rotation": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-010",
+      "revisions": [
+        {
+          "id": "gv-r-010-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "moderate",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [
+                  {
+                    "shape": "diamond",
+                    "rotation": 0
+                  },
+                  {
+                    "shape": "bar",
+                    "rotation": 90
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "rotation": 90
+                      },
+                      {
+                        "shape": "bar",
+                        "rotation": 180
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "rotation": 0
+                      },
+                      {
+                        "shape": "bar",
+                        "rotation": 90
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "diamond",
+                        "rotation": 180
+                      },
+                      {
+                        "shape": "bar",
+                        "rotation": 270
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "rotation": 90
+                      },
+                      {
+                        "shape": "diamond",
+                        "rotation": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-011",
+      "revisions": [
+        {
+          "id": "gv-r-011-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "moderate",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 2,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "square",
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 2,
+                        "col": 3,
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 3,
+                        "col": 2,
+                        "elements": [
+                          {
+                            "shape": "square",
+                            "fill": "solid"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-012",
+      "revisions": [
+        {
+          "id": "gv-r-012-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "hard",
+            "prompt": "Which figure is this one turned 270 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [
+                  {
+                    "shape": "triangle",
+                    "rotation": 0
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "d",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 90
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 180
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 0
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 270
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-013",
+      "revisions": [
+        {
+          "id": "gv-r-013-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "hard",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [
+                  {
+                    "shape": "hexagon",
+                    "rotation": 0,
+                    "fill": "hatch"
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "a",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "rotation": 90,
+                        "fill": "hatch"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "rotation": 0,
+                        "fill": "hatch"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "rotation": 90,
+                        "fill": "solid"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "hexagon",
+                        "rotation": 270,
+                        "fill": "hatch"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-014",
+      "revisions": [
+        {
+          "id": "gv-r-014-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "hard",
+            "prompt": "Which figure is this one turned 180 degrees?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "grid",
+                "rows": 3,
+                "cols": 3,
+                "cells": [
+                  {
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "circle",
+                        "fill": "solid"
+                      }
+                    ]
+                  },
+                  {
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "square"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "c",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 1,
+                        "elements": [
+                          {
+                            "shape": "circle",
+                            "fill": "solid"
+                          }
+                        ]
+                      },
+                      {
+                        "row": 1,
+                        "col": 2,
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 1,
+                        "col": 3,
+                        "elements": [
+                          {
+                            "shape": "circle",
+                            "fill": "solid"
+                          }
+                        ]
+                      },
+                      {
+                        "row": 2,
+                        "col": 3,
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 3,
+                        "col": 3,
+                        "elements": [
+                          {
+                            "shape": "circle",
+                            "fill": "solid"
+                          }
+                        ]
+                      },
+                      {
+                        "row": 3,
+                        "col": 2,
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "grid",
+                    "rows": 3,
+                    "cols": 3,
+                    "cells": [
+                      {
+                        "row": 3,
+                        "col": 1,
+                        "elements": [
+                          {
+                            "shape": "circle",
+                            "fill": "solid"
+                          }
+                        ]
+                      },
+                      {
+                        "row": 2,
+                        "col": 1,
+                        "elements": [
+                          {
+                            "shape": "square"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gv-r-015",
+      "revisions": [
+        {
+          "id": "gv-r-015-r1",
+          "revision": 1,
+          "status": "draft",
+          "content": {
+            "engine": "power-mcq-v1",
+            "domain": "gv",
+            "difficulty": "hard",
+            "prompt": "Which figure is this one turned 90 degrees clockwise?",
+            "stimulus": {
+              "type": "figure",
+              "figure": {
+                "kind": "single",
+                "elements": [
+                  {
+                    "shape": "arrow",
+                    "rotation": 45
+                  }
+                ]
+              }
+            },
+            "correctChoiceId": "b",
+            "choices": [
+              {
+                "id": "a",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 45
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "b",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 135
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "c",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 225
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id": "d",
+                "content": {
+                  "type": "figure",
+                  "figure": {
+                    "kind": "single",
+                    "elements": [
+                      {
+                        "shape": "arrow",
+                        "rotation": 90
                       }
                     ]
                   }

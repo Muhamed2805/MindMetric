@@ -2,7 +2,7 @@
   "id": "form_rq_quant_pilot",
   "slug": "rq-quant-pilot",
   "title": "Quantitative reasoning (pilot form)",
-  "description": "Short authored number-series and quantity form used to exercise RQ. Not a normed subtest.",
+  "description": "Authored number-series and quantity form for the core calibration battery. Fourteen scored items; not yet a normed subtest.",
   "domain": "rq",
   "engine": "power-form-v1",
   "versions": [
@@ -27,7 +27,11 @@
           "rq-n-006-r1",
           "rq-n-007-r1",
           "rq-n-008-r1",
-          "rq-n-009-r1"
+          "rq-n-009-r1",
+          "rq-n-010-r1",
+          "rq-n-011-r1",
+          "rq-n-012-r1",
+          "rq-n-013-r1"
         ]
       }
     }

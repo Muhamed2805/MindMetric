@@ -1,3 +1,4 @@
+import { figureSignature } from "@mindmetric/shared";
 import { describe, expect, it } from "vitest";
 import {
   assertBatteryCatalogReferences,
@@ -303,7 +304,7 @@ describe("loadBatteryCatalog", () => {
     );
 
     expect(form?.engine).toBe("power-form-v1");
-    expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(10);
+    expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(14);
     expect(
       rqBattery?.versions[0]?.definition.sections.map(
         (section) => section.domain,
@@ -321,7 +322,7 @@ describe("loadBatteryCatalog", () => {
     );
 
     expect(form?.engine).toBe("power-form-v1");
-    expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(8);
+    expect(form?.versions[0]?.definition.itemRevisionIds).toHaveLength(13);
     expect(
       gvBattery?.versions[0]?.definition.sections.map(
         (section) => section.domain,
@@ -378,5 +379,34 @@ describe("loadBatteryCatalog", () => {
     );
 
     expect(statuses.every((status) => status === "draft")).toBe(true);
+  });
+
+  it("pins V1-length power forms with unique choice figures", () => {
+    const loaded = loadBatteryCatalog();
+    const gf = loaded.forms.find((entry) => entry.slug === "gf-matrix-pilot");
+    const rq = loaded.forms.find((entry) => entry.slug === "rq-quant-pilot");
+    const gv = loaded.forms.find((entry) => entry.slug === "gv-rotation-pilot");
+
+    expect(gf?.versions[0]?.definition.itemRevisionIds).toHaveLength(18);
+    expect(gf?.versions[0]?.definition.sectionTimeLimitMs).toBe(660_000);
+    expect(rq?.versions[0]?.definition.itemRevisionIds).toHaveLength(14);
+    expect(gv?.versions[0]?.definition.itemRevisionIds).toHaveLength(13);
+
+    const contents = loaded.banks.flatMap((bank) =>
+      bank.items.flatMap((item) => item.revisions.map((row) => row.content)),
+    );
+    for (const content of contents) {
+      if (!("choices" in content) || content.stimulus.type !== "figure") {
+        continue;
+      }
+      const signatures = content.choices.map((choice) =>
+        choice.content.type === "figure"
+          ? figureSignature(choice.content.figure)
+          : choice.content.text,
+      );
+      expect(new Set(signatures).size, content.correctChoiceId).toBe(
+        signatures.length,
+      );
+    }
   });
 });
