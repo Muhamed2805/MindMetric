@@ -94,6 +94,49 @@ describe("parsePowerMcqItemContent", () => {
     ).toThrow(/choices b and c render identically/);
   });
 
+  it("rejects choices that differ only by an invisible rotation", () => {
+    expect(() =>
+      parsePowerMcqItemContent(
+        {
+          ...item,
+          choices: [
+            {
+              id: "a",
+              content: {
+                type: "figure",
+                figure: {
+                  kind: "single",
+                  elements: [{ shape: "triangle" }],
+                },
+              },
+            },
+            {
+              id: "b",
+              content: {
+                type: "figure",
+                figure: {
+                  kind: "single",
+                  elements: [{ shape: "square", rotation: 0 }],
+                },
+              },
+            },
+            {
+              id: "c",
+              content: {
+                type: "figure",
+                figure: {
+                  kind: "single",
+                  elements: [{ shape: "square", rotation: 90 }],
+                },
+              },
+            },
+          ],
+        },
+        "item",
+      ),
+    ).toThrow(/choices b and c render identically/);
+  });
+
   it("rejects a choice that differs from another only in size", () => {
     expect(() =>
       parsePowerMcqItemContent(

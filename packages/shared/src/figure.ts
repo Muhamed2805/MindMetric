@@ -212,9 +212,34 @@ export function figureBlankCell(spec: FigureSpec): FigureCell | null {
 }
 
 /**
+ * Degrees after which the outline looks the same. 0 means rotation never
+ * changes the drawing (circles). The renderer still stores the authored
+ * angle; signatures use this so two choices that look identical fail parse.
+ */
+const VISIBLE_ROTATION_PERIOD: Record<FigureShape, number> = {
+  circle: 0,
+  square: 90,
+  diamond: 90,
+  hexagon: 60,
+  cross: 90,
+  bar: 180,
+  triangle: 360,
+  arrow: 360,
+};
+
+function visibleRotation(shape: FigureShape, rotation: number): number {
+  const period = VISIBLE_ROTATION_PERIOD[shape];
+  if (period === 0) {
+    return 0;
+  }
+  return ((rotation % period) + period) % period;
+}
+
+/**
  * Stable serialization of what a spec draws: two specs with the same signature
  * render identically. Element order inside a cell is preserved because the
- * renderer lays marks out in that order.
+ * renderer lays marks out in that order. Rotation is folded by each shape's
+ * visible symmetry (a square at 0° and 90° is the same drawing).
  */
 export function figureSignature(
   spec: FigureSpec,
@@ -231,7 +256,7 @@ export function figureSignature(
               [
                 element.shape,
                 element.fill,
-                element.rotation,
+                visibleRotation(element.shape, element.rotation),
                 options.ignoreSize ? "" : element.size,
                 element.count,
               ].join("/"),

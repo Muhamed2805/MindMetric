@@ -1983,15 +1983,29 @@
             "stimulus": {
               "type": "figure",
               "figure": {
-                "kind": "single",
-                "elements": [
+                "kind": "grid",
+                "rows": 2,
+                "cols": 2,
+                "cells": [
                   {
-                    "shape": "diamond",
-                    "rotation": 0
+                    "row": 1,
+                    "col": 1,
+                    "elements": [
+                      {
+                        "shape": "triangle",
+                        "rotation": 0
+                      }
+                    ]
                   },
                   {
-                    "shape": "bar",
-                    "rotation": 90
+                    "row": 1,
+                    "col": 2,
+                    "elements": [
+                      {
+                        "shape": "bar",
+                        "rotation": 90
+                      }
+                    ]
                   }
                 ]
               }
@@ -2003,15 +2017,29 @@
                 "content": {
                   "type": "figure",
                   "figure": {
-                    "kind": "single",
-                    "elements": [
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
                       {
-                        "shape": "diamond",
-                        "rotation": 90
+                        "row": 1,
+                        "col": 2,
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 90
+                          }
+                        ]
                       },
                       {
-                        "shape": "bar",
-                        "rotation": 180
+                        "row": 2,
+                        "col": 2,
+                        "elements": [
+                          {
+                            "shape": "bar",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }
@@ -2022,15 +2050,29 @@
                 "content": {
                   "type": "figure",
                   "figure": {
-                    "kind": "single",
-                    "elements": [
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
                       {
-                        "shape": "diamond",
-                        "rotation": 0
+                        "row": 1,
+                        "col": 1,
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 0
+                          }
+                        ]
                       },
                       {
-                        "shape": "bar",
-                        "rotation": 90
+                        "row": 1,
+                        "col": 2,
+                        "elements": [
+                          {
+                            "shape": "bar",
+                            "rotation": 90
+                          }
+                        ]
                       }
                     ]
                   }
@@ -2041,15 +2083,29 @@
                 "content": {
                   "type": "figure",
                   "figure": {
-                    "kind": "single",
-                    "elements": [
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
                       {
-                        "shape": "diamond",
-                        "rotation": 180
+                        "row": 1,
+                        "col": 1,
+                        "elements": [
+                          {
+                            "shape": "bar",
+                            "rotation": 0
+                          }
+                        ]
                       },
                       {
-                        "shape": "bar",
-                        "rotation": 270
+                        "row": 2,
+                        "col": 1,
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 270
+                          }
+                        ]
                       }
                     ]
                   }
@@ -2060,15 +2116,29 @@
                 "content": {
                   "type": "figure",
                   "figure": {
-                    "kind": "single",
-                    "elements": [
+                    "kind": "grid",
+                    "rows": 2,
+                    "cols": 2,
+                    "cells": [
                       {
-                        "shape": "bar",
-                        "rotation": 90
+                        "row": 2,
+                        "col": 1,
+                        "elements": [
+                          {
+                            "shape": "bar",
+                            "rotation": 270
+                          }
+                        ]
                       },
                       {
-                        "shape": "diamond",
-                        "rotation": 0
+                        "row": 2,
+                        "col": 2,
+                        "elements": [
+                          {
+                            "shape": "triangle",
+                            "rotation": 180
+                          }
+                        ]
                       }
                     ]
                   }

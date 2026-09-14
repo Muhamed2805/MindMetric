@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { figureBlankCell, parseFigureSpec } from "./figure";
+import { figureBlankCell, figureSignature, parseFigureSpec } from "./figure";
 
 describe("parseFigureSpec", () => {
   it("fills element defaults so authored JSON stays terse", () => {
@@ -107,5 +107,56 @@ describe("parseFigureSpec", () => {
         "choice",
       ),
     ).toThrow(/rotation/);
+  });
+});
+
+describe("figureSignature", () => {
+  it("treats rotations that do not change the drawing as identical", () => {
+    const square0 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "square", rotation: 0 }] },
+      "a",
+    );
+    const square90 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "square", rotation: 90 }] },
+      "b",
+    );
+    const diamond45 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "diamond", rotation: 45 }] },
+      "c",
+    );
+    const diamond135 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "diamond", rotation: 135 }] },
+      "d",
+    );
+    const hex90 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "hexagon", rotation: 90 }] },
+      "e",
+    );
+    const hex270 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "hexagon", rotation: 270 }] },
+      "f",
+    );
+    const bar0 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "bar", rotation: 0 }] },
+      "g",
+    );
+    const bar180 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "bar", rotation: 180 }] },
+      "h",
+    );
+    const arrow0 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "arrow", rotation: 0 }] },
+      "i",
+    );
+    const arrow90 = parseFigureSpec(
+      { kind: "single", elements: [{ shape: "arrow", rotation: 90 }] },
+      "j",
+    );
+
+    expect(figureSignature(square0)).toBe(figureSignature(square90));
+    expect(figureSignature(diamond45)).toBe(figureSignature(diamond135));
+    expect(figureSignature(hex90)).toBe(figureSignature(hex270));
+    expect(figureSignature(bar0)).toBe(figureSignature(bar180));
+    expect(figureSignature(arrow0)).not.toBe(figureSignature(arrow90));
   });
 });
