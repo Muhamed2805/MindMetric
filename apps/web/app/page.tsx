@@ -7,6 +7,7 @@ import { apiGet } from "../lib/api.server";
 import type { CatalogInstrument } from "../lib/assessment-types";
 import { BRAIN_GAMES } from "../lib/brain-games";
 import { getServerSession } from "../lib/session";
+import { isPrimaryScale } from "../lib/workspace-nav";
 
 function workspacePath(signedIn: boolean, path: string) {
   return signedIn ? path : `/login?from=${path}`;
@@ -23,7 +24,9 @@ export default async function HomePage() {
   }
 
   const startHref = session ? "/tests" : "/register";
-  const liveCount = instruments.length;
+  const liveCount = instruments.filter((item) =>
+    isPrimaryScale(item.slug),
+  ).length;
 
   return (
     <div className="flex min-h-dvh flex-col">

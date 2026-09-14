@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CatalogInstrument } from "../lib/assessment-types";
 import { durationLabel } from "../lib/format";
-import { FIVE_FACTOR_SLUG } from "../lib/personality";
+import { instrumentHref } from "../lib/workspace-nav";
 
 export function InstrumentCard({
   instrument,
@@ -9,10 +9,7 @@ export function InstrumentCard({
   instrument: CatalogInstrument;
 }) {
   const time = durationLabel(instrument.estimatedSeconds, instrument.itemCount);
-  const href =
-    instrument.slug === FIVE_FACTOR_SLUG
-      ? "/personality"
-      : `/tests/${instrument.slug}`;
+  const href = instrumentHref(instrument.slug);
 
   return (
     <Link href={href} className="mm-panel flex h-full flex-col px-5 py-5">

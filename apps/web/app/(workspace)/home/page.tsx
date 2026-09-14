@@ -21,6 +21,8 @@ import {
 } from "../../../lib/personality";
 import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
 import {
+  instrumentHref,
+  isPrimaryScale,
   profileBucketStartHref,
   profileBuckets,
   profileCompletion,
@@ -91,7 +93,7 @@ export default async function WorkspaceHomePage() {
     .slice(0, 3);
   const doneSlugs = new Set(completed.map((row) => row.slug));
   const recommended = instruments
-    .filter((item) => !doneSlugs.has(item.slug))
+    .filter((item) => isPrimaryScale(item.slug) && !doneSlugs.has(item.slug))
     .slice(0, 2);
   const latestPersonality = pickLatestPersonality(completed);
   const completion = profileCompletion({
@@ -311,10 +313,15 @@ export default async function WorkspaceHomePage() {
                 <ul className="mt-3 flex flex-col gap-2 text-sm text-muted">
                   {recommended.map((item) => (
                     <li key={item.slug}>
-                      {item.title}
-                      {durationLabel(item.estimatedSeconds, item.itemCount)
-                        ? ` · ${durationLabel(item.estimatedSeconds, item.itemCount)}`
-                        : ""}
+                      <Link
+                        href={instrumentHref(item.slug)}
+                        className="text-ink hover:text-accent"
+                      >
+                        {item.title}
+                        {durationLabel(item.estimatedSeconds, item.itemCount)
+                          ? ` · ${durationLabel(item.estimatedSeconds, item.itemCount)}`
+                          : ""}
+                      </Link>
                     </li>
                   ))}
                 </ul>

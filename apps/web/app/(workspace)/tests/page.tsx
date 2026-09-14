@@ -4,11 +4,9 @@ import Link from "next/link";
 import { InstrumentCard } from "../../../components/instrument-card";
 import { apiGet } from "../../../lib/api.server";
 import type { CatalogInstrument } from "../../../lib/assessment-types";
-import {
-  type BatteryOverview,
-  LISTED_BATTERY_SLUGS,
-} from "../../../lib/battery-types";
+import type { BatteryOverview } from "../../../lib/battery-types";
 import { minutesFromMs } from "../../../lib/format";
+import { CORE_BATTERY_SLUG, isPrimaryScale } from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
   title: "Assessments",
@@ -26,16 +24,14 @@ export default async function TestsPage({
   let loadError: string | null = null;
 
   try {
-    const [catalog, ...listed] = await Promise.all([
+    const [catalog, core] = await Promise.all([
       apiGet<CatalogInstrument[]>("/instruments"),
-      ...LISTED_BATTERY_SLUGS.map((slug) =>
-        apiGet<BatteryOverview>(`/battery/catalog/${slug}`).catch(() => null),
+      apiGet<BatteryOverview>(`/battery/catalog/${CORE_BATTERY_SLUG}`).catch(
+        () => null,
       ),
     ]);
-    instruments = catalog;
-    batteries = listed.filter(
-      (entry): entry is BatteryOverview => entry !== null,
-    );
+    instruments = catalog.filter((item) => isPrimaryScale(item.slug));
+    batteries = core ? [core] : [];
   } catch (cause) {
     loadError =
       cause instanceof Error ? cause.message : "Could not load tests.";
@@ -63,9 +59,9 @@ export default async function TestsPage({
           Assessments
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-          Focused measures for a more complete picture of how you think. The
-          personality test is a five-factor self-report, separate from the
-          cognitive battery.
+          Focused measures: the core calibration battery, a five-factor
+          personality profile, and short work scales. Domain practice forms live
+          on Battery. Brain Games are separate and never feed an IQ.
         </p>
       </div>
       {loadError ? (

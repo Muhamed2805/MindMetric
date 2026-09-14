@@ -1,5 +1,13 @@
 import { FIVE_FACTOR_SLUG } from "./personality";
 
+export const CORE_BATTERY_SLUG = "core-cognitive";
+
+export const PRIMARY_SCALE_SLUGS = [
+  FIVE_FACTOR_SLUG,
+  "work-attention",
+  "work-emotion-awareness",
+] as const;
+
 export const workspaceNav = [
   { href: "/home", label: "Home" },
   { href: "/tests", label: "Assessments", shortLabel: "Tests" },
@@ -86,4 +94,15 @@ export function profileBucketStartHref(id: string) {
     return "/tests/work-emotion-awareness";
   }
   return "/tests";
+}
+
+export function isPrimaryScale(slug: string) {
+  return (PRIMARY_SCALE_SLUGS as readonly string[]).includes(slug);
+}
+
+export function instrumentHref(slug: string) {
+  if (slug === FIVE_FACTOR_SLUG) {
+    return "/personality";
+  }
+  return `/tests/${slug}`;
 }

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { FIVE_FACTOR_SLUG } from "./personality";
 import {
+  CORE_BATTERY_SLUG,
+  instrumentHref,
+  isPrimaryScale,
   profileBucketStartHref,
   profileCompletion,
   scoredProfileBuckets,
@@ -51,5 +55,16 @@ describe("profileCompletion", () => {
         completedSlugs: ["quick-pattern-reasoning"],
       }).filled,
     ).toBe(0);
+  });
+});
+
+describe("primary catalog", () => {
+  it("keeps the old timed MCQ and domain pilots off the assessments grid", () => {
+    expect(CORE_BATTERY_SLUG).toBe("core-cognitive");
+    expect(isPrimaryScale(FIVE_FACTOR_SLUG)).toBe(true);
+    expect(isPrimaryScale("work-attention")).toBe(true);
+    expect(isPrimaryScale("quick-pattern-reasoning")).toBe(false);
+    expect(instrumentHref(FIVE_FACTOR_SLUG)).toBe("/personality");
+    expect(instrumentHref("work-attention")).toBe("/tests/work-attention");
   });
 });
