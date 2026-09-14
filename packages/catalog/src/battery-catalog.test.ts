@@ -389,9 +389,9 @@ describe("loadBatteryCatalog", () => {
 
     const gfDefinition = gf?.versions[0]?.definition;
     expect(gfDefinition?.itemRevisionIds).toHaveLength(18);
-    expect(gfDefinition ? formSectionTimeLimitMs(gfDefinition) : undefined).toBe(
-      660_000,
-    );
+    expect(
+      gfDefinition ? formSectionTimeLimitMs(gfDefinition) : undefined,
+    ).toBe(660_000);
     expect(rq?.versions[0]?.definition.itemRevisionIds).toHaveLength(14);
     expect(gv?.versions[0]?.definition.itemRevisionIds).toHaveLength(13);
 
