@@ -137,7 +137,7 @@ export default async function HomePage() {
             {BRAIN_GAMES.map((game) => (
               <li key={game.slug}>
                 <Link
-                  href={workspacePath(Boolean(session), "/games")}
+                  href={workspacePath(Boolean(session), `/games/${game.slug}`)}
                   className="mm-panel flex items-start gap-3 px-4 py-4"
                 >
                   <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-canvas text-accent">
