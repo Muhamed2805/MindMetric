@@ -1,6 +1,23 @@
 # MindMetric
-IN DEVELOPMENT
-Web platform for psychometric and cognitive assessments.
+
+**In development.** Personal project, not a launched product.
+
+A web platform for a calibration cognitive battery, a five-factor personality profile, and short work scales. Scoring is keyed on the server. Brain Games are practice drills; they never feed an IQ.
+
+## Status
+
+- Calibration phase: raw domain totals and quality notes only.
+- No IQ, percentile, or confidence interval on the public UI. Those fields stay empty until a reference sample exists.
+- The core five-domain battery is still a draft practice form. Domain pilots on Battery are rehearsal, not a substitute.
+- No hosted demo yet. Run it locally with the steps below.
+
+This is not a clinical measure, not a diagnosis, and not a published psychometric instrument.
+
+Item keys live in `packages/catalog`. Treat this repository as a calibration and portfolio codebase, not a secure high-stakes form.
+
+## Stack
+
+pnpm monorepo: Next.js App Router, NestJS (Fastify), PostgreSQL 16, Drizzle, Better Auth. Scoring is a pure library (`packages/scoring-core`). Architecture decisions are in `docs/adr`.
 
 ## Requirements
 
@@ -31,7 +48,7 @@ corepack pnpm dev
 - Current user: http://localhost:3000/api/v1/me
 - Catalog (public): http://localhost:3000/api/v1/instruments
 
-`db:migrate` seeds published instruments from `packages/catalog/instruments`. Edit a published version by adding a new `version` object; migrate will refuse to overwrite existing published JSON. Likert scales and the timed puzzle set (`quick-pattern-reasoning`) ship together.
+`db:migrate` seeds the catalog from `packages/catalog`. Edit a published version by adding a new `version` object; migrate will refuse to overwrite existing published JSON.
 
 PGlite (`pglite:` URLs) is an emergency fallback only. Next and Nest cannot share one PGlite file.
 
@@ -71,4 +88,6 @@ Do not commit `.env.production`.
 | `corepack pnpm prod:up` | Build and start production Compose (needs `.env.production`) |
 | `corepack pnpm prod:down` | Stop production Compose |
 
-Architecture decisions live in `docs/adr`.
+## License
+
+MIT. See [LICENSE](LICENSE).
