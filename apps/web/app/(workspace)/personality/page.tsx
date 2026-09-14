@@ -49,7 +49,7 @@ export default async function PersonalityPage() {
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
       <div>
         <p className="text-[11px] font-medium uppercase tracking-widest text-mark">
-          Free personality test
+          Five-factor self-report
         </p>
         <h1 className="mt-2 font-serif text-4xl font-medium tracking-tight md:text-5xl">
           {detail.title}

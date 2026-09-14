@@ -147,11 +147,6 @@ function LikertResult({
         valueLabel={`${score.raw} of ${score.max}`}
         percent={((score.raw - score.min) / range) * 100}
       />
-      <Meter
-        label="Percent of scale range"
-        valueLabel={`${score.pomp}%`}
-        percent={score.pomp}
-      />
       <p className="text-sm leading-6 text-muted">
         The report is the keyed total and the band. A development table ships
         with this version; it is not shown as a rank, not a clinical norm, and
