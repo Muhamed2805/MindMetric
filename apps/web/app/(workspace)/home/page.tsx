@@ -332,8 +332,8 @@ export default async function WorkspaceHomePage() {
                     Nothing open
                   </h2>
                   <p className="mt-2 text-sm text-muted">
-                    Start the core battery or a live scale when you have a quiet
-                    few minutes.
+                    Start the core battery or another assessment when you have a
+                    quiet few minutes.
                   </p>
                   <Button asChild className="mt-5">
                     <Link href="/tests">Explore assessments</Link>
@@ -347,7 +347,7 @@ export default async function WorkspaceHomePage() {
               </h2>
               {recommended.length === 0 ? (
                 <p className="mt-3 text-sm text-muted">
-                  You have a result on the core battery and every live scale.
+                  You have a result on every listed assessment.
                 </p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2 text-sm text-muted">

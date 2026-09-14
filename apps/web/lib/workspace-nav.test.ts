@@ -29,6 +29,9 @@ describe("workspaceNav", () => {
     expect(
       workspaceNav.find((item) => item.label === "Personality")?.href,
     ).toBe("/personality");
+    expect(
+      workspaceNav.find((item) => item.label === "Assessments"),
+    ).toMatchObject({ shortLabel: "Assess" });
   });
 });
 
@@ -162,7 +165,7 @@ describe("recommendedNextSlugs", () => {
     ).toEqual([CORE_BATTERY_SLUG]);
   });
 
-  it("is empty when the core battery and live scales are done", () => {
+  it("is empty when the core battery and listed assessments are done", () => {
     expect(
       recommendedNextSlugs({
         hasCoreBattery: true,

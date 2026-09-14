@@ -57,7 +57,7 @@ export const PRIMARY_SCALE_SLUGS = [
 
 export const workspaceNav = [
   { href: "/home", label: "Home" },
-  { href: "/tests", label: "Assessments", shortLabel: "Tests" },
+  { href: "/tests", label: "Assessments", shortLabel: "Assess" },
   { href: "/battery", label: "Battery" },
   { href: "/personality", label: "Personality", shortLabel: "Traits" },
   { href: "/games", label: "Brain Games", shortLabel: "Games" },
