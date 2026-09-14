@@ -4,6 +4,7 @@ import {
   BRAIN_GAMES,
   getBrainGame,
   queryMatchesBrainGames,
+  todaysBrainGame,
 } from "./brain-games";
 
 describe("brain game catalog", () => {
@@ -25,5 +26,13 @@ describe("brain game catalog", () => {
     expect(queryMatchesBrainGames("memory")).toBe(true);
     expect(queryMatchesBrainGames("chimp")).toBe(true);
     expect(queryMatchesBrainGames("attention")).toBe(false);
+  });
+
+  it("rotates Today's pick by UTC day", () => {
+    const day = 86_400_000;
+    expect(todaysBrainGame(0)?.slug).toBe("sequence-memory");
+    expect(todaysBrainGame(day)?.slug).toBe("visual-memory");
+    expect(todaysBrainGame(day * 5)?.slug).toBe("sequence-memory");
+    expect(todaysBrainGame(day)?.slug).toBe(todaysBrainGame(day + 1)?.slug);
   });
 });

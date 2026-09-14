@@ -8,6 +8,7 @@ import {
   BRAIN_GAMES,
   emptyBrainGameStats,
   readBrainGameStats,
+  todaysBrainGame,
 } from "../../lib/brain-games";
 
 export function BrainGamesHub() {
@@ -21,7 +22,7 @@ export function BrainGamesHub() {
     setBests(next);
   }, []);
 
-  const featured = BRAIN_GAMES[0];
+  const featured = todaysBrainGame();
 
   return (
     <div className="flex flex-col gap-6">

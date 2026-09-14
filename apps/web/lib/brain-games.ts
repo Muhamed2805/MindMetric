@@ -89,6 +89,14 @@ export function getBrainGame(slug: string): BrainGame | undefined {
   return BRAIN_GAMES.find((game) => game.slug === slug);
 }
 
+const MS_PER_DAY = 86_400_000;
+
+/** One drill per UTC day. Local stats still stay on the device. */
+export function todaysBrainGame(nowMs = Date.now()) {
+  const day = Math.floor(nowMs / MS_PER_DAY);
+  return BRAIN_GAMES[day % BRAIN_GAMES.length] ?? BRAIN_GAMES[0];
+}
+
 /** Assessments search should not swallow memory queries as a missing test. */
 export function queryMatchesBrainGames(query: string) {
   const needle = query.trim().toLowerCase();
