@@ -97,14 +97,17 @@ export default async function WorkspaceHomePage() {
         ...bucket,
         percent: null as number | null,
         detail: "Raw totals",
+        facets: null,
       };
     }
     if (bucket.id === "personality") {
       const match = completed.find((row) => bucket.slugs.includes(row.slug));
+      const facets = match?.score?.facets ?? null;
       return {
         ...bucket,
         percent: match ? 100 : null,
         detail: match ? "Five traits" : null,
+        facets,
       };
     }
     const match = completed.find((row) => bucket.slugs.includes(row.slug));
@@ -112,7 +115,12 @@ export default async function WorkspaceHomePage() {
       match?.score && match.score.max > 0
         ? Math.round((match.score.raw / match.score.max) * 100)
         : null;
-    return { ...bucket, percent, detail: null as string | null };
+    return {
+      ...bucket,
+      percent,
+      detail: null as string | null,
+      facets: null,
+    };
   });
 
   return (
@@ -206,12 +214,40 @@ export default async function WorkspaceHomePage() {
               {glance.map((bucket) => (
                 <li key={bucket.id}>
                   <p className="text-sm text-ink">{bucket.label}</p>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-                    <div
-                      className="h-full rounded-full bg-accent"
-                      style={{ width: `${bucket.percent ?? 0}%` }}
-                    />
-                  </div>
+                  {bucket.facets && bucket.facets.length > 0 ? (
+                    <ul className="mt-2 flex flex-col gap-1">
+                      {bucket.facets.map((facet) => {
+                        const span = Math.max(1, facet.max - facet.min);
+                        const width = Math.min(
+                          100,
+                          Math.max(0, ((facet.raw - facet.min) / span) * 100),
+                        );
+                        return (
+                          <li key={facet.id}>
+                            <span className="sr-only">
+                              {facet.label}: {facet.band?.label ?? facet.label}
+                            </span>
+                            <div
+                              className="h-1 overflow-hidden rounded-full bg-line"
+                              aria-hidden="true"
+                            >
+                              <div
+                                className="h-full rounded-full bg-accent"
+                                style={{ width: `${width}%` }}
+                              />
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : (
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+                      <div
+                        className="h-full rounded-full bg-accent"
+                        style={{ width: `${bucket.percent ?? 0}%` }}
+                      />
+                    </div>
+                  )}
                   <p className="mt-1 text-xs text-muted">
                     {bucket.detail ??
                       (bucket.percent === null ? "—" : `${bucket.percent}%`)}

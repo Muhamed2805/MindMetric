@@ -142,6 +142,9 @@ export class AssessmentService {
               max: score.max,
               percentile: score.percentile,
               band: score.band,
+              ...("facets" in score && score.facets
+                ? { facets: score.facets }
+                : {}),
             }
           : null,
       };

@@ -5,6 +5,7 @@ import type {
   CttScore,
   SumCorrectScore,
 } from "../lib/assessment-types";
+import { personalityBandCopy, personalityPoles } from "../lib/personality";
 
 function Meter({
   label,
@@ -59,21 +60,37 @@ function PersonalityResult({ score }: { score: CttScore }) {
           Your five-factor profile
         </p>
         <p className="mt-2 text-sm leading-6 text-muted">
-          Each bar is what you reported on that scale after reverse-keyed items
-          were recoded. Higher emotional stability means you described yourself
-          as calmer. This is not a type code, not a rank against other users,
-          and not a clinical result.
+          Each scale is what you reported after reverse-keyed items were
+          recoded. The filled end is the named trait. This is not a type code,
+          not a rank against other users, and not a clinical result.
         </p>
       </div>
       {facets.map((facet) => {
         const range = Math.max(1, facet.max - facet.min);
+        const poles = personalityPoles(facet.id);
+        const copy = personalityBandCopy(facet.id, facet.band?.id);
         return (
-          <div key={facet.id} className="flex flex-col gap-2">
-            <Meter
-              label={facet.label}
-              valueLabel={facet.band?.label ?? `${facet.raw} of ${facet.max}`}
-              percent={((facet.raw - facet.min) / range) * 100}
-            />
+          <div key={facet.id} className="flex flex-col gap-3">
+            <p className="text-sm font-medium text-ink">{facet.label}</p>
+            {poles ? (
+              <div className="flex justify-between gap-4 text-xs text-muted">
+                <span>{poles.low}</span>
+                <span className="text-right">{poles.high}</span>
+              </div>
+            ) : null}
+            <div className="h-2 overflow-hidden bg-line" aria-hidden="true">
+              <div
+                className="h-full bg-accent"
+                style={{
+                  width: `${Math.min(100, Math.max(0, ((facet.raw - facet.min) / range) * 100))}%`,
+                }}
+              />
+            </div>
+            {copy ? (
+              <p className="text-sm leading-6 text-muted">{copy}</p>
+            ) : facet.band ? (
+              <p className="text-sm leading-6 text-muted">{facet.band.label}</p>
+            ) : null}
           </div>
         );
       })}

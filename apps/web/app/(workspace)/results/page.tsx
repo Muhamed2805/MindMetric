@@ -5,6 +5,7 @@ import { batteryRawLabel } from "../../../components/battery-report";
 import { apiGet } from "../../../lib/api.server";
 import type { AssessmentSummary } from "../../../lib/assessment-types";
 import type { BatterySessionSummary } from "../../../lib/battery-types";
+import { FIVE_FACTOR_SLUG } from "../../../lib/personality";
 
 export const metadata: Metadata = {
   title: "Results",
@@ -43,12 +44,19 @@ export default async function ResultsPage() {
         id: row.id,
         href: `/results/${row.id}`,
         title: row.title,
-        total: row.score ? `${row.score.raw} / ${row.score.max}` : "—",
+        total:
+          row.slug === FIVE_FACTOR_SLUG
+            ? "Five traits"
+            : row.score
+              ? `${row.score.raw} / ${row.score.max}`
+              : "—",
         note:
-          row.score?.band?.label ??
-          (row.score?.percentile != null
-            ? `${row.score.percentile}th percentile`
-            : "Keyed"),
+          row.slug === FIVE_FACTOR_SLUG
+            ? "Self-report profile"
+            : (row.score?.band?.label ??
+              (row.score?.percentile != null
+                ? `${row.score.percentile}th percentile`
+                : "Keyed")),
         completedAt: row.completedAt,
       })),
     ...batteries

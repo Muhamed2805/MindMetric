@@ -97,5 +97,6 @@ export type AssessmentSummary = {
     max: number;
     percentile: number | null;
     band: { id: string; label: string } | null;
+    facets?: CttScore["facets"];
   } | null;
 };
