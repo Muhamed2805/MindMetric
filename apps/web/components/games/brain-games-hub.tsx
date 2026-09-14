@@ -7,11 +7,16 @@ import {
   BRAIN_GAME_DISCLAIMER,
   BRAIN_GAMES,
   emptyBrainGameStats,
+  getBrainGame,
   readBrainGameStats,
-  todaysBrainGame,
+  type BrainGameSlug,
 } from "../../lib/brain-games";
 
-export function BrainGamesHub() {
+export function BrainGamesHub({
+  featuredSlug,
+}: {
+  featuredSlug: BrainGameSlug;
+}) {
   const [bests, setBests] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -22,7 +27,7 @@ export function BrainGamesHub() {
     setBests(next);
   }, []);
 
-  const featured = todaysBrainGame();
+  const featured = getBrainGame(featuredSlug) ?? BRAIN_GAMES[0];
 
   return (
     <div className="flex flex-col gap-6">
