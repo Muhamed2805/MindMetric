@@ -19,6 +19,7 @@ import {
   pickLatestCompletedBattery,
 } from "../../../lib/workspace-home";
 import {
+  isOpenScaleSession,
   profileBucketStartHref,
   profileBuckets,
   profileCompletion,
@@ -51,7 +52,7 @@ export default async function AccountPage() {
   const completed = assessments.filter(
     (row) => row.status === "completed" && row.score,
   );
-  const inProgress = assessments.filter((row) => row.status === "in_progress");
+  const inProgress = assessments.filter(isOpenScaleSession);
   const latestBattery = pickLatestCompletedBattery(
     batteries.filter((row) => row.status === "completed"),
   );

@@ -51,7 +51,7 @@ export default async function HomePage() {
               </Button>
               <Button asChild variant="secondary">
                 <Link href={workspacePath(Boolean(session), "/tests")}>
-                  Explore Tests
+                  Explore assessments
                 </Link>
               </Button>
             </div>

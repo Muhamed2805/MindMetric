@@ -26,6 +26,7 @@ import {
 import {
   assessmentHref,
   CORE_BATTERY_SLUG,
+  isOpenScaleSession,
   profileBucketStartHref,
   profileBuckets,
   profileCompletion,
@@ -56,7 +57,7 @@ export default async function WorkspaceHomePage() {
       cause instanceof Error ? cause.message : "Could not load your workspace.";
   }
 
-  const inProgress = assessments.filter((row) => row.status === "in_progress");
+  const inProgress = assessments.filter(isOpenScaleSession);
   const completed = assessments.filter(
     (row) => row.status === "completed" && row.score,
   );

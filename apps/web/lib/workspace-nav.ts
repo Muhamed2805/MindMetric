@@ -5,6 +5,10 @@ export const CORE_BATTERY_SLUG = "core-cognitive";
 /** Earlier timed puzzle set. New starts go to the core battery. */
 export const LEGACY_TIMED_MCQ_SLUG = "quick-pattern-reasoning";
 
+export function isOpenScaleSession(row: { slug: string; status: string }) {
+  return row.status === "in_progress" && row.slug !== LEGACY_TIMED_MCQ_SLUG;
+}
+
 const BATTERY_SEARCH_CODES = new Set(["gf", "gs", "rq", "gv", "wm"]);
 
 const BATTERY_SEARCH_TERMS = [

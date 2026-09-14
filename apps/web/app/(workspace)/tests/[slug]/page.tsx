@@ -52,12 +52,14 @@ export default async function InstrumentPage({ params }: PageProps) {
     ) {
       notFound();
     }
-    loadError = message || "Could not load this test.";
+    loadError = message || "Could not load this assessment.";
   }
 
   if (loadError || !detail) {
     return (
-      <ErrorState description={loadError ?? "Could not load this test."} />
+      <ErrorState
+        description={loadError ?? "Could not load this assessment."}
+      />
     );
   }
 

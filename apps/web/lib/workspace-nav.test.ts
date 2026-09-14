@@ -4,6 +4,7 @@ import {
   assessmentHref,
   CORE_BATTERY_SLUG,
   instrumentHref,
+  isOpenScaleSession,
   isPrimaryScale,
   LEGACY_TIMED_MCQ_SLUG,
   profileBucketStartHref,
@@ -93,6 +94,15 @@ describe("primary catalog", () => {
     expect(instrumentHref(FIVE_FACTOR_SLUG)).toBe("/personality");
     expect(instrumentHref("work-attention")).toBe("/tests/work-attention");
     expect(instrumentHref(LEGACY_TIMED_MCQ_SLUG)).toBe("/battery");
+    expect(
+      isOpenScaleSession({
+        slug: LEGACY_TIMED_MCQ_SLUG,
+        status: "in_progress",
+      }),
+    ).toBe(false);
+    expect(
+      isOpenScaleSession({ slug: "work-attention", status: "in_progress" }),
+    ).toBe(true);
     expect(queryMatchesBatteryPractice("rotation")).toBe(true);
     expect(queryMatchesBatteryPractice("pilot")).toBe(true);
     expect(queryMatchesBatteryPractice("working memory")).toBe(true);
