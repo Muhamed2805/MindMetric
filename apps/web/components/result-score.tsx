@@ -152,20 +152,11 @@ function LikertResult({
         valueLabel={`${score.pomp}%`}
         percent={score.pomp}
       />
-      {score.percentile !== null ? (
-        <Meter
-          label="Development percentile"
-          valueLabel={`${score.percentile}`}
-          percent={score.percentile}
-        />
-      ) : null}
-      {score.normsKind === "development" ? (
-        <p className="text-sm leading-6 text-muted">
-          Percentiles come from a development table shipped with this instrument
-          version. They are not clinical norms and not ranks against other
-          MindMetric users.
-        </p>
-      ) : null}
+      <p className="text-sm leading-6 text-muted">
+        The report is the keyed total and the band. A development table ships
+        with this version; it is not shown as a rank, not a clinical norm, and
+        not a comparison with other MindMetric users.
+      </p>
       <div>
         <p className="mb-3 text-sm font-medium text-ink">Keyed item scores</p>
         <ul className="flex flex-col gap-3">
@@ -221,18 +212,10 @@ function McqResult({
         valueLabel={`${score.raw} of ${score.max}`}
         percent={score.max === 0 ? 0 : (score.raw / score.max) * 100}
       />
-      {score.percentile !== null ? (
-        <Meter
-          label="Development percentile"
-          valueLabel={`${score.percentile}`}
-          percent={score.percentile}
-        />
-      ) : null}
       <p className="text-sm leading-6 text-muted">
         Credit is given only for the correct option inside the time limit. This
-        set is not an IQ test and not a clinical instrument. Percentiles are
-        development tables shipped with the version, not ranks against other
-        users.
+        set is not an IQ test and not a clinical instrument. The count is a raw
+        total, not a rank.
       </p>
       <div>
         <p className="mb-3 text-sm font-medium text-ink">Items</p>

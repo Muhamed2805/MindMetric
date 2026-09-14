@@ -65,7 +65,7 @@ export default async function InstrumentPage({ params }: PageProps) {
   const intro =
     detail.kind === "mcq-timed-v1"
       ? "Each puzzle has a clock. A late or missing answer scores zero. This is not an IQ test and not a clinical instrument."
-      : "You will answer one statement at a time. Reverse-keyed items are recoded when you finish. Percentiles are development tables, not clinical norms.";
+      : "You will answer one statement at a time. Reverse-keyed items are recoded when you finish. The report is a keyed total and a band, not a rank against other users.";
 
   return (
     <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">

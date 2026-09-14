@@ -191,8 +191,8 @@ export default async function HomePage() {
               body="Answers are scored with the published key. The client never receives correct-choice IDs for timed items."
             />
             <MethodPoint
-              title="Percentiles with a disclaimer"
-              body="Today we ship development tables with each instrument version. They are not clinical norms and not ranks against other users."
+              title="Bands, not ranks"
+              body="Work scales show a keyed total and a band. Development tables ship with the version but are not shown as ranks. The cognitive battery has no percentile until a reference sample exists."
             />
             <MethodPoint
               title="Transparent methodology"

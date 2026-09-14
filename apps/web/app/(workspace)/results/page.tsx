@@ -9,6 +9,7 @@ import {
   FIVE_FACTOR_SLUG,
   hasPersonalityFacets,
 } from "../../../lib/personality";
+import { scaleResultNote } from "../../../lib/result-copy";
 
 export const metadata: Metadata = {
   title: "Results",
@@ -55,15 +56,7 @@ export default async function ResultsPage() {
             : row.score
               ? `${row.score.raw} / ${row.score.max}`
               : "—",
-        note:
-          row.slug === FIVE_FACTOR_SLUG
-            ? hasPersonalityFacets(row.score)
-              ? "Self-report profile"
-              : "Retake for trait bars"
-            : (row.score?.band?.label ??
-              (row.score?.percentile != null
-                ? `${row.score.percentile}th percentile`
-                : "Keyed")),
+        note: scaleResultNote({ slug: row.slug, score: row.score }),
         completedAt: row.completedAt,
       })),
     ...batteries
