@@ -1,5 +1,5 @@
 # MindMetric
-
+IN DEVELOPMENT
 Web platform for psychometric and cognitive assessments.
 
 ## Requirements
