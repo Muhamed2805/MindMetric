@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { BatterySessionSummary } from "./battery-types";
 import {
   hasCompletedCoreBattery,
+  newestByKey,
   pickLatestCompletedBattery,
 } from "./workspace-home";
 
@@ -67,6 +68,23 @@ describe("pickLatestCompletedBattery", () => {
         }),
       ]),
     ).toBeNull();
+  });
+});
+
+describe("newestByKey", () => {
+  it("keeps one newest row per key so retakes do not hide other scales", () => {
+    const rows = newestByKey(
+      [
+        { id: "p1", key: "five-factor-profile", at: 3 },
+        { id: "p0", key: "five-factor-profile", at: 1 },
+        { id: "core", key: "core-cognitive", at: 2 },
+        { id: "att", key: "work-attention", at: 0 },
+      ],
+      (row) => row.key,
+      (row) => row.at,
+    );
+
+    expect(rows.map((row) => row.id)).toEqual(["p1", "core", "att"]);
   });
 });
 

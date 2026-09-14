@@ -21,12 +21,14 @@ import {
 } from "../../../lib/personality";
 import {
   hasCompletedCoreBattery,
+  newestByKey,
   pickLatestCompletedBattery,
 } from "../../../lib/workspace-home";
 import {
   assessmentHref,
   CORE_BATTERY_SLUG,
   isOpenScaleSession,
+  LEGACY_TIMED_MCQ_SLUG,
   profileBucketStartHref,
   profileBuckets,
   profileCompletion,
@@ -68,35 +70,37 @@ export default async function WorkspaceHomePage() {
   const latestBattery = pickLatestCompletedBattery(completedBatteries);
   const hasCoreBattery = hasCompletedCoreBattery(completedBatteries);
   const continueRow = inProgress[0];
-  const recent = [
-    ...completed.map((row) => ({
-      id: row.id,
-      href: `/results/${row.id}`,
-      title: row.title,
-      detail:
-        row.slug === FIVE_FACTOR_SLUG
-          ? hasPersonalityFacets(row.score)
-            ? "Five traits"
-            : "Earlier total"
-          : row.score
-            ? `${row.score.raw} / ${row.score.max}`
-            : "",
-      at: row.completedAt,
-    })),
-    ...completedBatteries.map((row) => ({
-      id: row.id,
-      href: `/results/battery/${row.id}`,
-      title: row.batteryTitle,
-      detail: batteryRawLabel(row.report),
-      at: row.completedAt,
-    })),
-  ]
-    .sort((left, right) => {
-      const leftAt = left.at ? new Date(left.at).getTime() : 0;
-      const rightAt = right.at ? new Date(right.at).getTime() : 0;
-      return rightAt - leftAt;
-    })
-    .slice(0, 3);
+  const recent = newestByKey(
+    [
+      ...completed
+        .filter((row) => row.slug !== LEGACY_TIMED_MCQ_SLUG)
+        .map((row) => ({
+          id: row.id,
+          href: `/results/${row.id}`,
+          title: row.title,
+          detail:
+            row.slug === FIVE_FACTOR_SLUG
+              ? hasPersonalityFacets(row.score)
+                ? "Five traits"
+                : "Earlier total"
+              : row.score
+                ? `${row.score.raw} / ${row.score.max}`
+                : "",
+          at: row.completedAt,
+          key: row.slug,
+        })),
+      ...completedBatteries.map((row) => ({
+        id: row.id,
+        href: `/results/battery/${row.id}`,
+        title: row.batteryTitle,
+        detail: batteryRawLabel(row.report),
+        at: row.completedAt,
+        key: `battery:${row.batterySlug}`,
+      })),
+    ],
+    (row) => row.key,
+    (row) => (row.at ? new Date(row.at).getTime() : 0),
+  ).slice(0, 3);
   const doneSlugs = new Set(completed.map((row) => row.slug));
   const bySlug = new Map(instruments.map((item) => [item.slug, item]));
   const recommended = recommendedNextSlugs({

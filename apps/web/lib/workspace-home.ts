@@ -32,3 +32,20 @@ export function pickLatestCompletedBattery(
 
   return [...completed].sort(newest)[0] ?? null;
 }
+
+/** One newest row per key, newest first. Home recent should not drown in retakes. */
+export function newestByKey<T>(
+  rows: T[],
+  key: (row: T) => string,
+  time: (row: T) => number,
+) {
+  const best = new Map<string, T>();
+  for (const row of rows) {
+    const id = key(row);
+    const previous = best.get(id);
+    if (!previous || time(row) > time(previous)) {
+      best.set(id, row);
+    }
+  }
+  return [...best.values()].sort((left, right) => time(right) - time(left));
+}
