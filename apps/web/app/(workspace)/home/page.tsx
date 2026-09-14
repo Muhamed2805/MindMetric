@@ -2,6 +2,7 @@ import { Button, ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { batteryRawLabel } from "../../../components/battery-report";
+import { PersonalityTraitBars } from "../../../components/personality-trait-bars";
 import { apiGet } from "../../../lib/api.server";
 import type {
   AssessmentSummary,
@@ -13,7 +14,10 @@ import {
 } from "../../../lib/battery-copy";
 import type { BatterySessionSummary } from "../../../lib/battery-types";
 import { durationLabel } from "../../../lib/format";
-import { FIVE_FACTOR_SLUG } from "../../../lib/personality";
+import {
+  FIVE_FACTOR_SLUG,
+  pickLatestPersonality,
+} from "../../../lib/personality";
 import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
 import { profileBuckets } from "../../../lib/workspace-nav";
 
@@ -91,6 +95,7 @@ export default async function WorkspaceHomePage() {
   const recommended = instruments
     .filter((item) => !doneSlugs.has(item.slug))
     .slice(0, 2);
+  const latestPersonality = pickLatestPersonality(completed);
   const glance = profileBuckets.map((bucket) => {
     if (bucket.id === "cognitive" && latestBattery) {
       return {
@@ -98,16 +103,18 @@ export default async function WorkspaceHomePage() {
         percent: null as number | null,
         detail: "Raw totals",
         facets: null,
+        href: "/battery",
       };
     }
     if (bucket.id === "personality") {
-      const match = completed.find((row) => bucket.slugs.includes(row.slug));
-      const facets = match?.score?.facets ?? null;
       return {
         ...bucket,
-        percent: match ? 100 : null,
-        detail: match ? "Five traits" : null,
-        facets,
+        percent: latestPersonality ? 100 : null,
+        detail: latestPersonality ? "Five traits" : null,
+        facets: latestPersonality?.score?.facets ?? null,
+        href: latestPersonality
+          ? `/results/${latestPersonality.id}`
+          : "/personality",
       };
     }
     const match = completed.find((row) => bucket.slugs.includes(row.slug));
@@ -120,6 +127,7 @@ export default async function WorkspaceHomePage() {
       percent,
       detail: null as string | null,
       facets: null,
+      href: null as string | null,
     };
   });
 
@@ -211,49 +219,43 @@ export default async function WorkspaceHomePage() {
               </Link>
             </div>
             <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              {glance.map((bucket) => (
-                <li key={bucket.id}>
-                  <p className="text-sm text-ink">{bucket.label}</p>
-                  {bucket.facets && bucket.facets.length > 0 ? (
-                    <ul className="mt-2 flex flex-col gap-1">
-                      {bucket.facets.map((facet) => {
-                        const span = Math.max(1, facet.max - facet.min);
-                        const width = Math.min(
-                          100,
-                          Math.max(0, ((facet.raw - facet.min) / span) * 100),
-                        );
-                        return (
-                          <li key={facet.id}>
-                            <span className="sr-only">
-                              {facet.label}: {facet.band?.label ?? facet.label}
-                            </span>
-                            <div
-                              className="h-1 overflow-hidden rounded-full bg-line"
-                              aria-hidden="true"
-                            >
-                              <div
-                                className="h-full rounded-full bg-accent"
-                                style={{ width: `${width}%` }}
-                              />
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  ) : (
-                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-                      <div
-                        className="h-full rounded-full bg-accent"
-                        style={{ width: `${bucket.percent ?? 0}%` }}
-                      />
-                    </div>
-                  )}
-                  <p className="mt-1 text-xs text-muted">
-                    {bucket.detail ??
-                      (bucket.percent === null ? "—" : `${bucket.percent}%`)}
-                  </p>
-                </li>
-              ))}
+              {glance.map((bucket) => {
+                const body = (
+                  <>
+                    <p className="text-sm text-ink">{bucket.label}</p>
+                    {bucket.facets && bucket.facets.length > 0 ? (
+                      <div className="mt-2">
+                        <PersonalityTraitBars facets={bucket.facets} />
+                      </div>
+                    ) : (
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+                        <div
+                          className="h-full rounded-full bg-accent"
+                          style={{ width: `${bucket.percent ?? 0}%` }}
+                        />
+                      </div>
+                    )}
+                    <p className="mt-1 text-xs text-muted">
+                      {bucket.detail ??
+                        (bucket.percent === null ? "—" : `${bucket.percent}%`)}
+                    </p>
+                  </>
+                );
+                return (
+                  <li key={bucket.id}>
+                    {bucket.href ? (
+                      <Link
+                        href={bucket.href}
+                        className="block hover:text-accent"
+                      >
+                        {body}
+                      </Link>
+                    ) : (
+                      body
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">

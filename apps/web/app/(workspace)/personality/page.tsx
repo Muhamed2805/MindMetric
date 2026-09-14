@@ -1,10 +1,18 @@
 import { ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { PersonalityTraitBars } from "../../../components/personality-trait-bars";
 import { StartAssessmentButton } from "../../../components/start-assessment-button";
 import { apiGet } from "../../../lib/api.server";
-import type { InstrumentDetail } from "../../../lib/assessment-types";
+import type {
+  AssessmentSummary,
+  InstrumentDetail,
+} from "../../../lib/assessment-types";
 import { durationLabel } from "../../../lib/format";
-import { FIVE_FACTOR_SLUG } from "../../../lib/personality";
+import {
+  FIVE_FACTOR_SLUG,
+  pickLatestPersonality,
+} from "../../../lib/personality";
 
 export const metadata: Metadata = {
   title: "Personality test",
@@ -40,8 +48,14 @@ const traits = [
 
 export default async function PersonalityPage() {
   let detail: InstrumentDetail | null = null;
+  let latestPersonality: ReturnType<typeof pickLatestPersonality> = null;
   try {
-    detail = await apiGet<InstrumentDetail>(`/instruments/${FIVE_FACTOR_SLUG}`);
+    const [instrument, assessments] = await Promise.all([
+      apiGet<InstrumentDetail>(`/instruments/${FIVE_FACTOR_SLUG}`),
+      apiGet<AssessmentSummary[]>("/assessments").catch(() => []),
+    ]);
+    detail = instrument;
+    latestPersonality = pickLatestPersonality(assessments);
   } catch {
     detail = null;
   }
@@ -105,12 +119,43 @@ export default async function PersonalityPage() {
       </div>
 
       <div className="mm-panel flex flex-col gap-4 px-5 py-5">
-        <p className="text-sm leading-6 text-muted">
-          Answers are what you report about yourself today. Reverse-keyed items
-          are recoded on the server. You can leave and resume an unfinished
-          session.
-        </p>
-        <StartAssessmentButton slug={detail.slug} label="Start the test" />
+        {latestPersonality?.score?.facets &&
+        latestPersonality.score.facets.length > 0 ? (
+          <>
+            <h2 className="font-serif text-xl font-medium text-ink">
+              Your latest profile
+            </h2>
+            <PersonalityTraitBars
+              facets={latestPersonality.score.facets}
+              variant="poles"
+            />
+            <p className="text-sm leading-6 text-muted">
+              Take it again any time. Reverse-keyed items are recoded on the
+              server. You can leave and resume an unfinished session.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <StartAssessmentButton
+                slug={detail.slug}
+                label="Take the test again"
+              />
+              <Link
+                href={`/results/${latestPersonality.id}`}
+                className="text-sm font-medium text-accent"
+              >
+                View full report →
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-sm leading-6 text-muted">
+              Answers are what you report about yourself today. Reverse-keyed
+              items are recoded on the server. You can leave and resume an
+              unfinished session.
+            </p>
+            <StartAssessmentButton slug={detail.slug} label="Start the test" />
+          </>
+        )}
       </div>
     </div>
   );

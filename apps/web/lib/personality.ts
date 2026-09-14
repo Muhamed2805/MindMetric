@@ -69,3 +69,53 @@ export function personalityBandCopy(
   }
   return TRAIT_BAND_COPY[facetId]?.[bandId] ?? null;
 }
+
+export type PersonalityAssessment = {
+  id: string;
+  slug: string;
+  status: string;
+  completedAt: string | null;
+  score: {
+    facets?: Array<{
+      id: string;
+      label: string;
+      raw: number;
+      min: number;
+      max: number;
+      pomp: number;
+      band: { id: string; label: string } | null;
+    }>;
+  } | null;
+};
+
+function completedAtMs(row: PersonalityAssessment) {
+  return row.completedAt ? new Date(row.completedAt).getTime() : 0;
+}
+
+/** Newest five-factor result, preferring one that already has trait facets. */
+export function pickLatestPersonality(
+  rows: PersonalityAssessment[],
+): PersonalityAssessment | null {
+  const completed = rows
+    .filter(
+      (row) =>
+        row.slug === FIVE_FACTOR_SLUG &&
+        row.status === "completed" &&
+        row.score,
+    )
+    .sort((left, right) => completedAtMs(right) - completedAtMs(left));
+  return (
+    completed.find((row) => (row.score?.facets?.length ?? 0) > 0) ??
+    completed[0] ??
+    null
+  );
+}
+
+export function personalityFacetPercent(facet: {
+  raw: number;
+  min: number;
+  max: number;
+}) {
+  const span = Math.max(1, facet.max - facet.min);
+  return Math.min(100, Math.max(0, ((facet.raw - facet.min) / span) * 100));
+}
