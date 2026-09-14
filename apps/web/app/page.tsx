@@ -188,7 +188,7 @@ export default async function HomePage() {
             />
             <MethodPoint
               title="Transparent methodology"
-              body="Scoring models live in the catalog files (CTT, sum-correct). A full IQ battery with population norms is the next instrument, not this landing copy."
+              body="Scoring models live in the catalog. The core battery currently reports raw section totals only. IQ, percentile, and interval stay empty until a reference sample exists."
             />
           </ul>
         </section>

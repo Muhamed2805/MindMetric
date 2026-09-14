@@ -7,8 +7,13 @@ import type {
   AssessmentSummary,
   CatalogInstrument,
 } from "../../../lib/assessment-types";
+import {
+  batteryPhaseLabel,
+  batteryScoreDisclaimer,
+} from "../../../lib/battery-copy";
 import type { BatterySessionSummary } from "../../../lib/battery-types";
 import { durationLabel } from "../../../lib/format";
+import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
 import { profileBuckets } from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
@@ -43,6 +48,7 @@ export default async function WorkspaceHomePage() {
   const completedBatteries = batteries.filter(
     (row) => row.status === "completed",
   );
+  const latestBattery = pickLatestCompletedBattery(completedBatteries);
   const continueRow = inProgress[0];
   const recent = [
     ...completed.map((row) => ({
@@ -66,26 +72,33 @@ export default async function WorkspaceHomePage() {
       return rightAt - leftAt;
     })
     .slice(0, 3);
-  const cognitiveSlugs =
-    profileBuckets.find((bucket) => bucket.id === "cognitive")?.slugs ?? [];
-  const latestCognitive = completed.find((row) =>
-    cognitiveSlugs.includes(row.slug),
-  );
-  const filledBuckets = profileBuckets.filter((bucket) =>
-    bucket.slugs.some((slug) => completed.some((row) => row.slug === slug)),
-  ).length;
+  const filledBuckets = profileBuckets.filter((bucket) => {
+    if (bucket.id === "cognitive" && latestBattery) {
+      return true;
+    }
+    return bucket.slugs.some((slug) =>
+      completed.some((row) => row.slug === slug),
+    );
+  }).length;
   const completion = Math.round((filledBuckets / profileBuckets.length) * 100);
   const doneSlugs = new Set(completed.map((row) => row.slug));
   const recommended = instruments
     .filter((item) => !doneSlugs.has(item.slug))
     .slice(0, 2);
   const glance = profileBuckets.map((bucket) => {
+    if (bucket.id === "cognitive" && latestBattery) {
+      return {
+        ...bucket,
+        percent: null as number | null,
+        detail: "Raw totals",
+      };
+    }
     const match = completed.find((row) => bucket.slugs.includes(row.slug));
     const percent =
       match?.score && match.score.max > 0
         ? Math.round((match.score.raw / match.score.max) * 100)
         : null;
-    return { ...bucket, percent };
+    return { ...bucket, percent, detail: null as string | null };
   });
 
   return (
@@ -98,7 +111,8 @@ export default async function WorkspaceHomePage() {
           Welcome back
         </h1>
         <p className="mt-2 text-sm text-muted">
-          A clear view of your developing cognitive profile.
+          Raw battery totals when you have them. No IQ or percentile until a
+          reference sample exists.
         </p>
       </div>
       {loadError ? (
@@ -108,22 +122,27 @@ export default async function WorkspaceHomePage() {
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-2xl bg-accent px-6 py-6 text-accent-fg">
               <p className="text-[11px] uppercase tracking-widest text-accent-fg/70">
-                Latest cognitive score
+                Latest battery totals
               </p>
-              {latestCognitive?.score ? (
+              {latestBattery ? (
                 <>
-                  <p className="mt-3 font-serif text-5xl font-medium">
-                    {latestCognitive.score.raw}
-                    <span className="ml-2 text-xl text-accent-fg/70">
-                      / {latestCognitive.score.max}
-                    </span>
+                  <p className="mt-3 font-serif text-2xl font-medium leading-snug">
+                    {batteryRawLabel(latestBattery.report)}
                   </p>
                   <p className="mt-3 inline-flex rounded-full bg-accent-fg/15 px-3 py-1 text-sm">
-                    {latestCognitive.score.percentile !== null
-                      ? `${latestCognitive.score.percentile}th percentile`
-                      : (latestCognitive.score.band?.label ??
-                        latestCognitive.title)}
+                    {batteryPhaseLabel(latestBattery.isPracticeMode)}
                   </p>
+                  <p className="mt-3 text-sm text-accent-fg/80">
+                    {batteryScoreDisclaimer()}
+                  </p>
+                  <Button
+                    asChild
+                    className="mt-4 bg-accent-fg text-accent hover:bg-accent-fg/90"
+                  >
+                    <Link href={`/results/battery/${latestBattery.id}`}>
+                      View report
+                    </Link>
+                  </Button>
                 </>
               ) : (
                 <>
@@ -180,7 +199,8 @@ export default async function WorkspaceHomePage() {
                     />
                   </div>
                   <p className="mt-1 text-xs text-muted">
-                    {bucket.percent === null ? "—" : `${bucket.percent}%`}
+                    {bucket.detail ??
+                      (bucket.percent === null ? "—" : `${bucket.percent}%`)}
                   </p>
                 </li>
               ))}
