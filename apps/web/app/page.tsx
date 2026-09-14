@@ -8,12 +8,11 @@ import type { CatalogInstrument } from "../lib/assessment-types";
 import { getServerSession } from "../lib/session";
 
 const games = [
-  { title: "Reaction Time", detail: "Visual stimulus response" },
-  { title: "Chimp Test", detail: "Numerical memory sequence" },
-  { title: "Sequence Memory", detail: "Pattern recall under pressure" },
-  { title: "Verbal Memory", detail: "Word recognition and recall" },
-  { title: "Visual Memory", detail: "Spatial pattern retention" },
-  { title: "Number Memory", detail: "Digit span working memory" },
+  { title: "Sequence Memory", detail: "Repeat a growing chain of tiles" },
+  { title: "Visual Memory", detail: "Hold a scattered pattern" },
+  { title: "Chimp Test", detail: "Touch numerals after they hide" },
+  { title: "Number Memory", detail: "Hold a growing integer" },
+  { title: "Verbal Memory", detail: "Track words you have already seen" },
 ];
 
 export default async function HomePage() {
@@ -137,23 +136,24 @@ export default async function HomePage() {
             Train & measure
           </h2>
           <p className="mt-3 max-w-lg text-[15px] leading-6 text-muted">
-            Short, focused exercises that measure specific cognitive abilities
-            in real time. These are sketched in the product plan; they are not
-            in the catalog yet.
+            Short drills you can repeat. They live in the workspace as practice,
+            and they never feed the cognitive battery or an IQ score.
           </p>
           <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {games.map((game) => (
-              <li
-                key={game.title}
-                className="mm-panel flex items-start gap-3 px-4 py-4"
-              >
-                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-canvas text-accent">
-                  <Bolt />
-                </span>
-                <div>
-                  <p className="text-sm font-medium text-ink">{game.title}</p>
-                  <p className="mt-0.5 text-sm text-muted">{game.detail}</p>
-                </div>
+              <li key={game.title}>
+                <Link
+                  href={session ? "/games" : "/login?from=/games"}
+                  className="mm-panel flex items-start gap-3 px-4 py-4"
+                >
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-canvas text-accent">
+                    <Bolt />
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium text-ink">{game.title}</p>
+                    <p className="mt-0.5 text-sm text-muted">{game.detail}</p>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>

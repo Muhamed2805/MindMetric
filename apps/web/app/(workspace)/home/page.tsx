@@ -276,10 +276,10 @@ export default async function WorkspaceHomePage() {
                 Quick access to Brain Games
               </h2>
               <p className="mt-2 text-sm text-muted">
-                Short drills are on the board. They are not in the engine yet.
+                Short drills. They are not part of the cognitive battery.
               </p>
               <Button asChild variant="secondary" className="mt-5">
-                <Link href="/games">See Brain Games</Link>
+                <Link href="/games">Open Brain Games</Link>
               </Button>
             </div>
           </div>
