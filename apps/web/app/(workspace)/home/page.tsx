@@ -14,6 +14,7 @@ import {
 } from "../../../lib/battery-copy";
 import type { BatterySessionSummary } from "../../../lib/battery-types";
 import { durationLabel } from "../../../lib/format";
+import { todaysBrainGame } from "../../../lib/brain-games";
 import {
   FIVE_FACTOR_SLUG,
   hasPersonalityFacets,
@@ -135,6 +136,7 @@ export default async function WorkspaceHomePage() {
     ];
   });
   const latestPersonality = pickLatestPersonality(completed);
+  const featuredGame = todaysBrainGame();
   const completion = profileCompletion({
     hasBattery: hasCoreBattery,
     hasPersonality: Boolean(latestPersonality),
@@ -392,12 +394,27 @@ export default async function WorkspaceHomePage() {
               <h2 className="font-serif text-xl font-medium">
                 Quick access to Brain Games
               </h2>
-              <p className="mt-2 text-sm text-muted">
-                Short drills. They are not part of the cognitive battery.
+              <p className="mt-3 text-[11px] font-medium uppercase tracking-widest text-mark">
+                Today&apos;s pick
               </p>
-              <Button asChild variant="secondary" className="mt-5">
-                <Link href="/games">Open Brain Games</Link>
+              <p className="mt-1 font-serif text-2xl font-medium">
+                {featuredGame.title}
+              </p>
+              <p className="mt-2 text-sm text-muted">
+                {featuredGame.tagline} They are not part of the cognitive
+                battery.
+              </p>
+              <Button asChild className="mt-5">
+                <Link href={`/games/${featuredGame.slug}`}>Start</Link>
               </Button>
+              <p className="mt-3">
+                <Link
+                  href="/games"
+                  className="text-sm text-muted hover:text-ink"
+                >
+                  All drills →
+                </Link>
+              </p>
             </div>
           </div>
         </>
