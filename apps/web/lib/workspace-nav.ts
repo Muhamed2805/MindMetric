@@ -25,3 +25,22 @@ export const profileBuckets: Array<{
   { id: "personality", label: "Personality", slugs: [FIVE_FACTOR_SLUG] },
   { id: "eq", label: "EQ", slugs: ["work-emotion-awareness"] },
 ];
+
+export function profileBucketStartHref(id: string) {
+  if (id === "cognitive") {
+    return "/battery";
+  }
+  if (id === "personality") {
+    return "/personality";
+  }
+  if (id === "memory") {
+    return "/games";
+  }
+  if (id === "attention") {
+    return "/tests/work-attention";
+  }
+  if (id === "eq") {
+    return "/tests/work-emotion-awareness";
+  }
+  return "/tests";
+}

@@ -15,27 +15,14 @@ import type { BatterySessionSummary } from "../../../lib/battery-types";
 import { pickLatestPersonality } from "../../../lib/personality";
 import { getServerSession } from "../../../lib/session";
 import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
-import { profileBuckets } from "../../../lib/workspace-nav";
+import {
+  profileBucketStartHref,
+  profileBuckets,
+} from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
   title: "My Profile",
 };
-
-function unfinishedHref(id: string) {
-  if (id === "cognitive") {
-    return "/battery";
-  }
-  if (id === "personality") {
-    return "/personality";
-  }
-  if (id === "eq") {
-    return "/tests/work-emotion-awareness";
-  }
-  if (id === "attention") {
-    return "/tests/work-attention";
-  }
-  return "/tests";
-}
 
 export default async function AccountPage() {
   const session = await getServerSession();
@@ -83,7 +70,10 @@ export default async function AccountPage() {
   });
   const filled = glance.filter((row) => row.filled).length;
   const completion = Math.round((filled / glance.length) * 100);
-  const unfinished = glance.filter((row) => !row.filled);
+  const unfinished = glance.filter(
+    (row) =>
+      !row.filled && (row.id === "cognitive" || row.id === "personality"),
+  );
 
   return (
     <div className="flex flex-col gap-5">
@@ -176,6 +166,49 @@ export default async function AccountPage() {
           )}
         </div>
       </div>
+      <div className="mm-panel px-6 py-5">
+        <h2 className="font-serif text-xl font-medium">Other scales</h2>
+        <ul className="mt-4 flex flex-col gap-3">
+          {glance
+            .filter(
+              (row) =>
+                row.id === "attention" ||
+                row.id === "eq" ||
+                row.id === "memory",
+            )
+            .map((row) => {
+              const match = completed.find((entry) =>
+                row.slugs.includes(entry.slug),
+              );
+              return (
+                <li
+                  key={row.id}
+                  className="flex flex-wrap items-baseline justify-between gap-2 text-sm"
+                >
+                  <span className="text-ink">{row.label}</span>
+                  {match ? (
+                    <Link href={`/results/${match.id}`} className="text-accent">
+                      {match.score?.band?.label ?? "View report"}
+                    </Link>
+                  ) : (
+                    <Link
+                      href={profileBucketStartHref(row.id)}
+                      className="text-muted hover:text-ink"
+                    >
+                      {row.id === "memory"
+                        ? "Brain Games practice"
+                        : "Not started"}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+        </ul>
+        <p className="mt-4 text-xs leading-5 text-muted">
+          Brain Games are drills. They never feed the cognitive battery or an IQ
+          score.
+        </p>
+      </div>
       {inProgress[0] ? (
         <div className="mm-panel px-6 py-5">
           <h2 className="font-serif text-xl font-medium">Unfinished</h2>
@@ -193,14 +226,21 @@ export default async function AccountPage() {
           <ul className="mt-3 flex flex-col gap-1 text-sm text-muted">
             {unfinished.map((row) => (
               <li key={row.id}>
-                <Link href={unfinishedHref(row.id)} className="hover:text-ink">
-                  {row.label} · Not started
+                <Link
+                  href={profileBucketStartHref(row.id)}
+                  className="hover:text-ink"
+                >
+                  {row.id === "memory"
+                    ? "Memory · Brain Games practice"
+                    : `${row.label} · Not started`}
                 </Link>
               </li>
             ))}
           </ul>
           <Button asChild variant="secondary" className="mt-4">
-            <Link href={unfinishedHref(unfinished[0]?.id ?? "cognitive")}>
+            <Link
+              href={profileBucketStartHref(unfinished[0]?.id ?? "cognitive")}
+            >
               Complete profile
             </Link>
           </Button>

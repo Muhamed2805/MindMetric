@@ -19,7 +19,10 @@ import {
   pickLatestPersonality,
 } from "../../../lib/personality";
 import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
-import { profileBuckets } from "../../../lib/workspace-nav";
+import {
+  profileBucketStartHref,
+  profileBuckets,
+} from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -117,17 +120,23 @@ export default async function WorkspaceHomePage() {
           : "/personality",
       };
     }
+    if (bucket.id === "memory") {
+      return {
+        ...bucket,
+        percent: null as number | null,
+        detail: "Practice",
+        facets: null,
+        href: "/games",
+      };
+    }
     const match = completed.find((row) => bucket.slugs.includes(row.slug));
-    const percent =
-      match?.score && match.score.max > 0
-        ? Math.round((match.score.raw / match.score.max) * 100)
-        : null;
+    const done = Boolean(match);
     return {
       ...bucket,
-      percent,
-      detail: null as string | null,
+      percent: done ? 100 : null,
+      detail: done ? "Keyed" : null,
       facets: null,
-      href: null as string | null,
+      href: match ? `/results/${match.id}` : profileBucketStartHref(bucket.id),
     };
   });
 
