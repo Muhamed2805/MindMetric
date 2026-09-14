@@ -324,7 +324,8 @@ export default async function WorkspaceHomePage() {
                     Nothing open
                   </h2>
                   <p className="mt-2 text-sm text-muted">
-                    Start a published scale when you have a quiet few minutes.
+                    Start the core battery or a live scale when you have a quiet
+                    few minutes.
                   </p>
                   <Button asChild className="mt-5">
                     <Link href="/tests">Explore assessments</Link>

@@ -89,6 +89,29 @@ export function getBrainGame(slug: string): BrainGame | undefined {
   return BRAIN_GAMES.find((game) => game.slug === slug);
 }
 
+/** Assessments search should not swallow memory queries as a missing test. */
+export function queryMatchesBrainGames(query: string) {
+  const needle = query.trim().toLowerCase();
+  if (!needle) {
+    return false;
+  }
+  if (
+    needle === "memory" ||
+    needle === "game" ||
+    needle === "games" ||
+    needle === "drill" ||
+    needle === "drills" ||
+    needle.includes("brain")
+  ) {
+    return true;
+  }
+  return BRAIN_GAMES.some((game) =>
+    [game.slug, game.title, game.skill, game.tagline].some((field) =>
+      field.toLowerCase().includes(needle),
+    ),
+  );
+}
+
 export type BrainGameStats = {
   best: number;
   last: number;

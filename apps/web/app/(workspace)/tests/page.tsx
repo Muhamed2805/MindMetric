@@ -5,6 +5,7 @@ import { InstrumentCard } from "../../../components/instrument-card";
 import { apiGet } from "../../../lib/api.server";
 import type { CatalogInstrument } from "../../../lib/assessment-types";
 import type { BatteryOverview } from "../../../lib/battery-types";
+import { queryMatchesBrainGames } from "../../../lib/brain-games";
 import { minutesFromMs } from "../../../lib/format";
 import { CORE_BATTERY_SLUG, isPrimaryScale } from "../../../lib/workspace-nav";
 
@@ -67,7 +68,17 @@ export default async function TestsPage({
       {loadError ? (
         <ErrorState description={loadError} />
       ) : visible.length === 0 && visibleBatteries.length === 0 ? (
-        <p className="text-muted">No published assessments match.</p>
+        query && queryMatchesBrainGames(query) ? (
+          <p className="max-w-xl text-sm leading-6 text-muted">
+            Memory drills live in Brain Games, not the assessment catalog. They
+            never feed the cognitive battery or an IQ.{" "}
+            <Link href="/games" className="font-medium text-accent">
+              Open Brain Games →
+            </Link>
+          </p>
+        ) : (
+          <p className="text-muted">No published assessments match.</p>
+        )
       ) : (
         <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {visibleBatteries.map((entry) => (
