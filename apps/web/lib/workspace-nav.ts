@@ -5,6 +5,36 @@ export const CORE_BATTERY_SLUG = "core-cognitive";
 /** Earlier timed puzzle set. New starts go to the core battery. */
 export const LEGACY_TIMED_MCQ_SLUG = "quick-pattern-reasoning";
 
+const BATTERY_SEARCH_CODES = new Set(["gf", "gs", "rq", "gv", "wm"]);
+
+const BATTERY_SEARCH_TERMS = [
+  "pilot",
+  "rotation",
+  "spatial",
+  "fluid",
+  "matrix",
+  "matrices",
+  "pattern",
+  "processing",
+  "quantitative",
+  "numerical",
+  "working memory",
+  "same or different",
+  "calibration",
+];
+
+/** Assessments search should not swallow domain pilots as a missing test. */
+export function queryMatchesBatteryPractice(query: string) {
+  const needle = query.trim().toLowerCase();
+  if (!needle) {
+    return false;
+  }
+  if (BATTERY_SEARCH_CODES.has(needle)) {
+    return true;
+  }
+  return BATTERY_SEARCH_TERMS.some((term) => needle.includes(term));
+}
+
 export function splitListedBatteries<T extends { slug: string }>(rows: T[]) {
   return {
     core: rows.find((row) => row.slug === CORE_BATTERY_SLUG) ?? null,

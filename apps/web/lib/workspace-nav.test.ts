@@ -8,6 +8,7 @@ import {
   LEGACY_TIMED_MCQ_SLUG,
   profileBucketStartHref,
   profileCompletion,
+  queryMatchesBatteryPractice,
   recommendedNextSlugs,
   scoredProfileBuckets,
   splitListedBatteries,
@@ -71,6 +72,13 @@ describe("primary catalog", () => {
     expect(instrumentHref(FIVE_FACTOR_SLUG)).toBe("/personality");
     expect(instrumentHref("work-attention")).toBe("/tests/work-attention");
     expect(instrumentHref(LEGACY_TIMED_MCQ_SLUG)).toBe("/battery");
+    expect(queryMatchesBatteryPractice("rotation")).toBe(true);
+    expect(queryMatchesBatteryPractice("pilot")).toBe(true);
+    expect(queryMatchesBatteryPractice("working memory")).toBe(true);
+    expect(queryMatchesBatteryPractice("gf")).toBe(true);
+    expect(queryMatchesBatteryPractice("pattern")).toBe(true);
+    expect(queryMatchesBatteryPractice("memory")).toBe(false);
+    expect(queryMatchesBatteryPractice("attention")).toBe(false);
     expect(assessmentHref(CORE_BATTERY_SLUG)).toBe("/battery");
     expect(
       splitListedBatteries([
