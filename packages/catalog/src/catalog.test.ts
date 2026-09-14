@@ -1,4 +1,4 @@
-import { LIKERT_ENGINE } from "@mindmetric/shared";
+import { isLikertDefinition, LIKERT_ENGINE } from "@mindmetric/shared";
 import { describe, expect, it } from "vitest";
 import { parseCatalogDocument } from "./document";
 import { loadCatalogDocuments } from "./load";
@@ -27,6 +27,7 @@ describe("loadCatalogDocuments", () => {
   it("loads published instruments from files", () => {
     const documents = loadCatalogDocuments();
     expect(documents.map((document) => document.slug)).toEqual([
+      "five-factor-profile",
       "quick-pattern-reasoning",
       "work-attention",
       "work-emotion-awareness",
@@ -36,6 +37,26 @@ describe("loadCatalogDocuments", () => {
         document.versions.some((version) => version.status === "published"),
       ).toBe(true);
     }
+  });
+
+  it("ships a five-factor self-report with keyed facets", () => {
+    const documents = loadCatalogDocuments();
+    const personality = documents.find(
+      (document) => document.slug === "five-factor-profile",
+    );
+    const definition = personality?.versions[0]?.definition;
+    expect(isLikertDefinition(definition)).toBe(true);
+    if (!isLikertDefinition(definition)) {
+      return;
+    }
+    expect(definition.items.length).toBe(25);
+    expect(definition.scoring?.facets?.map((facet) => facet.id)).toEqual([
+      "openness",
+      "conscientiousness",
+      "extraversion",
+      "agreeableness",
+      "stability",
+    ]);
   });
 });
 

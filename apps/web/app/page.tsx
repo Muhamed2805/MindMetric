@@ -87,20 +87,20 @@ export default async function HomePage() {
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <li>
               <CategoryCard
-                href="/tests"
+                href={session ? "/battery" : "/login?from=/battery"}
                 badge="Core"
                 title="IQ & Cognitive"
                 detail="Reasoning, spatial ability and numerical thinking"
-                time="From 2 min"
+                time="~40 min practice"
               />
             </li>
             <li>
               <CategoryCard
-                href="/tests"
+                href={session ? "/personality" : "/login?from=/personality"}
                 badge="Profile"
                 title="Personality"
-                detail="Big Five personality profile"
-                time="Coming later"
+                detail="Big Five self-report of everyday tendencies"
+                time="~10 min · 25 statements"
               />
             </li>
             <li>

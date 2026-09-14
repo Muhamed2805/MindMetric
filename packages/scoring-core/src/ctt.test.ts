@@ -76,6 +76,68 @@ describe("scoreLikertCtt", () => {
     expect(result.pomp).toBe(75);
     expect(result.band?.id).toBe("high");
     expect(result.items.map((item) => item.keyed)).toEqual([4, 4]);
+    expect(result.facets).toBeUndefined();
+  });
+
+  it("scores named facets without changing the overall total", () => {
+    const result = scoreLikertCtt(
+      {
+        engine: LIKERT_ENGINE,
+        items: [
+          { ...forward, facet: "openness" },
+          { ...reverse, facet: "stability" },
+        ],
+        scoring: {
+          model: "ctt-v1",
+          bands: [
+            { upTo: 5, id: "low", label: "Low" },
+            { upTo: 10, id: "high", label: "High" },
+          ],
+          norms: {
+            kind: "development",
+            points: [
+              { score: 2, percentile: 1 },
+              { score: 10, percentile: 99 },
+            ],
+          },
+          facets: [
+            {
+              id: "openness",
+              label: "Openness",
+              bands: [{ upTo: 5, id: "higher", label: "Higher" }],
+            },
+            {
+              id: "stability",
+              label: "Emotional stability",
+              bands: [{ upTo: 5, id: "higher", label: "Higher" }],
+            },
+          ],
+        },
+      },
+      { a: 4, b: 2 },
+    );
+
+    expect(result.raw).toBe(8);
+    expect(result.facets).toEqual([
+      {
+        id: "openness",
+        label: "Openness",
+        raw: 4,
+        min: 1,
+        max: 5,
+        pomp: 75,
+        band: { id: "higher", label: "Higher" },
+      },
+      {
+        id: "stability",
+        label: "Emotional stability",
+        raw: 4,
+        min: 1,
+        max: 5,
+        pomp: 75,
+        band: { id: "higher", label: "Higher" },
+      },
+    ]);
   });
 
   it("rejects a missing answer", () => {

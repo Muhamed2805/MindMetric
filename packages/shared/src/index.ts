@@ -101,6 +101,7 @@ export {
   isLikertValue,
   LIKERT_ENGINE,
   type LikertCttBand,
+  type LikertCttFacet,
   type LikertCttScoring,
   type LikertDefinition,
   type LikertItem,

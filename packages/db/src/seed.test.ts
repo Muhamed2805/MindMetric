@@ -11,6 +11,7 @@ describe("catalog seed documents", () => {
   it("publishes Likert scales and a timed MCQ set", () => {
     const documents = loadCatalogDocuments();
     expect(documents.map((document) => document.slug)).toEqual([
+      "five-factor-profile",
       "quick-pattern-reasoning",
       "work-attention",
       "work-emotion-awareness",

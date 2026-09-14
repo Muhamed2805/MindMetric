@@ -6,7 +6,13 @@ import { useState } from "react";
 import { apiSend } from "../lib/api";
 import type { AssessmentSession } from "../lib/assessment-types";
 
-export function StartAssessmentButton({ slug }: { slug: string }) {
+export function StartAssessmentButton({
+  slug,
+  label = "Start this test",
+}: {
+  slug: string;
+  label?: string;
+}) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -29,7 +35,7 @@ export function StartAssessmentButton({ slug }: { slug: string }) {
   return (
     <div className="flex flex-col items-start gap-3">
       <Button type="button" disabled={pending} onClick={onClick}>
-        {pending ? "Starting" : "Start this test"}
+        {pending ? "Starting" : label}
       </Button>
       {error ? (
         <p className="text-sm text-danger" role="alert">

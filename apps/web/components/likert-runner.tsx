@@ -8,13 +8,59 @@ import { apiSend } from "../lib/api";
 import type {
   AssessmentSession,
   ClientLikertItem,
+  LikertAnchor,
 } from "../lib/assessment-types";
+import { FIVE_FACTOR_SLUG } from "../lib/personality";
 
 function firstUnansweredIndex(session: AssessmentSession) {
   const index = session.items.findIndex(
     (item) => session.answers[item.id] === undefined,
   );
   return index === -1 ? session.items.length - 1 : index;
+}
+
+function AgreeDisagreeScale({
+  anchors,
+  selected,
+  disabled,
+  onChoose,
+}: {
+  anchors: LikertAnchor[];
+  selected: number | undefined;
+  disabled: boolean;
+  onChoose: (value: number) => void;
+}) {
+  const sorted = anchors.slice().sort((a, b) => a.value - b.value);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between gap-4 text-sm font-medium text-muted">
+        <span>Disagree</span>
+        <span className="text-right">Agree</span>
+      </div>
+      <div className="flex items-center justify-between gap-2 sm:gap-3">
+        {sorted.map((anchor) => {
+          const active = selected === anchor.value;
+          return (
+            <button
+              key={anchor.value}
+              type="button"
+              aria-label={anchor.label}
+              disabled={disabled}
+              onClick={() => onChoose(anchor.value)}
+              className={
+                active
+                  ? "flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-medium text-accent-fg sm:h-14 sm:w-14"
+                  : "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-line bg-canvas text-sm text-ink hover:border-accent sm:h-14 sm:w-14"
+              }
+            >
+              <span className="sr-only">{anchor.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 export function LikertRunner({ initial }: { initial: AssessmentSession }) {
@@ -87,6 +133,10 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
     }
   }
 
+  const exitHref =
+    session.slug === FIVE_FACTOR_SLUG ? "/personality" : "/tests";
+  const horizontal = item.scale.anchors.length === 5;
+
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-10 px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
       <header className="flex items-start justify-between gap-4">
@@ -96,7 +146,7 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
         <div className="flex items-center gap-4">
           <p className="text-sm tabular-nums text-muted">{progress}</p>
           <Link
-            href="/tests"
+            href={exitHref}
             className="text-sm font-medium text-ink underline decoration-line underline-offset-4"
           >
             Exit
@@ -114,29 +164,38 @@ export function LikertRunner({ initial }: { initial: AssessmentSession }) {
       <p className="font-serif text-2xl font-medium leading-snug text-ink md:text-[1.75rem]">
         {item.prompt}
       </p>
-      <div className="flex flex-col gap-2">
-        {item.scale.anchors
-          .slice()
-          .sort((a, b) => a.value - b.value)
-          .map((anchor) => {
-            const active = selected === anchor.value;
-            return (
-              <button
-                key={anchor.value}
-                type="button"
-                disabled={pending}
-                onClick={() => onChoose(anchor.value)}
-                className={
-                  active
-                    ? "min-h-12 rounded-sm bg-accent px-4 py-3 text-left text-base text-accent-fg"
-                    : "mm-panel min-h-12 px-4 py-3 text-left text-base text-ink"
-                }
-              >
-                {anchor.label}
-              </button>
-            );
-          })}
-      </div>
+      {horizontal ? (
+        <AgreeDisagreeScale
+          anchors={item.scale.anchors}
+          selected={typeof selected === "number" ? selected : undefined}
+          disabled={pending}
+          onChoose={onChoose}
+        />
+      ) : (
+        <div className="flex flex-col gap-2">
+          {item.scale.anchors
+            .slice()
+            .sort((a, b) => a.value - b.value)
+            .map((anchor) => {
+              const active = selected === anchor.value;
+              return (
+                <button
+                  key={anchor.value}
+                  type="button"
+                  disabled={pending}
+                  onClick={() => onChoose(anchor.value)}
+                  className={
+                    active
+                      ? "min-h-12 rounded-sm bg-accent px-4 py-3 text-left text-base text-accent-fg"
+                      : "mm-panel min-h-12 px-4 py-3 text-left text-base text-ink"
+                  }
+                >
+                  {anchor.label}
+                </button>
+              );
+            })}
+        </div>
+      )}
       {error ? (
         <p className="text-sm text-danger" role="alert">
           {error}

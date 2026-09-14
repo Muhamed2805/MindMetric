@@ -63,8 +63,9 @@ export default async function TestsPage({
           Assessments
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-          Focused measures for a more complete picture of how you think.
-          Personality batteries are still ahead of the live catalog.
+          Focused measures for a more complete picture of how you think. The
+          personality test is a five-factor self-report, separate from the
+          cognitive battery.
         </p>
       </div>
       {loadError ? (

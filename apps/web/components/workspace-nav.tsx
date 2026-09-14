@@ -37,6 +37,26 @@ function NavIcon({ name }: { name: string }) {
       </Icon>
     );
   }
+  if (name === "Battery") {
+    return (
+      <Icon>
+        <rect x="5" y="4" width="14" height="4" rx="1" />
+        <rect x="5" y="10" width="14" height="4" rx="1" />
+        <rect x="5" y="16" width="14" height="4" rx="1" />
+      </Icon>
+    );
+  }
+  if (name === "Personality") {
+    return (
+      <Icon>
+        <circle cx="12" cy="5.5" r="1.4" />
+        <circle cx="5.8" cy="10" r="1.4" />
+        <circle cx="18.2" cy="10" r="1.4" />
+        <circle cx="7.8" cy="17.5" r="1.4" />
+        <circle cx="16.2" cy="17.5" r="1.4" />
+      </Icon>
+    );
+  }
   if (name === "Brain Games") {
     return (
       <Icon>
@@ -68,12 +88,16 @@ export function WorkspaceNav({ variant }: { variant: "side" | "bottom" }) {
       className={
         variant === "side"
           ? "flex flex-col gap-0.5 px-3"
-          : "grid grid-cols-5 gap-0 px-1 pt-1"
+          : "grid grid-cols-7 gap-0 px-1 pt-1"
       }
     >
       {workspaceNav.map((item) => {
         const current =
           pathname === item.href || pathname.startsWith(`${item.href}/`);
+        const label =
+          variant === "bottom" && "shortLabel" in item && item.shortLabel
+            ? item.shortLabel
+            : item.label;
         return (
           <Link
             key={item.href}
@@ -82,14 +106,14 @@ export function WorkspaceNav({ variant }: { variant: "side" | "bottom" }) {
             className={cn(
               "flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-[13.5px]",
               variant === "bottom" &&
-                "flex-col justify-center gap-0.5 px-1 text-[11px]",
+                "flex-col justify-center gap-0.5 px-0.5 text-[11px]",
               current
                 ? "bg-[#e8eef2] font-medium text-ink"
                 : "text-muted hover:bg-canvas hover:text-ink",
             )}
           >
             <NavIcon name={item.label} />
-            {item.label}
+            {label}
           </Link>
         );
       })}

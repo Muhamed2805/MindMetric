@@ -21,6 +21,7 @@ export {
 } from "./battery-profile";
 export {
   type CttBand,
+  type CttFacetScore,
   type CttItemScore,
   type CttScore,
   interpolatePercentile,

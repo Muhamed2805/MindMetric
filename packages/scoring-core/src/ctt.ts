@@ -13,6 +13,16 @@ export type CttBand = {
   label: string;
 };
 
+export type CttFacetScore = {
+  id: string;
+  label: string;
+  raw: number;
+  min: number;
+  max: number;
+  pomp: number;
+  band: CttBand | null;
+};
+
 export type CttScore = {
   model: typeof SCORING_MODEL;
   raw: number;
@@ -23,6 +33,7 @@ export type CttScore = {
   band: CttBand | null;
   normsKind: "development" | null;
   items: CttItemScore[];
+  facets?: CttFacetScore[];
 };
 
 export function keyedLikertScore(item: LikertItem, value: number) {
@@ -73,6 +84,10 @@ export function scoreLikertCtt(
   answers: Record<string, unknown>,
 ): CttScore {
   const items: CttItemScore[] = [];
+  const facetTotals = new Map<
+    string,
+    { raw: number; min: number; max: number }
+  >();
   let raw = 0;
   let min = 0;
   let max = 0;
@@ -87,6 +102,17 @@ export function scoreLikertCtt(
     raw += keyed;
     min += item.scale.min;
     max += item.scale.max;
+    if (item.facet) {
+      const current = facetTotals.get(item.facet) ?? {
+        raw: 0,
+        min: 0,
+        max: 0,
+      };
+      current.raw += keyed;
+      current.min += item.scale.min;
+      current.max += item.scale.max;
+      facetTotals.set(item.facet, current);
+    }
   }
 
   const span = max - min;
@@ -106,6 +132,27 @@ export function scoreLikertCtt(
     }
   }
 
+  const facets = scoring?.facets?.map((facet) => {
+    const totals = facetTotals.get(facet.id) ?? { raw: 0, min: 0, max: 0 };
+    const facetSpan = totals.max - totals.min;
+    const facetPomp =
+      facetSpan === 0
+        ? 0
+        : round1(((totals.raw - totals.min) / facetSpan) * 100);
+    const match =
+      facet.bands.find((entry) => totals.raw <= entry.upTo) ??
+      facet.bands[facet.bands.length - 1];
+    return {
+      id: facet.id,
+      label: facet.label,
+      raw: totals.raw,
+      min: totals.min,
+      max: totals.max,
+      pomp: facetPomp,
+      band: match ? { id: match.id, label: match.label } : null,
+    };
+  });
+
   return {
     model: SCORING_MODEL,
     raw,
@@ -116,6 +163,7 @@ export function scoreLikertCtt(
     band,
     normsKind: scoring ? scoring.norms.kind : null,
     items,
+    ...(facets ? { facets } : {}),
   };
 }
 

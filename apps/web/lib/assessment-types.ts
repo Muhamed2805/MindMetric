@@ -54,6 +54,15 @@ export type CttScore = {
   band: { id: string; label: string } | null;
   normsKind: "development" | null;
   items: { id: string; keyed: number }[];
+  facets?: {
+    id: string;
+    label: string;
+    raw: number;
+    min: number;
+    max: number;
+    pomp: number;
+    band: { id: string; label: string } | null;
+  }[];
 };
 
 export type SumCorrectScore = {

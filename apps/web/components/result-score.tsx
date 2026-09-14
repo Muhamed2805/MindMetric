@@ -43,7 +43,42 @@ export function ResultScore({
   if (isSumCorrectScore(score)) {
     return <McqResult score={score} items={items} />;
   }
+  if (score.facets && score.facets.length > 0) {
+    return <PersonalityResult score={score} />;
+  }
   return <LikertResult score={score} items={items} />;
+}
+
+function PersonalityResult({ score }: { score: CttScore }) {
+  const facets = score.facets ?? [];
+
+  return (
+    <div className="flex flex-col gap-8">
+      <div>
+        <p className="font-serif text-2xl font-medium text-ink">
+          Your five-factor profile
+        </p>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          Each bar is what you reported on that scale after reverse-keyed items
+          were recoded. Higher emotional stability means you described yourself
+          as calmer. This is not a type code, not a rank against other users,
+          and not a clinical result.
+        </p>
+      </div>
+      {facets.map((facet) => {
+        const range = Math.max(1, facet.max - facet.min);
+        return (
+          <div key={facet.id} className="flex flex-col gap-2">
+            <Meter
+              label={facet.label}
+              valueLabel={facet.band?.label ?? `${facet.raw} of ${facet.max}`}
+              percent={((facet.raw - facet.min) / range) * 100}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 function LikertResult({

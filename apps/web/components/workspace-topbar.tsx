@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 const crumbs: Record<string, string> = {
   "/home": "Home",
   "/tests": "Assessments",
+  "/battery": "Battery",
+  "/personality": "Personality",
   "/games": "Brain Games",
   "/results": "Results",
   "/account": "My Profile",

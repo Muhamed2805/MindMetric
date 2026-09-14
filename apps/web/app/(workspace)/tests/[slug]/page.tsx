@@ -1,10 +1,11 @@
 import { ErrorState } from "@mindmetric/ui";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { StartAssessmentButton } from "../../../../components/start-assessment-button";
 import { apiGet } from "../../../../lib/api.server";
 import type { InstrumentDetail } from "../../../../lib/assessment-types";
 import { durationLabel, engineLabel } from "../../../../lib/format";
+import { FIVE_FACTOR_SLUG } from "../../../../lib/personality";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -24,6 +25,9 @@ export async function generateMetadata({
 
 export default async function InstrumentPage({ params }: PageProps) {
   const { slug } = await params;
+  if (slug === FIVE_FACTOR_SLUG) {
+    redirect("/personality");
+  }
 
   let detail: InstrumentDetail | null = null;
   let loadError: string | null = null;

@@ -13,6 +13,7 @@ import {
 } from "../../../lib/battery-copy";
 import type { BatterySessionSummary } from "../../../lib/battery-types";
 import { durationLabel } from "../../../lib/format";
+import { FIVE_FACTOR_SLUG } from "../../../lib/personality";
 import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
 import { profileBuckets } from "../../../lib/workspace-nav";
 
@@ -55,7 +56,12 @@ export default async function WorkspaceHomePage() {
       id: row.id,
       href: `/results/${row.id}`,
       title: row.title,
-      detail: row.score ? `${row.score.raw} / ${row.score.max}` : "",
+      detail:
+        row.slug === FIVE_FACTOR_SLUG
+          ? "Five traits"
+          : row.score
+            ? `${row.score.raw} / ${row.score.max}`
+            : "",
       at: row.completedAt,
     })),
     ...completedBatteries.map((row) => ({
@@ -91,6 +97,14 @@ export default async function WorkspaceHomePage() {
         ...bucket,
         percent: null as number | null,
         detail: "Raw totals",
+      };
+    }
+    if (bucket.id === "personality") {
+      const match = completed.find((row) => bucket.slugs.includes(row.slug));
+      return {
+        ...bucket,
+        percent: match ? 100 : null,
+        detail: match ? "Five traits" : null,
       };
     }
     const match = completed.find((row) => bucket.slugs.includes(row.slug));

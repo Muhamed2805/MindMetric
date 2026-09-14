@@ -1,0 +1,989 @@
+{
+  "id": "inst_five_factor",
+  "slug": "five-factor-profile",
+  "title": "Five-factor personality profile",
+  "description": "A short self-report of five everyday tendencies: how open, organized, outgoing, agreeable, and even-tempered you say you are. Not a type code and not a diagnosis.",
+  "kind": "likert-v1",
+  "versions": [
+    {
+      "id": "ver_five_factor_1",
+      "version": 1,
+      "status": "published",
+      "definition": {
+        "engine": "likert-v1",
+        "items": [
+          {
+            "id": "ff-01",
+            "type": "likert",
+            "prompt": "I look for a new way to do a familiar task.",
+            "facet": "openness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-02",
+            "type": "likert",
+            "prompt": "I finish the last unglamorous step of a job.",
+            "facet": "conscientiousness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-03",
+            "type": "likert",
+            "prompt": "I feel more alive after time with a group of people.",
+            "facet": "extraversion",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-04",
+            "type": "likert",
+            "prompt": "I assume people mean well until they show otherwise.",
+            "facet": "agreeableness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-05",
+            "type": "likert",
+            "prompt": "I stay even-tempered when plans change.",
+            "facet": "stability",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-06",
+            "type": "likert",
+            "prompt": "I would rather follow a well-worn method than invent one.",
+            "reverse": true,
+            "facet": "openness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-07",
+            "type": "likert",
+            "prompt": "I start things and leave the details for later.",
+            "reverse": true,
+            "facet": "conscientiousness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-08",
+            "type": "likert",
+            "prompt": "A quiet evening alone restores me more than a gathering.",
+            "reverse": true,
+            "facet": "extraversion",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-09",
+            "type": "likert",
+            "prompt": "I keep score when someone lets me down.",
+            "reverse": true,
+            "facet": "agreeableness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-10",
+            "type": "likert",
+            "prompt": "A small mistake stays with me all day.",
+            "reverse": true,
+            "facet": "stability",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-11",
+            "type": "likert",
+            "prompt": "Abstract ideas hold my attention.",
+            "facet": "openness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-12",
+            "type": "likert",
+            "prompt": "I keep my commitments even when nobody is watching.",
+            "facet": "conscientiousness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-13",
+            "type": "likert",
+            "prompt": "I speak up early in a room of people I do not know.",
+            "facet": "extraversion",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-14",
+            "type": "likert",
+            "prompt": "I give people the benefit of the doubt in a disagreement.",
+            "facet": "agreeableness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-15",
+            "type": "likert",
+            "prompt": "I recover quickly after I am embarrassed.",
+            "facet": "stability",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-16",
+            "type": "likert",
+            "prompt": "I lose interest when a conversation turns to theory.",
+            "reverse": true,
+            "facet": "openness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-17",
+            "type": "likert",
+            "prompt": "I let small tasks pile up until they become a problem.",
+            "reverse": true,
+            "facet": "conscientiousness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-18",
+            "type": "likert",
+            "prompt": "I wait to be invited into a conversation.",
+            "reverse": true,
+            "facet": "extraversion",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-19",
+            "type": "likert",
+            "prompt": "I would rather win an argument than keep the peace.",
+            "reverse": true,
+            "facet": "agreeableness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-20",
+            "type": "likert",
+            "prompt": "I lie awake turning over things I cannot fix.",
+            "reverse": true,
+            "facet": "stability",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-21",
+            "type": "likert",
+            "prompt": "I seek out art, books, or places I have never tried.",
+            "facet": "openness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-22",
+            "type": "likert",
+            "prompt": "I plan the week before it starts.",
+            "facet": "conscientiousness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-23",
+            "type": "likert",
+            "prompt": "I look for chances to meet someone new.",
+            "facet": "extraversion",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-24",
+            "type": "likert",
+            "prompt": "I look for a way both sides can live with the outcome.",
+            "facet": "agreeableness",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          },
+          {
+            "id": "ff-25",
+            "type": "likert",
+            "prompt": "I can put a worry down and pick the work back up.",
+            "facet": "stability",
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "anchors": [
+                {
+                  "value": 1,
+                  "label": "Strongly disagree"
+                },
+                {
+                  "value": 2,
+                  "label": "Disagree"
+                },
+                {
+                  "value": 3,
+                  "label": "Neither agree nor disagree"
+                },
+                {
+                  "value": 4,
+                  "label": "Agree"
+                },
+                {
+                  "value": 5,
+                  "label": "Strongly agree"
+                }
+              ]
+            }
+          }
+        ],
+        "scoring": {
+          "model": "ctt-v1",
+          "bands": [
+            {
+              "upTo": 75,
+              "id": "lower",
+              "label": "Lower overall endorsement across the five scales"
+            },
+            {
+              "upTo": 100,
+              "id": "typical",
+              "label": "Typical overall endorsement across the five scales"
+            },
+            {
+              "upTo": 125,
+              "id": "higher",
+              "label": "Higher overall endorsement across the five scales"
+            }
+          ],
+          "norms": {
+            "kind": "development",
+            "points": [
+              {
+                "score": 25,
+                "percentile": 1
+              },
+              {
+                "score": 50,
+                "percentile": 8
+              },
+              {
+                "score": 75,
+                "percentile": 30
+              },
+              {
+                "score": 90,
+                "percentile": 50
+              },
+              {
+                "score": 100,
+                "percentile": 70
+              },
+              {
+                "score": 115,
+                "percentile": 90
+              },
+              {
+                "score": 125,
+                "percentile": 99
+              }
+            ]
+          },
+          "facets": [
+            {
+              "id": "openness",
+              "label": "Openness",
+              "bands": [
+                {
+                  "upTo": 12,
+                  "id": "lower",
+                  "label": "Lower reported openness"
+                },
+                {
+                  "upTo": 18,
+                  "id": "typical",
+                  "label": "Typical reported openness"
+                },
+                {
+                  "upTo": 25,
+                  "id": "higher",
+                  "label": "Higher reported openness"
+                }
+              ]
+            },
+            {
+              "id": "conscientiousness",
+              "label": "Conscientiousness",
+              "bands": [
+                {
+                  "upTo": 12,
+                  "id": "lower",
+                  "label": "Lower reported conscientiousness"
+                },
+                {
+                  "upTo": 18,
+                  "id": "typical",
+                  "label": "Typical reported conscientiousness"
+                },
+                {
+                  "upTo": 25,
+                  "id": "higher",
+                  "label": "Higher reported conscientiousness"
+                }
+              ]
+            },
+            {
+              "id": "extraversion",
+              "label": "Extraversion",
+              "bands": [
+                {
+                  "upTo": 12,
+                  "id": "lower",
+                  "label": "Lower reported extraversion"
+                },
+                {
+                  "upTo": 18,
+                  "id": "typical",
+                  "label": "Typical reported extraversion"
+                },
+                {
+                  "upTo": 25,
+                  "id": "higher",
+                  "label": "Higher reported extraversion"
+                }
+              ]
+            },
+            {
+              "id": "agreeableness",
+              "label": "Agreeableness",
+              "bands": [
+                {
+                  "upTo": 12,
+                  "id": "lower",
+                  "label": "Lower reported agreeableness"
+                },
+                {
+                  "upTo": 18,
+                  "id": "typical",
+                  "label": "Typical reported agreeableness"
+                },
+                {
+                  "upTo": 25,
+                  "id": "higher",
+                  "label": "Higher reported agreeableness"
+                }
+              ]
+            },
+            {
+              "id": "stability",
+              "label": "Emotional stability",
+              "bands": [
+                {
+                  "upTo": 12,
+                  "id": "lower",
+                  "label": "Lower reported emotional stability"
+                },
+                {
+                  "upTo": 18,
+                  "id": "typical",
+                  "label": "Typical reported emotional stability"
+                },
+                {
+                  "upTo": 25,
+                  "id": "higher",
+                  "label": "Higher reported emotional stability"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

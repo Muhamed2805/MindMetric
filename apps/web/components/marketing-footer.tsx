@@ -11,6 +11,8 @@ export function MarketingFooter() {
           className="flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-mark"
         >
           <Link href="/#assessments">Assessments</Link>
+          <Link href="/battery">Battery</Link>
+          <Link href="/personality">Personality</Link>
           <Link href="/#games">Brain Games</Link>
           <Link href="/#method">Methodology</Link>
         </nav>

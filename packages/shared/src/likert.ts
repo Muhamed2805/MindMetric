@@ -16,6 +16,7 @@ export type LikertItem = {
   type: "likert";
   prompt: string;
   reverse?: boolean;
+  facet?: string;
   scale: LikertScale;
 };
 
@@ -30,6 +31,12 @@ export type LikertNormPoint = {
   percentile: number;
 };
 
+export type LikertCttFacet = {
+  id: string;
+  label: string;
+  bands: LikertCttBand[];
+};
+
 export type LikertCttScoring = {
   model: "ctt-v1";
   bands: LikertCttBand[];
@@ -37,6 +44,7 @@ export type LikertCttScoring = {
     kind: "development";
     points: LikertNormPoint[];
   };
+  facets?: LikertCttFacet[];
 };
 
 export type LikertDefinition = {
@@ -71,34 +79,24 @@ export function isLikertDefinition(value: unknown): value is LikertDefinition {
     return false;
   }
   if (value.scoring === undefined) {
-    return true;
+    return value.items.every(
+      (item) => !isRecord(item) || item.facet === undefined,
+    );
   }
-  return isLikertCttScoring(value.scoring);
+  if (!isLikertCttScoring(value.scoring)) {
+    return false;
+  }
+  return facetsAlign(value.items, value.scoring.facets);
 }
 
 export function isLikertCttScoring(value: unknown): value is LikertCttScoring {
   if (!isRecord(value) || value.model !== "ctt-v1") {
     return false;
   }
-  if (!Array.isArray(value.bands) || value.bands.length === 0) {
+  if (!isMonotonicBands(value.bands)) {
     return false;
   }
-  let previous = Number.NEGATIVE_INFINITY;
-  const bandsOk = value.bands.every((band) => {
-    if (!isRecord(band)) {
-      return false;
-    }
-    if (typeof band.upTo !== "number" || band.upTo <= previous) {
-      return false;
-    }
-    previous = band.upTo;
-    return typeof band.id === "string" && typeof band.label === "string";
-  });
-  if (
-    !bandsOk ||
-    !isRecord(value.norms) ||
-    value.norms.kind !== "development"
-  ) {
+  if (!isRecord(value.norms) || value.norms.kind !== "development") {
     return false;
   }
   if (!Array.isArray(value.norms.points) || value.norms.points.length === 0) {
@@ -106,7 +104,7 @@ export function isLikertCttScoring(value: unknown): value is LikertCttScoring {
   }
   let previousScore = Number.NEGATIVE_INFINITY;
   let previousPercentile = Number.NEGATIVE_INFINITY;
-  return value.norms.points.every((point) => {
+  const pointsOk = value.norms.points.every((point) => {
     if (!isRecord(point)) {
       return false;
     }
@@ -126,6 +124,76 @@ export function isLikertCttScoring(value: unknown): value is LikertCttScoring {
     previousPercentile = point.percentile;
     return true;
   });
+  if (!pointsOk) {
+    return false;
+  }
+  if (value.facets === undefined) {
+    return true;
+  }
+  return isLikertCttFacets(value.facets);
+}
+
+function isMonotonicBands(value: unknown): value is LikertCttBand[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    return false;
+  }
+  let previous = Number.NEGATIVE_INFINITY;
+  return value.every((band) => {
+    if (!isRecord(band)) {
+      return false;
+    }
+    if (typeof band.upTo !== "number" || band.upTo <= previous) {
+      return false;
+    }
+    previous = band.upTo;
+    return typeof band.id === "string" && typeof band.label === "string";
+  });
+}
+
+function isLikertCttFacets(value: unknown): value is LikertCttFacet[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    return false;
+  }
+  const ids = value.map((facet) => {
+    if (!isRecord(facet) || typeof facet.id !== "string") {
+      return "";
+    }
+    return facet.id;
+  });
+  if (ids.some((id) => id.length === 0) || new Set(ids).size !== ids.length) {
+    return false;
+  }
+  return value.every((facet) => {
+    if (!isRecord(facet)) {
+      return false;
+    }
+    return (
+      typeof facet.id === "string" &&
+      typeof facet.label === "string" &&
+      isMonotonicBands(facet.bands)
+    );
+  });
+}
+
+function facetsAlign(
+  items: unknown[],
+  facets: LikertCttFacet[] | undefined,
+): boolean {
+  if (facets === undefined) {
+    return items.every((item) => !isRecord(item) || item.facet === undefined);
+  }
+  const ids = new Set(facets.map((facet) => facet.id));
+  if (
+    !items.every(
+      (item) =>
+        isRecord(item) && typeof item.facet === "string" && ids.has(item.facet),
+    )
+  ) {
+    return false;
+  }
+  return facets.every((facet) =>
+    items.some((item) => isRecord(item) && item.facet === facet.id),
+  );
 }
 
 function isLikertItem(value: unknown): value is LikertItem {
@@ -137,6 +205,14 @@ function isLikertItem(value: unknown): value is LikertItem {
   }
   if (typeof value.prompt !== "string" || value.prompt.length === 0) {
     return false;
+  }
+  if (value.reverse !== undefined && typeof value.reverse !== "boolean") {
+    return false;
+  }
+  if (value.facet !== undefined) {
+    if (typeof value.facet !== "string" || value.facet.length === 0) {
+      return false;
+    }
   }
   return isLikertScale(value.scale);
 }

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "tsx watch --include ./src/**/*.ts src/main.ts",
+    "dev": "tsx watch --include ./src/**/*.ts --include ../../packages/scoring-core/src/**/*.ts --include ../../packages/shared/src/**/*.ts src/main.ts",
     "build": "nest build",
     "start": "tsx src/main.ts",
     "typecheck": "tsc --noEmit",

@@ -6,6 +6,7 @@ import { PageIntro } from "../../../../components/page-intro";
 import { ResultScore } from "../../../../components/result-score";
 import { apiGet } from "../../../../lib/api.server";
 import type { AssessmentSession } from "../../../../lib/assessment-types";
+import { FIVE_FACTOR_SLUG } from "../../../../lib/personality";
 
 type PageProps = {
   params: Promise<{ assessmentId: string }>;
@@ -36,7 +37,12 @@ export default async function ResultDetailPage({ params }: PageProps) {
           completed
             ? session.kind === "mcq-timed-v1"
               ? `Instrument version ${session.version}. Correct answers inside the time limit count.`
-              : `Instrument version ${session.version}. Reverse-keyed items are recoded before the total.`
+              : session.score &&
+                  "facets" in session.score &&
+                  session.score.facets &&
+                  session.score.facets.length > 0
+                ? `Instrument version ${session.version}. Five self-report scales. Not a type code and not a diagnosis.`
+                : `Instrument version ${session.version}. Reverse-keyed items are recoded before the total.`
             : "This session is still in progress. Resume to finish and score it."
         }
       />
@@ -59,6 +65,11 @@ export default async function ResultDetailPage({ params }: PageProps) {
         <Button asChild variant="secondary">
           <Link href="/results">All results</Link>
         </Button>
+        {session.slug === FIVE_FACTOR_SLUG ? (
+          <Button asChild variant="secondary">
+            <Link href="/personality">Personality test</Link>
+          </Button>
+        ) : null}
       </div>
     </div>
   );

@@ -5,9 +5,13 @@ import { BrandMark } from "./brand-mark";
 
 const links = [
   { href: "/#assessments", label: "Assessments" },
+  { href: "/battery", label: "Battery" },
+  { href: "/personality", label: "Personality" },
   { href: "/#games", label: "Brain Games" },
   { href: "/#method", label: "How It Works" },
 ];
+
+const gated = new Set(["/battery", "/personality"]);
 
 export async function MarketingHeader() {
   const session = await getServerSession();
@@ -20,15 +24,21 @@ export async function MarketingHeader() {
           aria-label="Marketing"
           className="hidden items-center gap-7 md:flex"
         >
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-[13.5px] text-muted hover:text-ink"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {links.map((link) => {
+            const href =
+              gated.has(link.href) && !session
+                ? `/login?from=${link.href}`
+                : link.href;
+            return (
+              <Link
+                key={link.href}
+                href={href}
+                className="text-[13.5px] text-muted hover:text-ink"
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
         <div className="flex items-center justify-end gap-4">
           {session ? (
