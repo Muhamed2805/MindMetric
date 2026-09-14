@@ -26,7 +26,7 @@ export async function generateMetadata({
     const detail = await apiGet<InstrumentDetail>(`/instruments/${slug}`);
     return { title: detail.title };
   } catch {
-    return { title: "Test" };
+    return { title: "Assessment" };
   }
 }
 

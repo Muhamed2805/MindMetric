@@ -39,7 +39,7 @@ export default async function TestsPage({
     batteries = core ? [core] : [];
   } catch (cause) {
     loadError =
-      cause instanceof Error ? cause.message : "Could not load tests.";
+      cause instanceof Error ? cause.message : "Could not load assessments.";
   }
 
   const visible = query

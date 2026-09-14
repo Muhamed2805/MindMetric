@@ -9,6 +9,7 @@ import {
   isOpenScaleSession,
   isPrimaryScale,
   LEGACY_TIMED_MCQ_SLUG,
+  PRIMARY_SCALE_SLUGS,
   profileBucketStartHref,
   profileCompletion,
   queryMatchesBatteryPractice,
@@ -93,6 +94,7 @@ describe("profileCompletion", () => {
 describe("primary catalog", () => {
   it("keeps the old timed MCQ and domain pilots off the assessments grid", () => {
     expect(CORE_BATTERY_SLUG).toBe("core-cognitive");
+    expect(PRIMARY_SCALE_SLUGS).toHaveLength(3);
     expect(isPrimaryScale(FIVE_FACTOR_SLUG)).toBe(true);
     expect(isPrimaryScale("work-attention")).toBe(true);
     expect(isPrimaryScale("quick-pattern-reasoning")).toBe(false);

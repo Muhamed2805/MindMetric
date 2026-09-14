@@ -3,11 +3,9 @@ import Link from "next/link";
 import { MarketingFooter } from "../components/marketing-footer";
 import { MarketingHeader } from "../components/marketing-header";
 import { SampleReportCard } from "../components/sample-report-card";
-import { apiGet } from "../lib/api.server";
-import type { CatalogInstrument } from "../lib/assessment-types";
 import { BRAIN_GAMES } from "../lib/brain-games";
 import { getServerSession } from "../lib/session";
-import { isPrimaryScale } from "../lib/workspace-nav";
+import { PRIMARY_SCALE_SLUGS } from "../lib/workspace-nav";
 
 function workspacePath(signedIn: boolean, path: string) {
   return signedIn ? path : `/login?from=${path}`;
@@ -15,18 +13,8 @@ function workspacePath(signedIn: boolean, path: string) {
 
 export default async function HomePage() {
   const session = await getServerSession();
-  let instruments: CatalogInstrument[] = [];
-
-  try {
-    instruments = await apiGet<CatalogInstrument[]>("/instruments");
-  } catch {
-    instruments = [];
-  }
-
   const startHref = session ? "/tests" : "/register";
-  const liveCount = instruments.filter((item) =>
-    isPrimaryScale(item.slug),
-  ).length;
+  const listedCount = PRIMARY_SCALE_SLUGS.length + 1;
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -58,9 +46,9 @@ export default async function HomePage() {
             <dl className="mt-4 flex flex-wrap gap-8">
               <div>
                 <dt className="font-serif text-2xl font-medium text-ink">
-                  {liveCount}
+                  {listedCount}
                 </dt>
-                <dd className="mt-1 text-xs text-muted">Live scales</dd>
+                <dd className="mt-1 text-xs text-muted">Assessments</dd>
               </div>
               <div>
                 <dt className="font-serif text-2xl font-medium text-ink">
