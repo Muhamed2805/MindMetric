@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { BatterySessionSummary } from "./battery-types";
-import { pickLatestCompletedBattery } from "./workspace-home";
+import {
+  hasCompletedCoreBattery,
+  pickLatestCompletedBattery,
+} from "./workspace-home";
 
 function row(
   overrides: Partial<BatterySessionSummary> &
@@ -64,5 +67,28 @@ describe("pickLatestCompletedBattery", () => {
         }),
       ]),
     ).toBeNull();
+  });
+});
+
+describe("hasCompletedCoreBattery", () => {
+  it("does not count a domain pilot as the core battery", () => {
+    expect(
+      hasCompletedCoreBattery([
+        row({
+          id: "gs",
+          batterySlug: "gs-same-different-pilot",
+          completedAt: "2026-09-14T12:00:00.000Z",
+        }),
+      ]),
+    ).toBe(false);
+    expect(
+      hasCompletedCoreBattery([
+        row({
+          id: "core",
+          batterySlug: "core-cognitive",
+          completedAt: "2026-09-14T11:00:00.000Z",
+        }),
+      ]),
+    ).toBe(true);
   });
 });

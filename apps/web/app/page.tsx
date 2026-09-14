@@ -50,7 +50,9 @@ export default async function HomePage() {
                 <Link href={startHref}>Start an Assessment</Link>
               </Button>
               <Button asChild variant="secondary">
-                <Link href="/tests">Explore Tests</Link>
+                <Link href={workspacePath(Boolean(session), "/tests")}>
+                  Explore Tests
+                </Link>
               </Button>
             </div>
             <dl className="mt-4 flex flex-wrap gap-8">

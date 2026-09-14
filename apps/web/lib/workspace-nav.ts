@@ -106,3 +106,34 @@ export function instrumentHref(slug: string) {
   }
   return `/tests/${slug}`;
 }
+
+export function assessmentHref(slug: string) {
+  if (slug === CORE_BATTERY_SLUG) {
+    return "/battery";
+  }
+  return instrumentHref(slug);
+}
+
+export function recommendedNextSlugs(
+  input: {
+    hasCoreBattery: boolean;
+    catalogSlugs: string[];
+    doneSlugs: Iterable<string>;
+  },
+  limit = 2,
+) {
+  const done = new Set(input.doneSlugs);
+  const next: string[] = [];
+  if (!input.hasCoreBattery) {
+    next.push(CORE_BATTERY_SLUG);
+  }
+  for (const slug of input.catalogSlugs) {
+    if (next.length >= limit) {
+      break;
+    }
+    if (isPrimaryScale(slug) && !done.has(slug)) {
+      next.push(slug);
+    }
+  }
+  return next;
+}

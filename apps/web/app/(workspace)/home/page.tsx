@@ -19,13 +19,17 @@ import {
   hasPersonalityFacets,
   pickLatestPersonality,
 } from "../../../lib/personality";
-import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
 import {
-  instrumentHref,
-  isPrimaryScale,
+  hasCompletedCoreBattery,
+  pickLatestCompletedBattery,
+} from "../../../lib/workspace-home";
+import {
+  assessmentHref,
+  CORE_BATTERY_SLUG,
   profileBucketStartHref,
   profileBuckets,
   profileCompletion,
+  recommendedNextSlugs,
 } from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
@@ -92,9 +96,35 @@ export default async function WorkspaceHomePage() {
     })
     .slice(0, 3);
   const doneSlugs = new Set(completed.map((row) => row.slug));
-  const recommended = instruments
-    .filter((item) => isPrimaryScale(item.slug) && !doneSlugs.has(item.slug))
-    .slice(0, 2);
+  const bySlug = new Map(instruments.map((item) => [item.slug, item]));
+  const recommended = recommendedNextSlugs({
+    hasCoreBattery: hasCompletedCoreBattery(completedBatteries),
+    catalogSlugs: instruments.map((item) => item.slug),
+    doneSlugs,
+  }).flatMap((slug) => {
+    if (slug === CORE_BATTERY_SLUG) {
+      return [
+        {
+          slug,
+          title: "Core cognitive battery",
+          href: assessmentHref(slug),
+          detail: "Calibration practice",
+        },
+      ];
+    }
+    const item = bySlug.get(slug);
+    if (!item) {
+      return [];
+    }
+    return [
+      {
+        slug,
+        title: item.title,
+        href: assessmentHref(slug),
+        detail: durationLabel(item.estimatedSeconds, item.itemCount) ?? null,
+      },
+    ];
+  });
   const latestPersonality = pickLatestPersonality(completed);
   const completion = profileCompletion({
     hasBattery: Boolean(latestBattery),
@@ -307,20 +337,18 @@ export default async function WorkspaceHomePage() {
               </h2>
               {recommended.length === 0 ? (
                 <p className="mt-3 text-sm text-muted">
-                  You have a result on every live scale.
+                  You have a result on the core battery and every live scale.
                 </p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2 text-sm text-muted">
                   {recommended.map((item) => (
                     <li key={item.slug}>
                       <Link
-                        href={instrumentHref(item.slug)}
+                        href={item.href}
                         className="text-ink hover:text-accent"
                       >
                         {item.title}
-                        {durationLabel(item.estimatedSeconds, item.itemCount)
-                          ? ` · ${durationLabel(item.estimatedSeconds, item.itemCount)}`
-                          : ""}
+                        {item.detail ? ` · ${item.detail}` : ""}
                       </Link>
                     </li>
                   ))}

@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { FIVE_FACTOR_SLUG } from "./personality";
 import {
+  assessmentHref,
   CORE_BATTERY_SLUG,
   instrumentHref,
   isPrimaryScale,
   profileBucketStartHref,
   profileCompletion,
+  recommendedNextSlugs,
   scoredProfileBuckets,
   workspaceNav,
 } from "./workspace-nav";
@@ -66,5 +68,49 @@ describe("primary catalog", () => {
     expect(isPrimaryScale("quick-pattern-reasoning")).toBe(false);
     expect(instrumentHref(FIVE_FACTOR_SLUG)).toBe("/personality");
     expect(instrumentHref("work-attention")).toBe("/tests/work-attention");
+    expect(assessmentHref(CORE_BATTERY_SLUG)).toBe("/battery");
+  });
+});
+
+describe("recommendedNextSlugs", () => {
+  const catalog = [
+    FIVE_FACTOR_SLUG,
+    "work-attention",
+    "work-emotion-awareness",
+    "quick-pattern-reasoning",
+  ];
+
+  it("leads with the core battery then the first undone scale", () => {
+    expect(
+      recommendedNextSlugs({
+        hasCoreBattery: false,
+        catalogSlugs: catalog,
+        doneSlugs: [],
+      }),
+    ).toEqual([CORE_BATTERY_SLUG, FIVE_FACTOR_SLUG]);
+  });
+
+  it("leads with the core battery when it is missing", () => {
+    expect(
+      recommendedNextSlugs({
+        hasCoreBattery: false,
+        catalogSlugs: catalog,
+        doneSlugs: catalog,
+      }),
+    ).toEqual([CORE_BATTERY_SLUG]);
+  });
+
+  it("is empty when the core battery and live scales are done", () => {
+    expect(
+      recommendedNextSlugs({
+        hasCoreBattery: true,
+        catalogSlugs: catalog,
+        doneSlugs: [
+          FIVE_FACTOR_SLUG,
+          "work-attention",
+          "work-emotion-awareness",
+        ],
+      }),
+    ).toEqual([]);
   });
 });

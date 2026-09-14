@@ -1,7 +1,17 @@
 import type { BatterySessionSummary } from "./battery-types";
+import { CORE_BATTERY_SLUG } from "./workspace-nav";
 
 function completedAtMs(row: BatterySessionSummary) {
   return row.completedAt ? new Date(row.completedAt).getTime() : 0;
+}
+
+export function hasCompletedCoreBattery(rows: BatterySessionSummary[]) {
+  return rows.some(
+    (row) =>
+      row.batterySlug === CORE_BATTERY_SLUG &&
+      row.status === "completed" &&
+      Boolean(row.completedAt),
+  );
 }
 
 /**
@@ -18,7 +28,7 @@ export function pickLatestCompletedBattery(
     completedAtMs(right) - completedAtMs(left);
 
   const core = completed
-    .filter((row) => row.batterySlug === "core-cognitive")
+    .filter((row) => row.batterySlug === CORE_BATTERY_SLUG)
     .sort(newest);
   if (core[0]) {
     return core[0];
