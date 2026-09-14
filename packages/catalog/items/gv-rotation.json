@@ -1895,7 +1895,7 @@
                 "kind": "single",
                 "elements": [
                   {
-                    "shape": "diamond",
+                    "shape": "triangle",
                     "rotation": 45
                   }
                 ]
@@ -1911,7 +1911,7 @@
                     "kind": "single",
                     "elements": [
                       {
-                        "shape": "diamond",
+                        "shape": "triangle",
                         "rotation": 45
                       }
                     ]
@@ -1926,7 +1926,7 @@
                     "kind": "single",
                     "elements": [
                       {
-                        "shape": "diamond",
+                        "shape": "triangle",
                         "rotation": 90
                       }
                     ]
@@ -1941,7 +1941,7 @@
                     "kind": "single",
                     "elements": [
                       {
-                        "shape": "diamond",
+                        "shape": "triangle",
                         "rotation": 135
                       }
                     ]
@@ -1956,7 +1956,7 @@
                     "kind": "single",
                     "elements": [
                       {
-                        "shape": "diamond",
+                        "shape": "triangle",
                         "rotation": 0
                       }
                     ]
@@ -2319,7 +2319,7 @@
                 "kind": "single",
                 "elements": [
                   {
-                    "shape": "hexagon",
+                    "shape": "arrow",
                     "rotation": 0,
                     "fill": "hatch"
                   }
@@ -2336,7 +2336,7 @@
                     "kind": "single",
                     "elements": [
                       {
-                        "shape": "hexagon",
+                        "shape": "arrow",
                         "rotation": 90,
                         "fill": "hatch"
                       }
@@ -2352,7 +2352,7 @@
                     "kind": "single",
                     "elements": [
                       {
-                        "shape": "hexagon",
+                        "shape": "arrow",
                         "rotation": 0,
                         "fill": "hatch"
                       }
@@ -2368,7 +2368,7 @@
                     "kind": "single",
                     "elements": [
                       {
-                        "shape": "hexagon",
+                        "shape": "arrow",
                         "rotation": 90,
                         "fill": "solid"
                       }
@@ -2384,7 +2384,7 @@
                     "kind": "single",
                     "elements": [
                       {
-                        "shape": "hexagon",
+                        "shape": "arrow",
                         "rotation": 270,
                         "fill": "hatch"
                       }
