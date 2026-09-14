@@ -18,6 +18,7 @@ import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
 import {
   profileBucketStartHref,
   profileBuckets,
+  profileCompletion,
 } from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
@@ -52,27 +53,15 @@ export default async function AccountPage() {
   );
   const personality = pickLatestPersonality(completed);
   const personalityFacets = personality?.score?.facets ?? [];
-  const glance = profileBuckets.map((bucket) => {
-    if (bucket.id === "cognitive") {
-      return {
-        ...bucket,
-        filled: Boolean(latestBattery),
-      };
-    }
-    if (bucket.id === "personality") {
-      return {
-        ...bucket,
-        filled: Boolean(personality),
-      };
-    }
-    const match = completed.find((row) => bucket.slugs.includes(row.slug));
-    return { ...bucket, filled: Boolean(match) };
+  const completion = profileCompletion({
+    hasBattery: Boolean(latestBattery),
+    hasPersonality: Boolean(personality),
+    completedSlugs: completed.map((row) => row.slug),
   });
-  const filled = glance.filter((row) => row.filled).length;
-  const completion = Math.round((filled / glance.length) * 100);
-  const unfinished = glance.filter(
+  const unfinished = profileBuckets.filter(
     (row) =>
-      !row.filled && (row.id === "cognitive" || row.id === "personality"),
+      (row.id === "cognitive" && !latestBattery) ||
+      (row.id === "personality" && !personality),
   );
 
   return (
@@ -89,13 +78,19 @@ export default async function AccountPage() {
         <h2 className="font-serif text-xl font-medium">
           Overall profile completion
         </h2>
-        <p className="mt-2 font-serif text-4xl font-medium">{completion}%</p>
+        <p className="mt-2 font-serif text-4xl font-medium">
+          {completion.percent}%
+        </p>
         <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-line">
           <div
             className="h-full rounded-full bg-accent"
-            style={{ width: `${completion}%` }}
+            style={{ width: `${completion.percent}%` }}
           />
         </div>
+        <p className="mt-3 text-sm text-muted">
+          {completion.filled} of {completion.total} scored areas. Brain Games do
+          not count.
+        </p>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl bg-accent px-6 py-6 text-accent-fg">
@@ -169,7 +164,7 @@ export default async function AccountPage() {
       <div className="mm-panel px-6 py-5">
         <h2 className="font-serif text-xl font-medium">Other scales</h2>
         <ul className="mt-4 flex flex-col gap-3">
-          {glance
+          {profileBuckets
             .filter(
               (row) =>
                 row.id === "attention" ||
@@ -230,9 +225,7 @@ export default async function AccountPage() {
                   href={profileBucketStartHref(row.id)}
                   className="hover:text-ink"
                 >
-                  {row.id === "memory"
-                    ? "Memory · Brain Games practice"
-                    : `${row.label} · Not started`}
+                  {row.label} · Not started
                 </Link>
               </li>
             ))}

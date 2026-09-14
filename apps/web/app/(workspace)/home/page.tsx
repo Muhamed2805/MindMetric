@@ -23,6 +23,7 @@ import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
 import {
   profileBucketStartHref,
   profileBuckets,
+  profileCompletion,
 } from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
@@ -88,26 +89,21 @@ export default async function WorkspaceHomePage() {
       return rightAt - leftAt;
     })
     .slice(0, 3);
-  const filledBuckets = profileBuckets.filter((bucket) => {
-    if (bucket.id === "cognitive" && latestBattery) {
-      return true;
-    }
-    return bucket.slugs.some((slug) =>
-      completed.some((row) => row.slug === slug),
-    );
-  }).length;
-  const completion = Math.round((filledBuckets / profileBuckets.length) * 100);
   const doneSlugs = new Set(completed.map((row) => row.slug));
   const recommended = instruments
     .filter((item) => !doneSlugs.has(item.slug))
     .slice(0, 2);
   const latestPersonality = pickLatestPersonality(completed);
+  const completion = profileCompletion({
+    hasBattery: Boolean(latestBattery),
+    hasPersonality: Boolean(latestPersonality),
+    completedSlugs: doneSlugs,
+  });
   const glance = profileBuckets.map((bucket) => {
-    if (bucket.id === "cognitive" && latestBattery) {
+    if (bucket.id === "cognitive") {
       return {
         ...bucket,
-        percent: null as number | null,
-        detail: "Raw totals",
+        detail: latestBattery ? "Raw totals" : null,
         facets: null,
         href: "/battery",
       };
@@ -115,8 +111,11 @@ export default async function WorkspaceHomePage() {
     if (bucket.id === "personality") {
       return {
         ...bucket,
-        percent: latestPersonality ? 100 : null,
-        detail: latestPersonality ? "Five traits" : null,
+        detail: latestPersonality
+          ? hasPersonalityFacets(latestPersonality.score)
+            ? "Five traits"
+            : "Earlier total"
+          : null,
         facets: latestPersonality?.score?.facets ?? null,
         href: latestPersonality
           ? `/results/${latestPersonality.id}`
@@ -126,18 +125,15 @@ export default async function WorkspaceHomePage() {
     if (bucket.id === "memory") {
       return {
         ...bucket,
-        percent: null as number | null,
         detail: "Practice",
         facets: null,
         href: "/games",
       };
     }
     const match = completed.find((row) => bucket.slugs.includes(row.slug));
-    const done = Boolean(match);
     return {
       ...bucket,
-      percent: done ? 100 : null,
-      detail: done ? "Keyed" : null,
+      detail: match?.score?.band?.label ?? (match ? "Report" : null),
       facets: null,
       href: match ? `/results/${match.id}` : profileBucketStartHref(bucket.id),
     };
@@ -207,17 +203,17 @@ export default async function WorkspaceHomePage() {
             <div className="mm-panel px-6 py-6">
               <p className="text-sm text-muted">Profile completion</p>
               <p className="mt-2 font-serif text-4xl font-medium text-ink">
-                {completion}%
+                {completion.percent}%
               </p>
               <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-line">
                 <div
-                  style={{ width: `${completion}%` }}
+                  style={{ width: `${completion.percent}%` }}
                   className="h-full rounded-full bg-accent"
                 />
               </div>
               <p className="mt-3 text-sm text-muted">
-                {filledBuckets} of {profileBuckets.length} profile areas have a
-                completed scale.
+                {completion.filled} of {completion.total} scored profile areas
+                have a completed scale. Brain Games do not count.
               </p>
             </div>
           </div>
@@ -239,17 +235,9 @@ export default async function WorkspaceHomePage() {
                       <div className="mt-2">
                         <PersonalityTraitBars facets={bucket.facets} />
                       </div>
-                    ) : (
-                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-                        <div
-                          className="h-full rounded-full bg-accent"
-                          style={{ width: `${bucket.percent ?? 0}%` }}
-                        />
-                      </div>
-                    )}
+                    ) : null}
                     <p className="mt-1 text-xs text-muted">
-                      {bucket.detail ??
-                        (bucket.percent === null ? "—" : `${bucket.percent}%`)}
+                      {bucket.detail ?? "—"}
                     </p>
                   </>
                 );

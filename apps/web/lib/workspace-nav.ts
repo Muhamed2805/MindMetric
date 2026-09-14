@@ -26,6 +26,49 @@ export const profileBuckets: Array<{
   { id: "eq", label: "EQ", slugs: ["work-emotion-awareness"] },
 ];
 
+/** Memory is Brain Games practice and never a scored profile area. */
+export function scoredProfileBuckets() {
+  return profileBuckets.filter((bucket) => bucket.id !== "memory");
+}
+
+export function profileBucketIsFilled(
+  bucket: { id: string; slugs: string[] },
+  input: {
+    hasBattery: boolean;
+    hasPersonality: boolean;
+    completedSlugs: Iterable<string>;
+  },
+) {
+  if (bucket.id === "memory") {
+    return false;
+  }
+  if (bucket.id === "cognitive") {
+    return input.hasBattery;
+  }
+  if (bucket.id === "personality") {
+    return input.hasPersonality;
+  }
+  const done = new Set(input.completedSlugs);
+  return bucket.slugs.some((slug) => done.has(slug));
+}
+
+export function profileCompletion(input: {
+  hasBattery: boolean;
+  hasPersonality: boolean;
+  completedSlugs: Iterable<string>;
+}) {
+  const scored = scoredProfileBuckets();
+  const filled = scored.filter((bucket) =>
+    profileBucketIsFilled(bucket, input),
+  ).length;
+  return {
+    filled,
+    total: scored.length,
+    percent:
+      scored.length === 0 ? 0 : Math.round((filled / scored.length) * 100),
+  };
+}
+
 export function profileBucketStartHref(id: string) {
   if (id === "cognitive") {
     return "/battery";
