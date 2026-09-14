@@ -39,21 +39,21 @@ describe("pickLatestCompletedBattery", () => {
     expect(picked?.id).toBe("core");
   });
 
-  it("falls back to the newest completed domain battery", () => {
-    const picked = pickLatestCompletedBattery([
-      row({
-        id: "gv",
-        batterySlug: "gv-rotation-pilot",
-        completedAt: "2026-09-14T09:00:00.000Z",
-      }),
-      row({
-        id: "rq",
-        batterySlug: "rq-quant-pilot",
-        completedAt: "2026-09-14T10:00:00.000Z",
-      }),
-    ]);
-
-    expect(picked?.id).toBe("rq");
+  it("ignores a completed domain practice run", () => {
+    expect(
+      pickLatestCompletedBattery([
+        row({
+          id: "gv",
+          batterySlug: "gv-rotation-pilot",
+          completedAt: "2026-09-14T09:00:00.000Z",
+        }),
+        row({
+          id: "rq",
+          batterySlug: "rq-quant-pilot",
+          completedAt: "2026-09-14T10:00:00.000Z",
+        }),
+      ]),
+    ).toBeNull();
   });
 
   it("ignores in-progress sessions", () => {

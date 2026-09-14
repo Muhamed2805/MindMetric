@@ -14,7 +14,10 @@ import {
 import type { BatterySessionSummary } from "../../../lib/battery-types";
 import { pickLatestPersonality } from "../../../lib/personality";
 import { getServerSession } from "../../../lib/session";
-import { pickLatestCompletedBattery } from "../../../lib/workspace-home";
+import {
+  hasCompletedCoreBattery,
+  pickLatestCompletedBattery,
+} from "../../../lib/workspace-home";
 import {
   profileBucketStartHref,
   profileBuckets,
@@ -51,16 +54,17 @@ export default async function AccountPage() {
   const latestBattery = pickLatestCompletedBattery(
     batteries.filter((row) => row.status === "completed"),
   );
+  const hasCoreBattery = hasCompletedCoreBattery(batteries);
   const personality = pickLatestPersonality(completed);
   const personalityFacets = personality?.score?.facets ?? [];
   const completion = profileCompletion({
-    hasBattery: Boolean(latestBattery),
+    hasBattery: hasCoreBattery,
     hasPersonality: Boolean(personality),
     completedSlugs: completed.map((row) => row.slug),
   });
   const unfinished = profileBuckets.filter(
     (row) =>
-      (row.id === "cognitive" && !latestBattery) ||
+      (row.id === "cognitive" && !hasCoreBattery) ||
       (row.id === "personality" && !personality),
   );
 

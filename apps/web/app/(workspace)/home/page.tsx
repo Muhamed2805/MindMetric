@@ -65,6 +65,7 @@ export default async function WorkspaceHomePage() {
     (row) => row.status === "completed",
   );
   const latestBattery = pickLatestCompletedBattery(completedBatteries);
+  const hasCoreBattery = hasCompletedCoreBattery(completedBatteries);
   const continueRow = inProgress[0];
   const recent = [
     ...completed.map((row) => ({
@@ -98,7 +99,7 @@ export default async function WorkspaceHomePage() {
   const doneSlugs = new Set(completed.map((row) => row.slug));
   const bySlug = new Map(instruments.map((item) => [item.slug, item]));
   const recommended = recommendedNextSlugs({
-    hasCoreBattery: hasCompletedCoreBattery(completedBatteries),
+    hasCoreBattery,
     catalogSlugs: instruments.map((item) => item.slug),
     doneSlugs,
   }).flatMap((slug) => {
@@ -127,7 +128,7 @@ export default async function WorkspaceHomePage() {
   });
   const latestPersonality = pickLatestPersonality(completed);
   const completion = profileCompletion({
-    hasBattery: Boolean(latestBattery),
+    hasBattery: hasCoreBattery,
     hasPersonality: Boolean(latestPersonality),
     completedSlugs: doneSlugs,
   });
@@ -135,7 +136,7 @@ export default async function WorkspaceHomePage() {
     if (bucket.id === "cognitive") {
       return {
         ...bucket,
-        detail: latestBattery ? "Raw totals" : null,
+        detail: hasCoreBattery ? "Raw totals" : null,
         facets: null,
         href: "/battery",
       };
