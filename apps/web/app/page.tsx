@@ -60,19 +60,17 @@ export default async function HomePage() {
                 <dt className="font-serif text-2xl font-medium text-ink">
                   {liveCount}
                 </dt>
-                <dd className="mt-1 text-xs text-muted">Published tests</dd>
+                <dd className="mt-1 text-xs text-muted">Live scales</dd>
               </div>
               <div>
                 <dt className="font-serif text-2xl font-medium text-ink">
                   {BRAIN_GAMES.length}
                 </dt>
-                <dd className="mt-1 text-xs text-muted">Brain Games drills</dd>
+                <dd className="mt-1 text-xs text-muted">Practice drills</dd>
               </div>
               <div>
-                <dt className="font-serif text-2xl font-medium text-ink">
-                  Live
-                </dt>
-                <dd className="mt-1 text-xs text-muted">Keyed on the server</dd>
+                <dt className="font-serif text-2xl font-medium text-ink">S0</dt>
+                <dd className="mt-1 text-xs text-muted">Raw totals, no IQ</dd>
               </div>
             </dl>
           </div>
@@ -115,18 +113,18 @@ export default async function HomePage() {
                   "/tests/work-emotion-awareness",
                 )}
                 badge="EQ"
-                title="Emotional Intelligence"
-                detail="Emotional awareness and regulation"
-                time="~2 min live scale"
+                title="Emotional awareness"
+                detail="A short workplace self-report. Not a full EQ battery and not a diagnosis."
+                time="~2 min"
               />
             </li>
             <li>
               <CategoryCard
                 href={workspacePath(Boolean(session), "/tests/work-attention")}
                 badge="Work"
-                title="Attention"
+                title="Work attention"
                 detail="A short self-report of staying with work despite interruptions"
-                time="~2 min live scale"
+                time="~2 min"
               />
             </li>
           </ul>

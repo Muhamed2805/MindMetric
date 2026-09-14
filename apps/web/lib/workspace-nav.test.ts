@@ -77,6 +77,7 @@ describe("primary catalog", () => {
     expect(queryMatchesBatteryPractice("working memory")).toBe(true);
     expect(queryMatchesBatteryPractice("gf")).toBe(true);
     expect(queryMatchesBatteryPractice("pattern")).toBe(true);
+    expect(queryMatchesBatteryPractice("iq")).toBe(true);
     expect(queryMatchesBatteryPractice("memory")).toBe(false);
     expect(queryMatchesBatteryPractice("attention")).toBe(false);
     expect(assessmentHref(CORE_BATTERY_SLUG)).toBe("/battery");

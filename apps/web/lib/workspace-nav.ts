@@ -32,6 +32,9 @@ export function queryMatchesBatteryPractice(query: string) {
   if (BATTERY_SEARCH_CODES.has(needle)) {
     return true;
   }
+  if (/\biq\b/.test(needle)) {
+    return true;
+  }
   return BATTERY_SEARCH_TERMS.some((term) => needle.includes(term));
 }
 
