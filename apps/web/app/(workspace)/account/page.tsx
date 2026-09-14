@@ -160,7 +160,7 @@ export default async function AccountPage() {
                 A five-factor self-report. Not a type code and not a diagnosis.
               </p>
               <Button asChild variant="secondary" className="mt-5">
-                <Link href="/personality">Take the test</Link>
+                <Link href="/personality">Start the profile</Link>
               </Button>
             </>
           )}

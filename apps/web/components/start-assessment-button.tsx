@@ -8,7 +8,7 @@ import type { AssessmentSession } from "../lib/assessment-types";
 
 export function StartAssessmentButton({
   slug,
-  label = "Start this test",
+  label = "Start this assessment",
 }: {
   slug: string;
   label?: string;

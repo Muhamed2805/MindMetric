@@ -17,7 +17,7 @@ import {
 } from "../../../lib/personality";
 
 export const metadata: Metadata = {
-  title: "Personality test",
+  title: "Personality",
 };
 
 export default async function PersonalityPage() {
@@ -37,7 +37,7 @@ export default async function PersonalityPage() {
   if (!detail) {
     return (
       <ErrorState
-        title="The personality test is unavailable"
+        title="The personality profile is unavailable"
         description="Please try again later."
       />
     );
@@ -112,7 +112,7 @@ export default async function PersonalityPage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <StartAssessmentButton
                 slug={detail.slug}
-                label="Take the test again"
+                label="Take the profile again"
               />
               <Link
                 href={`/results/${latestPersonality.id}`}
@@ -129,7 +129,10 @@ export default async function PersonalityPage() {
               items are recoded on the server. You can leave and resume an
               unfinished session.
             </p>
-            <StartAssessmentButton slug={detail.slug} label="Start the test" />
+            <StartAssessmentButton
+              slug={detail.slug}
+              label="Start the profile"
+            />
           </>
         )}
       </div>

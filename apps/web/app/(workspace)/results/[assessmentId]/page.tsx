@@ -73,7 +73,7 @@ export default async function ResultDetailPage({ params }: PageProps) {
         </Button>
         {session.slug === FIVE_FACTOR_SLUG ? (
           <Button asChild variant="secondary">
-            <Link href="/personality">Personality test</Link>
+            <Link href="/personality">Personality</Link>
           </Button>
         ) : null}
       </div>

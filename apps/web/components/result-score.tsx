@@ -69,7 +69,7 @@ function LegacyFiveFactorResult() {
       <p className="text-sm leading-6 text-muted">
         It was scored before the five-factor profile was stored. The overall
         keyed total is not a type, not an IQ, and not the profile we show now.
-        Take the test again for Openness through Emotional stability.
+        Take it again for Openness through Emotional stability.
       </p>
     </div>
   );

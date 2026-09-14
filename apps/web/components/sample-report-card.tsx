@@ -33,7 +33,7 @@ export function SampleReportCard() {
         </li>
       </ul>
       <p className="mt-4 text-[11px] leading-4 text-mark">
-        Illustrative layout. Live reports show your section counts, not an IQ,
+        Illustrative layout. Reports show your section counts, not an IQ,
         percentile, or confidence interval.
       </p>
     </aside>
