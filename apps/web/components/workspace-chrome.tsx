@@ -31,7 +31,7 @@ export function WorkspaceChrome({ children }: { children: ReactNode }) {
             href="/#method"
             className="flex min-h-10 items-center rounded-lg px-3 text-[13.5px] text-muted hover:text-ink"
           >
-            Methodology
+            How It Works
           </Link>
           <div className="px-3 pt-1">
             <SignOutButton />

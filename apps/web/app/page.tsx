@@ -172,7 +172,7 @@ export default async function HomePage() {
         >
           <div>
             <p className="text-[11px] font-medium uppercase tracking-widest text-mark">
-              03 — Methodology
+              03 — How It Works
             </p>
             <h2 className="mt-3 font-serif text-4xl font-medium leading-tight tracking-tight">
               Built around structure, not impressions.

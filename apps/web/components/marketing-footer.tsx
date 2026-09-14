@@ -7,7 +7,7 @@ const links = [
   { href: "/battery", label: "Battery" },
   { href: "/personality", label: "Personality" },
   { href: "/#games", label: "Brain Games" },
-  { href: "/#method", label: "Methodology" },
+  { href: "/#method", label: "How It Works" },
 ];
 
 const gated = new Set(["/battery", "/personality"]);
