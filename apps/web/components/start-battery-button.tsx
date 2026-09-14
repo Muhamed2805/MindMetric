@@ -28,9 +28,13 @@ function covariates() {
 export function StartBatteryButton({
   slug,
   access,
+  startLabel = "Begin the battery",
+  resumeLabel = "Continue the battery",
 }: {
   slug: string;
   access?: BatteryAccess | null;
+  startLabel?: string;
+  resumeLabel?: string;
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -68,8 +72,8 @@ export function StartBatteryButton({
         {pending
           ? "Starting"
           : access?.resumeSessionId
-            ? "Continue the battery"
-            : "Begin the battery"}
+            ? resumeLabel
+            : startLabel}
       </Button>
       {locked && access?.reason ? (
         <p className="text-sm text-muted">{access.reason}</p>

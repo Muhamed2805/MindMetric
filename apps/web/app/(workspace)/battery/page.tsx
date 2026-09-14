@@ -12,12 +12,11 @@ import {
   LISTED_BATTERY_SLUGS,
 } from "../../../lib/battery-types";
 import { domainLabel, minutesFromMs } from "../../../lib/format";
+import { splitListedBatteries } from "../../../lib/workspace-nav";
 
 export const metadata: Metadata = {
   title: "Cognitive battery",
 };
-
-const BATTERY_SLUGS = LISTED_BATTERY_SLUGS;
 
 function viewportNote(section: BatteryOverview["sections"][number]) {
   const parts: string[] = [];
@@ -126,10 +125,36 @@ function BatteryCard({
   );
 }
 
+function PracticeRow({
+  overview,
+  access,
+}: {
+  overview: BatteryOverview;
+  access: BatteryAccess | null;
+}) {
+  return (
+    <li className="mm-panel flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="max-w-xl">
+        <p className="font-medium text-ink">{overview.title}</p>
+        <p className="mt-1 text-sm leading-6 text-muted">
+          {minutesFromMs(overview.timedMs)} under a clock.{" "}
+          {overview.description}
+        </p>
+      </div>
+      <StartBatteryButton
+        slug={overview.slug}
+        access={access}
+        startLabel="Begin practice"
+        resumeLabel="Continue practice"
+      />
+    </li>
+  );
+}
+
 export default async function BatteryPage() {
   const overviews = (
     await Promise.all(
-      BATTERY_SLUGS.map((slug) =>
+      LISTED_BATTERY_SLUGS.map((slug) =>
         apiGet<BatteryOverview>(`/battery/catalog/${slug}`).catch(() => null),
       ),
     )
@@ -146,8 +171,9 @@ export default async function BatteryPage() {
       .filter((entry): entry is BatteryAccess => entry !== null)
       .map((entry) => [entry.slug, entry]),
   );
+  const { core, practice } = splitListedBatteries(overviews);
 
-  if (overviews.length === 0) {
+  if (!core && practice.length === 0) {
     return (
       <ErrorState
         title="The battery is unavailable"
@@ -160,21 +186,42 @@ export default async function BatteryPage() {
     <div className="flex flex-col gap-12">
       <div>
         <h1 className="font-serif text-4xl font-medium tracking-tight">
-          Cognitive batteries
+          Cognitive battery
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
           Calibration phase: raw domain totals and quality notes only. The core
-          battery runs all five domains in the locked order. Separate
-          single-domain forms stay available as practice.
+          form runs all five domains in the locked order. Single-domain forms
+          below are practice for one section, not a substitute.
         </p>
       </div>
-      {overviews.map((overview) => (
+      {core ? (
         <BatteryCard
-          key={overview.slug}
-          overview={overview}
-          access={accessBySlug.get(overview.slug) ?? null}
+          overview={core}
+          access={accessBySlug.get(core.slug) ?? null}
         />
-      ))}
+      ) : null}
+      {practice.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          <div>
+            <h2 className="font-serif text-2xl font-medium tracking-tight">
+              Single-domain practice
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
+              Each form is also inside the core battery. Use one when you want a
+              shorter rehearsal. Totals stay raw; they never feed an IQ.
+            </p>
+          </div>
+          <ul className="flex flex-col gap-3">
+            {practice.map((overview) => (
+              <PracticeRow
+                key={overview.slug}
+                overview={overview}
+                access={accessBySlug.get(overview.slug) ?? null}
+              />
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }

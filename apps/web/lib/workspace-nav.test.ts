@@ -9,6 +9,7 @@ import {
   profileCompletion,
   recommendedNextSlugs,
   scoredProfileBuckets,
+  splitListedBatteries,
   workspaceNav,
 } from "./workspace-nav";
 
@@ -69,6 +70,19 @@ describe("primary catalog", () => {
     expect(instrumentHref(FIVE_FACTOR_SLUG)).toBe("/personality");
     expect(instrumentHref("work-attention")).toBe("/tests/work-attention");
     expect(assessmentHref(CORE_BATTERY_SLUG)).toBe("/battery");
+    expect(
+      splitListedBatteries([
+        { slug: "gs-same-different-pilot" },
+        { slug: CORE_BATTERY_SLUG },
+        { slug: "gv-rotation-pilot" },
+      ]),
+    ).toEqual({
+      core: { slug: CORE_BATTERY_SLUG },
+      practice: [
+        { slug: "gs-same-different-pilot" },
+        { slug: "gv-rotation-pilot" },
+      ],
+    });
   });
 });
 

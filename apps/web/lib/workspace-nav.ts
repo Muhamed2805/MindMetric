@@ -2,6 +2,13 @@ import { FIVE_FACTOR_SLUG } from "./personality";
 
 export const CORE_BATTERY_SLUG = "core-cognitive";
 
+export function splitListedBatteries<T extends { slug: string }>(rows: T[]) {
+  return {
+    core: rows.find((row) => row.slug === CORE_BATTERY_SLUG) ?? null,
+    practice: rows.filter((row) => row.slug !== CORE_BATTERY_SLUG),
+  };
+}
+
 export const PRIMARY_SCALE_SLUGS = [
   FIVE_FACTOR_SLUG,
   "work-attention",
