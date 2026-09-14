@@ -2,6 +2,9 @@ import { FIVE_FACTOR_SLUG } from "./personality";
 
 export const CORE_BATTERY_SLUG = "core-cognitive";
 
+/** Earlier timed puzzle set. New starts go to the core battery. */
+export const LEGACY_TIMED_MCQ_SLUG = "quick-pattern-reasoning";
+
 export function splitListedBatteries<T extends { slug: string }>(rows: T[]) {
   return {
     core: rows.find((row) => row.slug === CORE_BATTERY_SLUG) ?? null,
@@ -33,7 +36,8 @@ export const profileBuckets: Array<{
   {
     id: "cognitive",
     label: "Cognitive",
-    slugs: ["quick-pattern-reasoning"],
+    // Fill is the core battery, not a catalog instrument.
+    slugs: [],
   },
   { id: "memory", label: "Memory", slugs: [] },
   { id: "attention", label: "Attention", slugs: ["work-attention"] },
@@ -110,6 +114,9 @@ export function isPrimaryScale(slug: string) {
 export function instrumentHref(slug: string) {
   if (slug === FIVE_FACTOR_SLUG) {
     return "/personality";
+  }
+  if (slug === LEGACY_TIMED_MCQ_SLUG) {
+    return "/battery";
   }
   return `/tests/${slug}`;
 }

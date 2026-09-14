@@ -5,6 +5,7 @@ import {
   CORE_BATTERY_SLUG,
   instrumentHref,
   isPrimaryScale,
+  LEGACY_TIMED_MCQ_SLUG,
   profileBucketStartHref,
   profileCompletion,
   recommendedNextSlugs,
@@ -69,6 +70,7 @@ describe("primary catalog", () => {
     expect(isPrimaryScale("quick-pattern-reasoning")).toBe(false);
     expect(instrumentHref(FIVE_FACTOR_SLUG)).toBe("/personality");
     expect(instrumentHref("work-attention")).toBe("/tests/work-attention");
+    expect(instrumentHref(LEGACY_TIMED_MCQ_SLUG)).toBe("/battery");
     expect(assessmentHref(CORE_BATTERY_SLUG)).toBe("/battery");
     expect(
       splitListedBatteries([

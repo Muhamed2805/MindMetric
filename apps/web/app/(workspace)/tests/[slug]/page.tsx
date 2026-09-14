@@ -6,6 +6,7 @@ import { apiGet } from "../../../../lib/api.server";
 import type { InstrumentDetail } from "../../../../lib/assessment-types";
 import { durationLabel, engineLabel } from "../../../../lib/format";
 import { FIVE_FACTOR_SLUG } from "../../../../lib/personality";
+import { LEGACY_TIMED_MCQ_SLUG } from "../../../../lib/workspace-nav";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -15,6 +16,12 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  if (slug === FIVE_FACTOR_SLUG) {
+    return { title: "Personality" };
+  }
+  if (slug === LEGACY_TIMED_MCQ_SLUG) {
+    return { title: "Cognitive battery" };
+  }
   try {
     const detail = await apiGet<InstrumentDetail>(`/instruments/${slug}`);
     return { title: detail.title };
@@ -27,6 +34,9 @@ export default async function InstrumentPage({ params }: PageProps) {
   const { slug } = await params;
   if (slug === FIVE_FACTOR_SLUG) {
     redirect("/personality");
+  }
+  if (slug === LEGACY_TIMED_MCQ_SLUG) {
+    redirect("/battery");
   }
 
   let detail: InstrumentDetail | null = null;
