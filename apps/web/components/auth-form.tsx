@@ -102,14 +102,20 @@ export function AuthForm({ mode, nextPath }: AuthFormProps) {
         {mode === "register" ? (
           <>
             Already have an account?{" "}
-            <Link className="font-medium text-ink underline" href="/login">
+            <Link
+              className="font-medium text-ink underline"
+              href={`/login?from=${encodeURIComponent(nextPath)}`}
+            >
               Sign in
             </Link>
           </>
         ) : (
           <>
             Need an account?{" "}
-            <Link className="font-medium text-ink underline" href="/register">
+            <Link
+              className="font-medium text-ink underline"
+              href={`/register?from=${encodeURIComponent(nextPath)}`}
+            >
               Create one
             </Link>
           </>

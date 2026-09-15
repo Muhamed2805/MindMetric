@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AuthForm } from "../../../components/auth-form";
 import { BrandMark } from "../../../components/brand-mark";
 import { getServerSession } from "../../../lib/session";
+import { safeWorkspaceReturnPath } from "../../../lib/workspace-guard";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -13,13 +14,12 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ from?: string }>;
 }) {
+  const { from } = await searchParams;
+  const nextPath = safeWorkspaceReturnPath(from);
   const session = await getServerSession();
   if (session) {
-    redirect("/home");
+    redirect(nextPath);
   }
-
-  const { from } = await searchParams;
-  const nextPath = from?.startsWith("/") ? from : "/home";
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center gap-8 px-4 py-12">

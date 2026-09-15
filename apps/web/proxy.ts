@@ -1,25 +1,25 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
-
-const protectedPaths = ["/home", "/tests", "/results", "/account", "/run"];
-
-function matches(pathname: string, prefixes: string[]) {
-  return prefixes.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  );
-}
+import {
+  isWorkspacePath,
+  WORKSPACE_PATHNAME_HEADER,
+} from "./lib/workspace-guard";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = getSessionCookie(request);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(WORKSPACE_PATHNAME_HEADER, pathname);
 
-  if (matches(pathname, protectedPaths) && !sessionCookie) {
+  if (isWorkspacePath(pathname) && !sessionCookie) {
     const login = new URL("/login", request.url);
     login.searchParams.set("from", pathname);
     return NextResponse.redirect(login);
   }
 
-  return NextResponse.next();
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {
@@ -28,6 +28,12 @@ export const config = {
     "/home/:path*",
     "/tests",
     "/tests/:path*",
+    "/battery",
+    "/battery/:path*",
+    "/personality",
+    "/personality/:path*",
+    "/games",
+    "/games/:path*",
     "/results",
     "/results/:path*",
     "/account",

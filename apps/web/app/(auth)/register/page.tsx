@@ -3,15 +3,22 @@ import { redirect } from "next/navigation";
 import { AuthForm } from "../../../components/auth-form";
 import { BrandMark } from "../../../components/brand-mark";
 import { getServerSession } from "../../../lib/session";
+import { safeWorkspaceReturnPath } from "../../../lib/workspace-guard";
 
 export const metadata: Metadata = {
   title: "Create account",
 };
 
-export default async function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>;
+}) {
+  const { from } = await searchParams;
+  const nextPath = safeWorkspaceReturnPath(from);
   const session = await getServerSession();
   if (session) {
-    redirect("/home");
+    redirect(nextPath);
   }
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center gap-8 px-4 py-12">
@@ -27,7 +34,7 @@ export default async function RegisterPage() {
           characters.
         </p>
       </div>
-      <AuthForm mode="register" nextPath="/home" />
+      <AuthForm mode="register" nextPath={nextPath} />
     </main>
   );
 }
