@@ -92,9 +92,13 @@ export function getBrainGame(slug: string): BrainGame | undefined {
 const MS_PER_DAY = 86_400_000;
 
 /** One drill per UTC day. Local stats still stay on the device. */
-export function todaysBrainGame(nowMs = Date.now()) {
-  const day = Math.floor(nowMs / MS_PER_DAY);
-  return BRAIN_GAMES[day % BRAIN_GAMES.length] ?? BRAIN_GAMES[0];
+export function todaysBrainGame(nowMs = Date.now()): BrainGame {
+  const index = Math.floor(nowMs / MS_PER_DAY) % BRAIN_GAMES.length;
+  const game = BRAIN_GAMES[index] ?? BRAIN_GAMES[0];
+  if (!game) {
+    throw new Error("Brain Games catalog is empty.");
+  }
+  return game;
 }
 
 /** Assessments search should not swallow memory queries as a missing test. */

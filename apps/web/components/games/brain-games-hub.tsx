@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 import {
   BRAIN_GAME_DISCLAIMER,
   BRAIN_GAMES,
+  type BrainGameSlug,
   emptyBrainGameStats,
   getBrainGame,
   readBrainGameStats,
-  type BrainGameSlug,
 } from "../../lib/brain-games";
 
 export function BrainGamesHub({

@@ -13,8 +13,8 @@ import {
   batteryScoreDisclaimer,
 } from "../../../lib/battery-copy";
 import type { BatterySessionSummary } from "../../../lib/battery-types";
-import { durationLabel } from "../../../lib/format";
 import { todaysBrainGame } from "../../../lib/brain-games";
+import { durationLabel } from "../../../lib/format";
 import {
   FIVE_FACTOR_SLUG,
   hasPersonalityFacets,
@@ -94,13 +94,13 @@ export default async function WorkspaceHomePage() {
       ...completedBatteries
         .filter((row) => isHomeRecentBattery(row.batterySlug))
         .map((row) => ({
-        id: row.id,
-        href: `/results/battery/${row.id}`,
-        title: row.batteryTitle,
-        detail: batteryRawLabel(row.report),
-        at: row.completedAt,
-        key: `battery:${row.batterySlug}`,
-      })),
+          id: row.id,
+          href: `/results/battery/${row.id}`,
+          title: row.batteryTitle,
+          detail: batteryRawLabel(row.report),
+          at: row.completedAt,
+          key: `battery:${row.batterySlug}`,
+        })),
     ],
     (row) => row.key,
     (row) => (row.at ? new Date(row.at).getTime() : 0),
